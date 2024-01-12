@@ -15,7 +15,7 @@ sections:
       text: |
         <br>
         
-        The **<Need to find a nice name> Group** has been a center of excellence for Artificial Intelligence research, teaching, and practice since its founding in 2016.
+        The **Engineering Synthetic Compartments Group** has been a center of excellence for Artificial Intelligence research, teaching, and practice since its founding in 2016.
   
   - block: collection
     content:
