@@ -33,7 +33,7 @@ sections:
         align: right
         background:
           image:
-            filename: empty lab.jpg
+            filename: empty-lab.jpg
             filters:
               brightness: 0.5
           position: center
