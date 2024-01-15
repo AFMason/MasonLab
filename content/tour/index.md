@@ -18,22 +18,22 @@ sections:
               brightness: 0.7
           position: right
           color: '#666'
-      - title: Lunch & Learn ☕️
-        content: 'Share your knowledge with the group and explore exciting new topics together!'
+      - title: Hacking a 3D Printer :robot:
+        content: 'Making bespoke lab equipment using a commercially available FDM 3D printer!'
         align: left
         background:
           image:
-            filename: contact.jpg
+            filename: dib-bot.jpg
             filters:
               brightness: 0.7
           position: center
           color: '#555'
-      - title: World-Class Semiconductor Lab
-        content: 'Just opened last month!'
+      - title: A new lab space
+        content: 'Watch this space as we build out a new lab in Molecular Horizons!'
         align: right
         background:
           image:
-            filename: welcome.jpg
+            filename: empty lab.jpg
             filters:
               brightness: 0.5
           position: center
