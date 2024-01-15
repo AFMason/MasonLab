@@ -21,9 +21,9 @@ organizations:
 bio: My research interests include synthetic cells, open-source hardware, and polymer science.
 
 interests:
-  - Artificial Intelligence
-  - Computational Linguistics
-  - Information Retrieval
+  - Synthetic cells
+  - Open-source hardware
+  - Light microscopy
 
 education:
   courses:
@@ -69,6 +69,6 @@ user_groups:
   - Researchers
 ---
 
-Nelson Bighetti is a professor of artificial intelligence at the Stanford AI Lab. His research interests include distributed robotics, mobile computing and programmable matter. He leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+Alex is a DECRA Fellow at the University of Wollongong, Australia. He is fascinated by the challenge of building a cell from the bottom-up, using synthetic materials. His research to date has been focused on compartmentalisation, using materials such as block copolymers, complex coacervates, and water-in-oil droplet networks. 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque elit, tristique placerat feugiat ac, facilisis vitae arcu. Proin eget egestas augue. Praesent ut sem nec arcu pellentesque aliquet. Duis dapibus diam vel metus tempus vulputate.
+He leads the Synthetic Biomimetic Compartments Lab at the University of Wollongong, which is aiming to create a synthetic chemical synapse using in vitro expressed membrane proteins, DNA nanotechnology, single molecule fluorescence microscopy, and a DIY nanoliter volume liquid handling robot named "DIB-BOT". If any of the above interests you, please send Alex a message!
