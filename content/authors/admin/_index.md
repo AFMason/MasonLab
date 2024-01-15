@@ -66,7 +66,7 @@ highlight_name: false
 # Organizational groups that you belong to (for People widget)
 #   Set this to `[]` or comment out if you are not using People widget.
 user_groups:
-  - Researchers
+  - Principal Investigator
 ---
 
 Alex is a DECRA Fellow at the University of Wollongong, Australia. He is fascinated by the challenge of building a cell from the bottom-up, using synthetic materials. His research to date has been focused on compartmentalisation, using materials such as block copolymers, complex coacervates, and water-in-oil droplet networks. 
