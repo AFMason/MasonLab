@@ -6,16 +6,16 @@ sections:
   - block: collection
     id: project
     content:
-      title: Recent Posts
+      title: Current projects
       subtitle: ''
-      text: 'Check out my recent blog posts below!'
+      text: 'Check out some of our ongoing projects!'
       # Choose how many pages you would like to display (0 = all pages)
-      count: 5
+      count: 0
       # Filter on criteria
       filters:
         # The folders to display content from
         folders:
-          - post
+          - project
         author: ""
         category: ""
         tag: ""
