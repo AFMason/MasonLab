@@ -18,7 +18,7 @@ sections:
               brightness: 0.7
           position: right
           color: '#666'
-      - title: Hacking a 3D Printer :robot:
+      - title: Hacking a 3D Printer 🤖
         content: 'Making bespoke lab equipment using a commercially available FDM 3D printer!'
         align: left
         background:
