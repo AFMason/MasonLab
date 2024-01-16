@@ -13,8 +13,8 @@ main:
   - name: People
     url: people
     weight: 30
-  - name: Events
-    url: event
+  - name: Projects
+    url: projects
     weight: 40
   - name: Publications
     url: publication
@@ -22,3 +22,6 @@ main:
   - name: Contact
     url: contact
     weight: 60
+ # - name: Events
+ #   url: event
+  #  weight: 70    
