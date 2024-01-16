@@ -9,24 +9,25 @@ sections:
     content:
       title: Contact
       text: |-
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue non tempor egestas. Proin nisl nunc, dignissim in accumsan dapibus, auctor ullamcorper neque. Quisque at elit felis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aenean eget elementum odio. Cras interdum eget risus sit amet aliquet. In volutpat, nisl ut fringilla dignissim, arcu nisl suscipit ante, at accumsan sapien nisl eu eros.
-      email: test@example.org
-      phone: 888 888 88 88
+        You can use this form to send me a short message. Typically, open positions will be advertised on this site, LinkedIn, and Twitter. The group is not currently in a position to recruit researchers without their own funding.
+
+        However, we are always open to visitors and new collaborations, so drop us a line!
+      email: alexander_mason@uow.edu.au
+      #phone: 888 888 88 88
       address:
-        street: 450 Serra Mall
-        city: Stanford
-        region: CA
-        postcode: '94305'
-        country: United States
-        country_code: US
+        street: Building 42 Molecular Horizons
+        city: University of Wollongong
+        region: NSW
+        postcode: '2522'
+        country: Australia
+        country_code: AU
       coordinates:
-        latitude: '37.4275'
-        longitude: '-122.1697'
-      directions: Enter Building 1 and take the stairs to Office 200 on Floor 2
+        latitude: '-34.4056'
+        longitude: '150.8806'
+      directions: Unless you have swipe access to meet in my office 42.113, I will meet you in the foyer of Building 42.
       office_hours:
-        - 'Monday 10:00 to 13:00'
-        - 'Wednesday 09:00 to 10:00'
-      appointment_url: 'https://calendly.com'
+        - 'Tues-Friday 8:00 to 16:00'
+      #appointment_url: 'https://calendly.com'
       #contact_links:
       #  - icon: comments
       #    icon_pack: fas

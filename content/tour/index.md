@@ -28,7 +28,7 @@ sections:
               brightness: 0.7
           position: center
           color: '#555'
-      - title: A new lab space
+      - title: A new lab
         content: 'Watch this space as we build out a new lab in Molecular Horizons!'
         align: right
         background:
