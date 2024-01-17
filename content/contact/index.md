@@ -9,7 +9,7 @@ sections:
     content:
       title: Contact
       text: |-
-        **This form is not currently working - send Alex an email or DM on Twitter/Linkedin instead.** Typically, open positions will be advertised on this site, LinkedIn, and Twitter. The group is not currently in a position to recruit researchers without their own funding.
+        Typically, open positions will be advertised on this site, LinkedIn, and Twitter. The group is not currently in a position to recruit researchers without their own funding.
 
         However, we are always open to visitors and new collaborations, so drop us a line!
       email: alexander_mason@uow.edu.au
@@ -58,7 +58,8 @@ sections:
       background:
         image: 
           filename: trees.jpg
-          filters:
+         placement: 3
+         filters:
             brightness: 1
           parallax: false
           position: center
