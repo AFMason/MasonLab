@@ -1,0 +1,12 @@
+    // Used in conjunction with mobile .navbar-brand to center logo on mobile.
+    .navbar-brand-mobile-wrapper {
+      position: relative;
+    }
+    .navbar-brand {
+      // Center logo in mobile navbar.
+      margin: auto;
+      padding-left: 0.5rem;
+    }
+    .navbar-brand img {
+      max-height: 0.9rem;
+    }
