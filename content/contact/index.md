@@ -5,11 +5,11 @@ date: 2022-10-24
 type: landing
 
 sections:
-  - block: markdown
+  - block: contact
     content:
       title: Contact
       text: |-
-        Typically, open positions will be advertised on this site, LinkedIn, and Twitter. The group is not currently in a position to recruit researchers without their own funding.
+        **This form is not currently working - send Alex an email or DM on Twitter/Linkedin instead.** Typically, open positions will be advertised on this site, LinkedIn, and Twitter. The group is not currently in a position to recruit researchers without their own funding.
 
         However, we are always open to visitors and new collaborations, so drop us a line!
       email: alexander_mason@uow.edu.au
@@ -38,13 +38,13 @@ sections:
       autolink: true
     
       # Email form provider
-      form:
-        provider: netlify
-        formspree:
-          id:
-        netlify:
-          # Enable CAPTCHA challenge to reduce spam?
-          captcha: false
+      #form:
+        #provider: netlify
+       # formspree:
+       #   id:
+       # netlify:
+       #   # Enable CAPTCHA challenge to reduce spam?
+       #   captcha: false
     design:
       columns: '1'
 
@@ -57,7 +57,7 @@ sections:
       columns: '1'
       background:
         image: 
-          filename: coders.jpg
+          filename: trees.jpg
           filters:
             brightness: 1
           parallax: false
