@@ -8,14 +8,16 @@ sections:
   - block: hero
     content:
       title: |
-        Wowchemy
+        Synthetic Biomimetic Compartments
         Research Group
       image:
         filename: welcome.jpg
       text: |
         <br>
         
-        The **Engineering Synthetic Compartments Group** has been a center of excellence for Artificial Intelligence research, teaching, and practice since its founding in 2016.
+        The **Synthetic Biomimetic Compartments Group** was founded by Alex Mason in 2023.
+
+        This website is still under construction.
   
   - block: collection
     content:
