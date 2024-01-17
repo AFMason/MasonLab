@@ -57,7 +57,7 @@ sections:
       columns: '1'
       background:
         image: 
-          filename: trees.jpg
+         filename: trees.jpg
          placement: 3
          filters:
             brightness: 1
