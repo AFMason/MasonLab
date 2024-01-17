@@ -1,7 +1,9 @@
 ---
 title: Publications
-subtitle: hello world
-
+subtitle: 
+{{% callout note %}}
+Click [here](https://scholar.google.com/citations?user=jxBZFwQAAAAJ&hl=en) to see the Google Scholar page.
+{{% /callout %}}
 
 # Listing view
 view: citation
