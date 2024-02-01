@@ -6,7 +6,7 @@ name = "test_theme"
   primary = "#EF525B"
 
   # Menu
-  menu_primary = "##2D4D42"
+  menu_primary = "#2D4D42"
   menu_text = "#B6AEAB"
   menu_text_active = "#DED6D3"
   menu_title = "#F8F9FB"
