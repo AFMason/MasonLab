@@ -6,12 +6,12 @@ name = "test_theme"
   primary = "#EF525B"
 
   # Menu
-  menu_primary = "#800080"
-  menu_text = "#fff"
-  menu_text_active = "#00828B"
-  menu_title = "#fff"
+  menu_primary = "##2D4D42"
+  menu_text = "#B6AEAB"
+  menu_text_active = "#DED6D3"
+  menu_title = "#F8F9FB"
 
   # Backgrounds
-  background = "#EAE7D6"
-  home_section_odd = "#EAE7D6"
-  home_section_even = "#EAE7D6"
+  background = "#F8F9FB"
+  home_section_odd = "#F8F9FB"
+  home_section_even = "#F8F9FB"
