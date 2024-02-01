@@ -3,12 +3,12 @@ name = "test_theme"
 
 [light]
   # Primary
-  primary = "#EF525B"
+  primary = "#0F2F24"
 
   # Menu
   menu_primary = "#2D4D42"
-  menu_text = "#B6AEAB"
-  menu_text_active = "#DED6D3"
+  menu_text = "#F8F9FB"
+  menu_text_active = "#F8F9FB"
   menu_title = "#F8F9FB"
 
   # Backgrounds
