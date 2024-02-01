@@ -1,14 +1,14 @@
 ---
 # Display name
-title: Aleksa Lakic
+title: New member
 
 # Full name (for SEO)
-first_name: Aleksa 
-last_name: Lakic
+first_name: New 
+last_name: Member
 
 # Username (this should match the folder name)
 authors:
-  - Aleksa
+  - NewMember
 
 # Is this the primary user of the site?
 superuser: false
@@ -70,7 +70,7 @@ email: ''
 # Organizational groups that you belong to (for People widget)
 #   Set this to `[]` or comment out if you are not using People widget.
 user_groups:
-  - Researchers
+  #- Researchers
 ---
 
 Aleksa description text..
