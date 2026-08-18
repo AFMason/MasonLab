@@ -1,14 +1,14 @@
 ---
 # Display name
-title: Aleksa Lakic
+title: Bimsara Pusweldiniya
 
 # Full name (for SEO)
-first_name: Aleksa
-last_name: Lakic
+first_name: Bimsara
+last_name: Pusweldiniya
 
 # Username (this should match the folder name)
 authors:
-  - Aleksa
+  - Bimsara
 
 # Is this the primary user of the site?
 superuser: false

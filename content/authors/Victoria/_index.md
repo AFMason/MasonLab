@@ -1,20 +1,20 @@
 ---
 # Display name
-title: Aleksa Lakic
+title: Victoria Rogers
 
 # Full name (for SEO)
-first_name: Aleksa
-last_name: Lakic
+first_name: Victoria
+last_name: Rogers
 
 # Username (this should match the folder name)
 authors:
-  - Aleksa
+  - Victoria
 
 # Is this the primary user of the site?
 superuser: false
 
 # Role/position
-role: HDR Candidate
+role: Research Student (SMAH240)
 
 # Organizations/Affiliations
 organizations:

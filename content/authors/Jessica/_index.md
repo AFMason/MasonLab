@@ -1,20 +1,20 @@
 ---
 # Display name
-title: Aleksa Lakic
+title: Jessica Prescott
 
 # Full name (for SEO)
-first_name: Aleksa
-last_name: Lakic
+first_name: Jessica
+last_name: Prescott
 
 # Username (this should match the folder name)
 authors:
-  - Aleksa
+  - Jessica
 
 # Is this the primary user of the site?
 superuser: false
 
 # Role/position
-role: HDR Candidate
+role: Honours Student
 
 # Organizations/Affiliations
 organizations:
