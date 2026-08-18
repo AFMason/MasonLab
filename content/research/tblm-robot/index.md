@@ -2,6 +2,7 @@
 title: Automated tBLM Preparation Robot
 summary: A custom liquid-handling platform that automates the solvent-exchange protocol for forming tethered bilayer lipid membranes across a full 96-well plate.
 date: 2026-08-18
+draft: true
 ---
 
 **A custom liquid-handling platform for high-throughput tethered bilayer lipid membrane formation**
