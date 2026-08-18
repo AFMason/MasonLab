@@ -25,9 +25,6 @@ sections:
       count: 0
       # Filter on criteria
       filters:
-        # The folders to display content from
-        folders:
-          - project
         author: ''
         category: ''
         tag: ''
@@ -37,6 +34,7 @@ sections:
         exclude_future: false
         exclude_past: false
       offset: 0
+      page_type: project
       sort_by: 'Date'
       sort_ascending: false
     design:
