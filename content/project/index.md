@@ -1,14 +1,26 @@
 ---
-title: Project
+title: Projects
 type: landing
 
 sections:
-  - block: collection
-    id: project
+  - block: markdown
+    id: about
     content:
-      title: Current projects
+      title: Our Research
       subtitle: ''
-      text: 'Check out some of our ongoing projects!'
+      text: |
+        The **Synthetic Biomimetic Compartments Group** is working towards building a cell from the bottom up, using synthetic materials — combining block copolymers, complex coacervates, water-in-oil droplet networks, DNA nanotechnology, and single-molecule fluorescence microscopy.
+
+        Below is a snapshot of what we're working on, who makes it possible, and who's doing the work.
+    design:
+      columns: '1'
+
+  - block: collection
+    id: activities
+    content:
+      title: Research activities
+      subtitle: ''
+      text: ''
       # Choose how many pages you would like to display (0 = all pages)
       count: 0
       # Filter on criteria
@@ -16,21 +28,61 @@ sections:
         # The folders to display content from
         folders:
           - project
-        author: ""
-        category: ""
-        tag: ""
-        publication_type: ""
+        author: ''
+        category: ''
+        tag: ''
+        publication_type: ''
         featured_only: false
         exclude_featured: false
         exclude_future: false
         exclude_past: false
-      # Choose how many pages you would like to offset by
-      # Useful if you wish to show the first item in the Featured widget
       offset: 0
-      # Field to sort by, such as Date or Title
       sort_by: 'Date'
       sort_ascending: false
     design:
-      # Choose a listing view
       view: card
+
+  - block: markdown
+    id: students
+    content:
+      title: Students
+      subtitle: ''
+      text: |
+        Our projects are driven by a mix of PhD, Honours, and undergraduate research students.
+
+        {{% cta cta_link="/people/" cta_text="Meet the team →" %}}
+    design:
+      columns: '1'
+
+  - block: markdown
+    id: funders
+    content:
+      title: Funders
+      subtitle: ''
+      text: |
+        <!-- TODO: replace with real funder names/logos -->
+        *Funder details coming soon.*
+    design:
+      columns: '1'
+
+  - block: markdown
+    id: collaborators
+    content:
+      title: Collaborators
+      subtitle: ''
+      text: |
+        <!-- TODO: replace with real collaborator names/logos -->
+        *Collaborator details coming soon.*
+    design:
+      columns: '1'
+
+  - block: markdown
+    id: publications-link
+    content:
+      title:
+      subtitle:
+      text: |
+        {{% cta cta_link="/publication/" cta_text="See our full publication list →" %}}
+    design:
+      columns: '1'
 ---
