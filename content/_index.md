@@ -17,7 +17,7 @@ sections:
         
         The **Synthetic Biomimetic Compartments Group** was founded by Alex Mason in 2023.
 
-        This website is still under construction.
+        Welcome to our lab! Explore our latest research, publications, and the people behind the science.
       announcement: 
         text: Test announcement - PhD position available starting 2024.
         link:
