@@ -24,4 +24,4 @@ A pore whose gating statistics are set by sequence, independently of applied vol
 
 ## People
 
-This project is led by a PhD student in the SBC Lab, with collaborators in advanced light microscopy at UOW.
+This project is led by Aleksa Lakic in the SBC Lab, with collaborators in advanced light microscopy at UOW.
