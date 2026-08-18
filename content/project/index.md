@@ -34,7 +34,7 @@ sections:
         exclude_future: false
         exclude_past: false
       offset: 0
-      page_type: project
+      page_type: research
       sort_by: 'Date'
       sort_ascending: false
     design:
