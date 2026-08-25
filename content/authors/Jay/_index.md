@@ -22,7 +22,7 @@ organizations:
     url: 'https://www.uow.edu.au/'
 
 # Short bio (displayed in user profile at end of posts)
-bio: ''
+bio: 'Research Assistant developing spatially patterned cell culture models using morphogen gradients released from a hydrogel source.'
 
 interests: []
 
@@ -41,4 +41,8 @@ user_groups:
   - Researchers
 ---
 
-Bio coming soon.
+Jay is a Research Assistant developing and characterising a method to produce spatially patterned cell culture models, generating concentration gradients of morphogens through their gradual release from a hydrogel source.
+
+They were drawn to this work by the goal of reproducing one of the driving mechanisms of embryogenesis — the use of concentration gradients to direct tissue growth — and its potential impact in the biomedical field.
+
+Outside the lab, Jay's interests include snowboarding, medicine, and the outdoors.
