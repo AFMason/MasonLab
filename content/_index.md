@@ -52,7 +52,7 @@ sections:
       columns: '1'
       background:
         image: 
-          filename: coders.jpg
+          filename: Group Photo May 2026.jpg
           filters:
             brightness: 1
           parallax: false
