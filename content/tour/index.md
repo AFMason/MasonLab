@@ -13,7 +13,7 @@ sections:
         align: center
         background:
           image:
-            filename: coders.jpg
+            filename: Group Photo May 2026.jpg
             filters:
               brightness: 0.7
           position: right
