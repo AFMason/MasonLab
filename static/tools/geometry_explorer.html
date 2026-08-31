@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Figure 6 — Geometry Explorer</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f8f6;color:#1a1a1a;padding:1.25rem;}
+.app{max-width:980px;margin:0 auto;}
+h1{font-size:16px;font-weight:500;margin-bottom:3px;}
+.subtitle{font-size:12px;color:#666;margin-bottom:1rem;}
+.mini-row{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:.75rem;}
+.mc{background:#fff;border:1px solid #e0e0e0;border-radius:7px;padding:5px;cursor:pointer;}
+.mc.active{border-color:#378ADD;border-width:2px;}
+.mt{font-size:10px;font-weight:500;text-align:center;margin-bottom:3px;}
+.mc canvas{width:100%;aspect-ratio:1;display:block;border-radius:3px;}
+.cfg-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.75rem;}
+.cb{padding:4px 11px;border-radius:5px;border:1px solid #d0d0d0;background:transparent;cursor:pointer;font-size:11px;color:#666;}
+.cb.active{background:#f0f0ee;color:#1a1a1a;border-color:#999;font-weight:500;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;}
+@media(max-width:620px){.grid2{grid-template-columns:1fr;}}
+.card{background:#fff;border:1px solid #e0e0e0;border-radius:9px;padding:.75rem .875rem;margin-bottom:.625rem;}
+.slbl{font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.cw{width:100%;aspect-ratio:1;max-width:320px;margin:0 auto;}
+.cw canvas{width:100%;height:100%;border-radius:5px;border:1px solid #e8e8e8;display:block;}
+.leg{display:flex;gap:12px;margin-top:6px;justify-content:center;flex-wrap:wrap;}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:#666;}
+.ld{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+h3{font-size:13px;font-weight:500;margin-bottom:4px;}
+.desc{font-size:11px;color:#555;line-height:1.6;margin-bottom:7px;}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin:7px 0;}
+.stat{background:#f5f5f2;border-radius:5px;padding:6px 7px;}
+.sv{font-size:16px;font-weight:500;}
+.sl{font-size:9px;color:#888;margin-top:1px;}
+.br{display:flex;align-items:center;gap:4px;margin-bottom:2px;}
+.blbl{font-size:9px;color:#888;width:18px;text-align:right;flex-shrink:0;}
+.btr{flex:1;height:8px;background:#f0f0ee;border-radius:4px;overflow:hidden;}
+.bf{height:100%;border-radius:4px;transition:width .3s ease;}
+.bv{font-size:9px;color:#888;width:26px;flex-shrink:0;}
+.ins{font-size:10px;color:#555;line-height:1.55;padding:7px 9px;background:#f5f5f2;border-radius:5px;border-left:3px solid #B5D4F4;margin-top:5px;}
+.gradbar{display:flex;align-items:center;gap:7px;margin-top:5px;justify-content:center;flex-wrap:wrap;}
+.gb{width:60px;height:6px;border-radius:3px;}
+.gradbar span{font-size:9px;color:#888;}
+/* sliders */
+.slider-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sl-row{display:flex;flex-direction:column;gap:2px;}
+.sl-row label{font-size:10px;color:#666;display:flex;justify-content:space-between;}
+.sl-row label span{font-weight:500;color:#1a1a1a;}
+input[type=range]{width:100%;accent-color:#378ADD;}
+.solve-status{font-size:10px;color:#888;font-style:italic;margin-top:4px;min-height:14px;}
+/* sandbox */
+.tab-bar{display:flex;gap:5px;margin-bottom:.75rem;border-bottom:1px solid #e0e0e0;padding-bottom:.5rem;}
+.tbtn{padding:4px 12px;border-radius:5px 5px 0 0;border:1px solid transparent;background:transparent;cursor:pointer;font-size:11px;color:#888;}
+.tbtn.active{background:#fff;border-color:#e0e0e0;border-bottom-color:#fff;color:#1a1a1a;font-weight:500;margin-bottom:-1px;}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.sb-toolbar{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+.tool-btn{padding:4px 12px;border-radius:5px;border:1px solid #d0d0d0;background:#fff;cursor:pointer;font-size:11px;color:#666;display:flex;align-items:center;gap:5px;}
+.tool-btn.active{border-color:#378ADD;color:#378ADD;background:#f0f6ff;}
+.tool-btn .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.sb-grid2{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;}
+@media(max-width:620px){.sb-grid2{grid-template-columns:1fr;}}
+.count-row{display:flex;gap:12px;font-size:11px;color:#666;margin-top:6px;}
+.count-pill{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>Figure 6 — Geometry Explorer</h1>
+<p class="subtitle">12 GOx + 12 HRP protocells. Steady-state reaction-diffusion model: HRP droplets deplete H₂O₂ as a first-order sink. Adjust parameters below to explore sensitivity.</p>
+
+<div class="tab-bar">
+  <button class="tbtn active" id="tab-explorer" onclick="switchTab('explorer')">Geometry explorer</button>
+  <button class="tbtn" id="tab-sandbox" onclick="switchTab('sandbox')">Sandbox designer</button>
+</div>
+
+<div class="tab-panel active" id="panel-explorer">
+<div class="mini-row" id="minis"></div>
+<div class="cfg-row" id="cfgbtns"></div>
+
+<div class="grid2">
+  <div>
+    <div class="card">
+      <div class="slbl">Print map</div>
+      <div class="cw"><canvas id="cm" width="320" height="320"></canvas></div>
+      <div class="leg">
+        <div class="li"><div class="ld" style="background:#1D9E75;"></div>GOx sender</div>
+        <div class="li"><div class="ld" style="background:#378ADD;"></div>HRP receiver</div>
+        <div class="li"><div class="ld" style="background:rgba(0,0,0,0.12);border:1.5px dashed #aaa;"></div>GOx gap (E)</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="slbl">Reaction-diffusion field</div>
+      <div class="cw"><canvas id="ch" width="320" height="320"></canvas></div>
+      <div class="gradbar">
+        <div class="gb" style="background:linear-gradient(to right,#f5fbf8,#1D9E75);"></div><span>H₂O₂</span>
+        <div class="gb" style="background:linear-gradient(to right,#fff0f0,#cc1010);margin-left:6px;"></div><span>Resorufin at HRP</span>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <div class="slbl">Parameters</div>
+      <div class="slider-grid">
+        <div class="sl-row">
+          <label>GOx source strength <span id="v-gox">1.0</span></label>
+          <input type="range" id="sl-gox" min="0.1" max="5" step="0.1" value="1.0">
+        </div>
+        <div class="sl-row">
+          <label>HRP reactivity Da <span id="v-hrp">0.00</span></label>
+          <input type="range" id="sl-hrp" min="-2" max="2" step="0.05" value="0">
+        </div>
+        <div class="sl-row">
+          <label>Droplet spacing <span id="v-sp">36 µm</span></label>
+          <input type="range" id="sl-sp" min="7" max="14" step="1" value="9">
+        </div>
+        <div class="sl-row">
+          <label>Diffusion length <span id="v-dl">1.0×</span></label>
+          <input type="range" id="sl-dl" min="0.3" max="3.0" step="0.05" value="1.0">
+        </div>
+      </div>
+      <p class="solve-status" id="solve-status"></p>
+    </div>
+
+    <div class="card">
+      <h3 id="ctitle">—</h3>
+      <p class="desc" id="cdesc">—</p>
+      <div class="stats">
+        <div class="stat"><div class="sv" id="smean">—</div><div class="sl">Mean signal</div></div>
+        <div class="stat"><div class="sv" id="scv">—</div><div class="sl">CV%</div></div>
+        <div class="stat"><div class="sv" id="srange">—</div><div class="sl">Max/min ratio</div></div>
+      </div>
+      <div class="slbl" style="margin-top:5px;">Per-HRP signal — sorted high to low</div>
+      <div id="bars"></div>
+      <div class="ins" id="cins">—</div>
+    </div>
+
+    <div class="card">
+      <div class="slbl">CV% across all configurations</div>
+      <div id="cvbars"></div>
+    </div>
+  </div>
+</div>
+</div>
+</div><!-- end panel-explorer -->
+
+<!-- ── Sandbox panel ─────────────────────────────────────────────────── -->
+<div class="tab-panel" id="panel-sandbox">
+<div class="sb-toolbar">
+  <button class="tool-btn active" id="tool-move" onclick="setTool('move')">
+    <span style="font-size:13px;">⊹</span> Move
+  </button>
+  <button class="tool-btn" id="tool-gox" onclick="setTool('gox')">
+    <span class="dot" style="background:#1D9E75;border:1.5px solid #1D9E75;"></span> Place GOx
+  </button>
+  <button class="tool-btn" id="tool-hrp" onclick="setTool('hrp')">
+    <span class="dot" style="background:#378ADD;border:1.5px solid #378ADD;"></span> Place HRP
+  </button>
+  <button class="tool-btn" id="tool-erase" onclick="setTool('erase')">
+    <span style="font-size:12px;">✕</span> Erase
+  </button>
+  <button class="tool-btn" onclick="resetSandbox()" style="margin-left:auto;">↺ Reset to C</button>
+</div>
+<div class="count-row">
+  <span>GOx placed: <strong id="sb-gox-count">0</strong>/12</span>
+  <span>HRP placed: <strong id="sb-hrp-count">0</strong>/12</span>
+  <span id="sb-status" style="color:#888;font-style:italic;"></span>
+</div>
+<div class="sb-grid2" style="margin-top:.625rem;">
+  <div>
+    <div class="card">
+      <div class="slbl">Sandbox — drag to move, click to place/erase</div>
+      <div class="cw"><canvas id="sb-map" width="320" height="320" style="cursor:crosshair;"></canvas></div>
+      <div class="leg">
+        <div class="li"><div class="ld" style="background:#1D9E75;"></div>GOx (12 max)</div>
+        <div class="li"><div class="ld" style="background:#378ADD;"></div>HRP (12 max)</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="slbl">Reaction-diffusion field</div>
+      <div class="cw"><canvas id="sb-heat" width="320" height="320"></canvas></div>
+      <div class="gradbar">
+        <div class="gb" style="background:linear-gradient(to right,#f5fbf8,#1D9E75);"></div><span>H₂O₂</span>
+        <div class="gb" style="background:linear-gradient(to right,#fff0f0,#cc1010);margin-left:6px;"></div><span>Resorufin</span>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <h3>Sandbox stats</h3>
+      <div class="stats" style="margin-top:6px;">
+        <div class="stat"><div class="sv" id="sb-mean">—</div><div class="sl">Mean signal</div></div>
+        <div class="stat"><div class="sv" id="sb-cv">—</div><div class="sl">CV%</div></div>
+        <div class="stat"><div class="sv" id="sb-range">—</div><div class="sl">Max/min ratio</div></div>
+      </div>
+      <div class="slbl" style="margin-top:8px;">Per-HRP signal — sorted high to low</div>
+      <div id="sb-bars"></div>
+    </div>
+    <div class="card">
+      <p style="font-size:11px;color:#555;line-height:1.6;">
+        Drag any drop to a new position. Drops snap to the 4px grid so they always align with the solver. Use Place GOx / Place HRP to add drops (up to 12 each). Use Erase to remove. The RD field updates on mouse release.<br><br>
+        Parameters from the explorer panel (GOx strength, Da, spacing, diffusion length) also apply here.
+      </p>
+    </div>
+  </div>
+</div>
+</div><!-- end panel-sandbox -->
+
+<script>
+const GC='#1D9E75', HC='#378ADD';
+// Grid constants: RD_N=80 cells, dx=4px per cell, drop radius=3 cells=12px
+// ALL drop coordinates are snapped to nearest grid node (multiple of DX)
+// so every droplet has an identical source/sink footprint in the RD solver
+const W=320, H=320, CX=W/2, CY=H/2;
+const RD_DX=4;               // px per grid cell
+const R_CELLS=3;             // droplet radius in grid cells
+const DR=R_CELLS*RD_DX;      // droplet radius in px = 12
+// Spacing slider: integer cell steps, min=7 cells (just touching + 1 cell gap)
+// Available spacings in grid cells: 7,8,9,10,11,12,13,14 → 28..56px
+const SP_MIN_CELLS=7, SP_MAX_CELLS=14, SP_DEFAULT_CELLS=9;
+
+function snap(v){ return Math.round(v/RD_DX)*RD_DX; }
+function pt(x,y,t){ return{x:snap(x),y:snap(y),t}; }
+
+// Ring: snap each drop to nearest grid node independently
+function mkring(cx,cy,r,n,a0=0,t='hrp'){
+  return Array.from({length:n},(_,i)=>{
+    const a=a0+i/n*Math.PI*2;
+    return pt(cx+r*Math.cos(a), cy+r*Math.sin(a), t);
+  });
+}
+
+// ── Config definitions ────────────────────────────────────────────────────
+// sp = spacing in grid cells (integer). All inter-drop distances are multiples
+// of RD_DX so centres always land on grid nodes.
+function makeDrops(id, spCells){
+  const sp=spCells*RD_DX; // spacing in px (always a multiple of RD_DX)
+  switch(id){
+    case 'A': {
+      // 4x6 checkerboard, centred. sp = centre-to-centre in both axes.
+      const d=[];
+      const cols=6, rows=4;
+      const x0=snap(CX-(cols-1)/2*sp), y0=snap(CY-(rows-1)/2*sp);
+      for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)
+        d.push(pt(x0+c*sp, y0+r*sp, (r+c)%2===0?'gox':'hrp'));
+      return d;
+    }
+    case 'B': {
+      // GOx 4x3 block near left edge. HRP row extends right from the block.
+      // HRP step = sp so the gradient spacing matches the slider.
+      // GOx block left edge at x=sp; rightmost col at x=sp+2*sp=3*sp.
+      // First HRP at x=3*sp+sp=4*sp (one sp gap from nearest GOx).
+      // All coords clamped to canvas: max HRP x = 4*sp+11*sp = 15*sp.
+      // At sp=7 cells=28px: 15*28=420 — still too wide. So fix GOx cols to
+      // sp spacing but use a smaller HRP step: max 11 steps must fit in W.
+      // Use hrpSp = min(sp, floor((W - 4*sp - 8) / 11)) to guarantee fit.
+      const d=[];
+      const gx0=sp, gy0=snap(CY-1.5*sp);
+      for(let r=0;r<4;r++) for(let c=0;c<3;c++)
+        d.push(pt(gx0+c*sp, gy0+r*sp, 'gox'));
+      // HRP: start one sp gap after rightmost GOx col, step by sp but cap to canvas
+      const hx0=gx0+3*sp+sp;
+      const hrpSp=Math.min(sp, Math.floor((W-hx0-DR)/11));
+      for(let i=0;i<12;i++) d.push(pt(hx0+i*hrpSp, CY, 'hrp'));
+      return d;
+    }
+    case 'C': {
+      // GOx 3x4 block left, HRP 3x4 block right, separated by sp gap
+      const d=[];
+      const gx0=snap(CX-3.5*sp-sp/2), gy0=snap(CY-1.5*sp);
+      for(let r=0;r<4;r++) for(let c=0;c<3;c++)
+        d.push(pt(gx0+c*sp, gy0+r*sp, 'gox'));
+      const hx0=snap(gx0+3*sp+sp);
+      for(let r=0;r<4;r++) for(let c=0;c<3;c++)
+        d.push(pt(hx0+c*sp, gy0+r*sp, 'hrp'));
+      return d;
+    }
+    case 'D': {
+      // GOx outer ring r=120 (near-perfect grid alignment), HRP inner ring r=88
+      // Both radii chosen for minimal snap error on 4px grid (tested)
+      const d=[];
+      mkring(CX,CY,120,12,0,'gox').forEach(p=>d.push(p));
+      mkring(CX,CY,88,12,Math.PI/12,'hrp').forEach(p=>d.push(p));
+      return d;
+    }
+    case 'E': {
+      // Inverse of D: GOx inner ring r=88, HRP outer ring r=120
+      const d=[];
+      mkring(CX,CY,88,12,0,'gox').forEach(p=>d.push(p));
+      mkring(CX,CY,120,12,Math.PI/12,'hrp').forEach(p=>d.push(p));
+      return d;
+    }
+    case 'F': {
+      // Two tight GOx clusters of 6, fixed radius=2 cells=8px near left/right edges.
+      // 12 HRP in a single line between the cluster centres at y=CY.
+      const d=[];
+      const CR=2*RD_DX; // cluster ring radius = 8px (tight, fixed, not sp-dependent)
+      const cx1=snap(W*0.18), cx2=snap(W*0.82); // cluster centres ~58px and ~262px
+      for(let i=0;i<6;i++){const a=i/6*Math.PI*2;
+        d.push(pt(cx1+CR*Math.cos(a), CY+CR*Math.sin(a), 'gox'));}
+      for(let i=0;i<6;i++){const a=i/6*Math.PI*2;
+        d.push(pt(cx2+CR*Math.cos(a), CY+CR*Math.sin(a), 'gox'));}
+      // HRP line: 12 drops between the clusters, sp-spaced, centred on canvas
+      const hx0=snap(CX-5.5*sp);
+      for(let i=0;i<12;i++) d.push(pt(hx0+i*sp, CY, 'hrp'));
+      return d;
+    }
+  }
+}
+
+const CFGS=[
+  {id:'A',lbl:'A — uniform interleaved',
+   title:'A: Uniform interleaved (control)',
+   desc:'Checkerboard mixing — every HRP surrounded by GOx at equal distance. The null hypothesis: geometry does not matter, all HRP sites see identical H₂O₂ flux.',
+   ins:'Predicts the flattest signal distribution and lowest CV. Use as the experimental control.'},
+  {id:'B',lbl:'B — morphogen gradient',
+   title:'B: Morphogen gradient',
+   desc:'GOx clustered left. HRP in a horizontal row extending right — each droplet at a unique distance. HRP consumption steepens the gradient: far droplets see less H₂O₂ than simple distance predicts.',
+   ins:'Highest CV. Each HRP encodes its position as a unique intensity — steepened by upstream depletion. Quantify by line-scan fluorescence along the HRP row.'},
+  {id:'C',lbl:'C — two-population blocks',
+   title:'C: Two-population blocks',
+   desc:'GOx block left, HRP block right. Front-row HRP consume most H₂O₂ before it reaches back-row droplets. Try reducing HRP sink rate — the cliff softens to a gradient.',
+   ins:'Front-vs-back effect amplified by depletion. Back-row droplets near-zero. Use the HRP sink slider: low sink = gradient; high sink = cliff.'},
+  {id:'D',lbl:'D — GOx ring / HRP inside',
+   title:'D: GOx outer ring, HRP concentric inside',
+   desc:'12 GOx in a closed outer ring, 12 HRP in three concentric inner rings (4 outer, 4 mid, 4 centre). H₂O₂ flux is directed inward. Outer HRP receive high flux; inner HRP are shielded by the depletion layer created by outer HRP.',
+   ins:'Enclosure maximises total signal. Outer-to-inner gradient is sink-rate dependent — drag the HRP slider down and the inner gradient flattens. Directly comparable to E.'},
+  {id:'E',lbl:'E — GOx inside / HRP outer ring',
+   title:'E: GOx inner ring, HRP outer ring (inverse of D)',
+   desc:'12 GOx in an inner ring, 12 HRP in an outer ring. H₂O₂ radiates outward. All 12 HRP are equidistant from the source ring with no depletion layer between source and receiver.',
+   ins:'Prediction: more uniform signal across all HRP than D, because outward flux reaches each HRP directly without passing through other HRP first. A clean inside-out vs outside-in comparison with identical droplet counts.'},
+  {id:'F',lbl:'F — two distant GOx clusters',
+   title:'F: Two distant GOx clusters — saddle point between sources',
+   desc:'12 GOx split into two clusters of 6 near opposite edges. 12 HRP in a single line through the centre. Each HRP sits at a unique position between the two fields — those near either cluster get high signal; those at the midpoint sit in the saddle where the two H₂O₂ fields meet and partially cancel.',
+   ins:'The saddle suppression at the midline creates a W-shaped signal profile along the HRP row rather than a simple gradient. A direct demonstration that source topology — not just concentration — shapes the receiver output.'}
+];
+
+// ── Reaction-diffusion solver ─────────────────────────────────────────────
+// Grid: RD_N x RD_N cells, one cell = RD_DX px. Drop centres are snapped to
+// grid nodes, so each drop occupies an identical R_CELLS-radius disc footprint.
+const RD_N=W/RD_DX; // =80 cells, 4px per cell
+function buildDisc(rCells){
+  // precompute list of (di,dj) offsets within a circle of rCells
+  const cells=[];
+  for(let di=-rCells;di<=rCells;di++)
+    for(let dj=-rCells;dj<=rCells;dj++)
+      if(di*di+dj*dj<=rCells*rCells) cells.push([di,dj]);
+  return cells;
+}
+const DISC=buildDisc(R_CELLS);
+
+function solveRD(drops, goxQ, hrpK, diffScale){
+  const gox=drops.filter(d=>d.t==='gox');
+  const hrp=drops.filter(d=>d.t==='hrp');
+  const src=new Float32Array(RD_N*RD_N);
+  const snk=new Float32Array(RD_N*RD_N);
+  // stamp identical disc footprint for every drop
+  function stamp(drops2, arr, val){
+    drops2.forEach(d=>{
+      const gc=Math.round(d.x/RD_DX), gr=Math.round(d.y/RD_DX);
+      DISC.forEach(([di,dj])=>{
+        const gi=gr+di, gj=gc+dj;
+        if(gi>=0&&gi<RD_N&&gj>=0&&gj<RD_N) arr[gi*RD_N+gj]+=val;
+      });
+    });
+  }
+  stamp(gox, src, goxQ);
+  stamp(hrp, snk, hrpK);
+  // Gauss-Seidel: ∇²C = -src + snk·C  →  C[i] = (nb + src·eff) / (4 + snk·eff)
+  const eff=RD_DX*RD_DX/diffScale;
+  const C=new Float32Array(RD_N*RD_N);
+  for(let it=0;it<600;it++){
+    for(let gy=1;gy<RD_N-1;gy++) for(let gx=1;gx<RD_N-1;gx++){
+      const i=gy*RD_N+gx;
+      const nb=C[(gy-1)*RD_N+gx]+C[(gy+1)*RD_N+gx]+C[gy*RD_N+gx-1]+C[gy*RD_N+gx+1];
+      C[i]=(nb+src[i]*eff)/(4+snk[i]*eff);
+    }
+    // Dirichlet boundaries: C=0 at all edges (H2O2 escapes to bulk — open dish)
+    for(let k=0;k<RD_N;k++){
+      C[k]=0; C[(RD_N-1)*RD_N+k]=0;
+      C[k*RD_N]=0; C[k*RD_N+RD_N-1]=0;
+    }
+  }
+  // sample signal at each HRP drop centre (exactly on a grid node)
+  const hrpSig=hrp.map(d=>{
+    const gx=Math.round(d.x/RD_DX), gy=Math.round(d.y/RD_DX);
+    return C[gy*RD_N+gx];
+  });
+  return{C,hrpSig};
+}
+
+function lerp(a,b,t){return a+(b-a)*t;}
+function fCol(n){return`rgb(${Math.round(lerp(255,200,n))},${Math.round(lerp(240,20,n))},${Math.round(lerp(240,20,n))})`;}
+
+// ── Drawing ───────────────────────────────────────────────────────────────
+function drawGrid(ctx,cvW,cvH,sc){
+  const step=RD_DX*sc;
+  const nX=Math.ceil(cvW/step), nY=Math.ceil(cvH/step);
+  for(let i=0;i<=nX;i++){
+    const x=i*step, major=i%10===0;
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cvH);
+    ctx.strokeStyle=major?'rgba(0,0,0,0.10)':'rgba(0,0,0,0.04)';
+    ctx.lineWidth=major?0.8:0.4;ctx.stroke();
+  }
+  for(let j=0;j<=nY;j++){
+    const y=j*step, major=j%10===0;
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cvW,y);
+    ctx.strokeStyle=major?'rgba(0,0,0,0.10)':'rgba(0,0,0,0.04)';
+    ctx.lineWidth=major?0.8:0.4;ctx.stroke();
+  }
+}
+
+function drawMap(cv,drops,mini=false){
+  const ctx=cv.getContext('2d'),sc=cv.width/W,r=mini?5:DR;
+  ctx.clearRect(0,0,cv.width,cv.height);
+  if(!mini) drawGrid(ctx,cv.width,cv.height,sc);
+  drops.forEach(d=>{
+    if(d.t==='gap'){
+      // show gap positions as dashed outlines
+      const x=d.x*sc,y=d.y*sc;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.setLineDash([2,2]);ctx.strokeStyle='#bbb';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+      return;
+    }
+    const x=d.x*sc,y=d.y*sc,c=d.t==='gox'?GC:HC;
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=c+'33';ctx.fill();ctx.strokeStyle=c;ctx.lineWidth=mini?0.8:1.5;ctx.stroke();
+    if(!mini){
+      ctx.fillStyle=c;ctx.font='bold 7px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(d.t==='gox'?'G':'H',x,y);
+    }
+  });
+}
+
+function drawHeat(cv,drops,rd){
+  const ctx=cv.getContext('2d'),sc=cv.width/W,cvW=cv.width,cvH=cv.height;
+  ctx.clearRect(0,0,cvW,cvH);
+  const{C,hrpSig}=rd;
+  const hrp=drops.filter(d=>d.t==='hrp');
+  const gox=drops.filter(d=>d.t==='gox');
+  const maxC=Math.max(...C,1e-9),maxS=Math.max(...hrpSig,1e-9);
+  const cellPx=cvW/RD_N;
+  const img=ctx.createImageData(cvW,cvH);
+  for(let gy=0;gy<RD_N;gy++) for(let gx=0;gx<RD_N;gx++){
+    const n=C[gy*RD_N+gx]/maxC;
+    const rv=Math.round(lerp(248,190,n*0.55));
+    const gv=Math.round(lerp(250,235,n*0.55));
+    const bv=Math.round(lerp(248,215,n*0.55));
+    const x0=Math.round(gx*cellPx),y0=Math.round(gy*cellPx);
+    const x1=Math.round((gx+1)*cellPx),y1=Math.round((gy+1)*cellPx);
+    for(let py=y0;py<y1&&py<cvH;py++) for(let px=x0;px<x1&&px<cvW;px++){
+      const i=(py*cvW+px)*4;
+      img.data[i]=rv;img.data[i+1]=gv;img.data[i+2]=bv;img.data[i+3]=255;
+    }
+  }
+  ctx.putImageData(img,0,0);
+  hrp.forEach((h,i)=>{
+    const n=hrpSig[i]/maxS,x=h.x*sc,y=h.y*sc;
+    const gr=ctx.createRadialGradient(x,y,DR*sc*.4,x,y,(DR+24*n)*sc);
+    gr.addColorStop(0,`rgba(210,40,40,${(0.25+0.65*n).toFixed(2)})`);gr.addColorStop(1,'rgba(210,40,40,0)');
+    ctx.fillStyle=gr;ctx.beginPath();ctx.arc(x,y,(DR+24*n)*sc,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,DR*sc,0,Math.PI*2);
+    ctx.fillStyle=fCol(n);ctx.fill();ctx.strokeStyle=HC;ctx.lineWidth=1.4*sc;ctx.stroke();
+    ctx.fillStyle='#fff';ctx.font=`bold ${Math.max(6,Math.round(7*sc))}px sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText((n*100).toFixed(0)+'%',x,y);
+  });
+  gox.forEach(g=>{
+    const x=g.x*sc,y=g.y*sc;
+    ctx.beginPath();ctx.arc(x,y,DR*sc,0,Math.PI*2);
+    ctx.fillStyle='rgba(29,158,117,0.18)';ctx.fill();ctx.strokeStyle=GC;ctx.lineWidth=1.4*sc;ctx.stroke();
+    ctx.fillStyle=GC;ctx.font=`bold ${Math.max(6,Math.round(7*sc))}px sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('G',x,y);
+  });
+}
+
+function renderBars(sig){
+  const s=[...sig].sort((a,b)=>b-a),mx=s[0]||1;
+  const c=document.getElementById('bars');c.innerHTML='';
+  s.forEach((f,i)=>{
+    const p=(f/mx*100).toFixed(0),n=f/mx;
+    const row=document.createElement('div');row.className='br';
+    row.innerHTML=`<span class="blbl">${i+1}</span><div class="btr"><div class="bf" style="width:${p}%;background:${fCol(n)};"></div></div><span class="bv">${p}%</span>`;
+    c.appendChild(row);
+  });
+}
+
+function renderCVBars(allRDs){
+  const c=document.getElementById('cvbars');c.innerHTML='';
+  CFGS.forEach((cfg,i)=>{
+    const f=allRDs[i].hrpSig,mean=f.reduce((a,b)=>a+b,0)/f.length;
+    const std=Math.sqrt(f.reduce((s,v)=>s+(v-mean)**2,0)/f.length);
+    const cv=mean>0?std/mean*100:0,pct=Math.min(cv/150*100,100);
+    const row=document.createElement('div');row.className='br';row.style.cursor='pointer';row.onclick=()=>selectCfg(i);
+    row.innerHTML=`<span class="blbl" style="font-weight:${i===cur?600:400};color:${i===cur?'#1a1a1a':'#888'};">${cfg.id}</span><div class="btr"><div class="bf" style="width:${pct.toFixed(0)}%;background:${i===cur?'#378ADD':'#85B7EB'};transition:width .3s;"></div></div><span class="bv">${cv.toFixed(0)}%</span>`;
+    c.appendChild(row);
+  });
+}
+
+// ── State & update logic ──────────────────────────────────────────────────
+let cur=0;
+let solveTimer=null;
+let cachedDrops=CFGS.map(cfg=>makeDrops(cfg.id,SP_DEFAULT_CELLS));
+let cachedRDs=null;
+// 1 grid cell = 4px. Assume printed droplets are 250µm diameter → DR=12px = 250µm
+// So 1 px ≈ 250/12 µm ≈ 20.8µm, 1 cell = 4px ≈ 83µm
+// spacing in µm ≈ spCells * 83
+const PX_TO_UM = 250/12; // µm per canvas px
+
+function getParams(){
+  const daLog=parseFloat(document.getElementById('sl-hrp').value);
+  const da=Math.pow(10,daLog); // Da = 10^slider: range 0.01 to 100
+  return{
+    gox:parseFloat(document.getElementById('sl-gox').value),
+    hrp:da,        // Damkohler number — dimensionless reaction/diffusion ratio
+    hrpLog:daLog,  // for display
+    sp:parseInt(document.getElementById('sl-sp').value),
+    dl:parseFloat(document.getElementById('sl-dl').value)
+  };
+}
+
+function solveAll(params){
+  cachedDrops=CFGS.map(cfg=>makeDrops(cfg.id,params.sp));
+  cachedRDs=CFGS.map((cfg,i)=>solveRD(cachedDrops[i],params.gox,params.hrp,params.dl));
+}
+
+function renderCurrent(){
+  const drops=cachedDrops[cur];
+  const rd=cachedRDs[cur];
+  drawMap(document.getElementById('cm'),drops);
+  drawHeat(document.getElementById('ch'),drops,rd);
+  // update mini maps
+  document.querySelectorAll('.mc canvas').forEach((cv,i)=>drawMap(cv,cachedDrops[i],true));
+  const sig=rd.hrpSig,mx=Math.max(...sig,1e-9),mn=Math.min(...sig);
+  const mean=sig.reduce((a,b)=>a+b,0)/sig.length;
+  const std=Math.sqrt(sig.reduce((s,v)=>s+(v-mean)**2,0)/sig.length);
+  const cv=mean>0?std/mean*100:0;
+  document.getElementById('smean').textContent=(mean/mx*100).toFixed(0)+'%';
+  document.getElementById('scv').textContent=cv.toFixed(0)+'%';
+  document.getElementById('srange').textContent=(mx/Math.max(mn,1e-9)).toFixed(1)+'×';
+  renderBars(sig);
+  renderCVBars(cachedRDs);
+  document.getElementById('solve-status').textContent='';
+}
+
+function selectCfg(i){
+  cur=i;
+  document.querySelectorAll('.cb').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.mc').forEach((b,j)=>b.classList.toggle('active',j===i));
+  const cfg=CFGS[i];
+  document.getElementById('ctitle').textContent=cfg.title;
+  document.getElementById('cdesc').textContent=cfg.desc;
+  document.getElementById('cins').textContent=cfg.ins;
+  if(cachedRDs) renderCurrent();
+}
+
+function onSliderInput(){
+  const p=getParams();
+  document.getElementById('v-gox').textContent=p.gox.toFixed(1);
+  document.getElementById('v-hrp').textContent='Da='+p.hrp.toFixed(2);
+  document.getElementById('v-sp').textContent=Math.round(p.sp*RD_DX*PX_TO_UM)+'µm';
+  document.getElementById('v-dl').textContent=p.dl.toFixed(2)+'×';
+  document.getElementById('solve-status').textContent='Solving…';
+  clearTimeout(solveTimer);
+  solveTimer=setTimeout(()=>{
+    solveAll(p);
+    renderCurrent();
+  },350);
+}
+
+['sl-gox','sl-hrp','sl-sp','sl-dl'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',onSliderInput);
+});
+
+// build UI
+const minis=document.getElementById('minis'),btns=document.getElementById('cfgbtns');
+CFGS.forEach((cfg,i)=>{
+  const mc=document.createElement('div');mc.className='mc'+(i===0?' active':'');mc.onclick=()=>selectCfg(i);
+  const mt=document.createElement('div');mt.className='mt';mt.textContent=cfg.id;
+  const cv=document.createElement('canvas');cv.width=80;cv.height=80;
+  mc.appendChild(mt);mc.appendChild(cv);minis.appendChild(mc);
+  const b=document.createElement('button');b.className='cb'+(i===0?' active':'');b.textContent=cfg.lbl;b.onclick=()=>selectCfg(i);
+  btns.appendChild(b);
+});
+
+// set initial label values
+const p0=getParams();
+document.getElementById('v-gox').textContent=p0.gox.toFixed(1);
+document.getElementById('v-hrp').textContent='Da='+p0.hrp.toFixed(2);
+document.getElementById('v-sp').textContent=Math.round(p0.sp*RD_DX*PX_TO_UM)+'µm';
+document.getElementById('v-dl').textContent=p0.dl.toFixed(2)+'×';
+
+// initial config text
+document.getElementById('ctitle').textContent=CFGS[0].title;
+document.getElementById('cdesc').textContent=CFGS[0].desc;
+document.getElementById('cins').textContent=CFGS[0].ins;
+
+// initial solve
+document.getElementById('solve-status').textContent='Solving…';
+setTimeout(()=>{
+  solveAll(p0);
+  renderCurrent();
+},30);
+
+// ── Tab switching ─────────────────────────────────────────────────────────
+function switchTab(tab){
+  document.getElementById('panel-explorer').classList.toggle('active', tab==='explorer');
+  document.getElementById('panel-sandbox').classList.toggle('active', tab==='sandbox');
+  document.getElementById('tab-explorer').classList.toggle('active', tab==='explorer');
+  document.getElementById('tab-sandbox').classList.toggle('active', tab==='sandbox');
+  if(tab==='sandbox' && sbDrops===null) resetSandbox();
+}
+
+// ── Sandbox state ─────────────────────────────────────────────────────────
+let sbDrops=null;       // array of {x,y,t} — mutable
+let sbRD=null;
+let sbTool='move';
+let dragIdx=-1;
+let dragOffX=0, dragOffY=0;
+let sbSolveTimer=null;
+
+function setTool(t){
+  sbTool=t;
+  ['move','gox','hrp','erase'].forEach(id=>{
+    document.getElementById('tool-'+id).classList.toggle('active', id===t);
+  });
+  const cv=document.getElementById('sb-map');
+  cv.style.cursor=t==='move'?'grab':t==='erase'?'crosshair':'cell';
+}
+
+function resetSandbox(){
+  const p=getParams();
+  // deep copy of config C drops
+  sbDrops=makeDrops('C',p.sp).map(d=>({...d}));
+  sbRD=null;
+  updateSbCounts();
+  drawSbMap();
+  sbSolveAndRender();
+}
+
+function updateSbCounts(){
+  const ng=sbDrops.filter(d=>d.t==='gox').length;
+  const nh=sbDrops.filter(d=>d.t==='hrp').length;
+  document.getElementById('sb-gox-count').textContent=ng;
+  document.getElementById('sb-hrp-count').textContent=nh;
+}
+
+function sbDropAt(cx,cy){
+  // return index of drop within DR px of (cx,cy) in canvas coords
+  const sc=320/W;
+  for(let i=0;i<sbDrops.length;i++){
+    const dx=sbDrops[i].x*sc-cx, dy=sbDrops[i].y*sc-cy;
+    if(dx*dx+dy*dy<=(DR*sc+2)**2) return i;
+  }
+  return -1;
+}
+
+function canvasXY(cv,e){
+  const r=cv.getBoundingClientRect();
+  const sc=W/cv.offsetWidth;
+  const cx=(e.clientX-r.left)*sc, cy=(e.clientY-r.top)*sc;
+  return[cx,cy];
+}
+
+function sbSolveAndRender(){
+  if(!sbDrops||sbDrops.length===0){
+    drawSbMap(); return;
+  }
+  document.getElementById('sb-status').textContent='Solving…';
+  sbSolveTimer=setTimeout(()=>{
+    const p=getParams();
+    sbRD=solveRD(sbDrops,p.gox,p.hrp,p.dl);
+    drawSbMap();
+    drawHeat(document.getElementById('sb-heat'),sbDrops,sbRD);
+    const sig=sbRD.hrpSig;
+    if(sig.length>0){
+      const mx=Math.max(...sig,1e-9),mn=Math.min(...sig);
+      const mean=sig.reduce((a,b)=>a+b,0)/sig.length;
+      const std=Math.sqrt(sig.reduce((s,v)=>s+(v-mean)**2,0)/sig.length);
+      const cv=mean>0?std/mean*100:0;
+      document.getElementById('sb-mean').textContent=(mean/mx*100).toFixed(0)+'%';
+      document.getElementById('sb-cv').textContent=cv.toFixed(0)+'%';
+      document.getElementById('sb-range').textContent=(mx/Math.max(mn,1e-9)).toFixed(1)+'×';
+      renderSbBars(sig);
+    }
+    document.getElementById('sb-status').textContent='';
+  },30);
+}
+
+function renderSbBars(sig){
+  const s=[...sig].sort((a,b)=>b-a),mx=s[0]||1;
+  const c=document.getElementById('sb-bars');c.innerHTML='';
+  s.forEach((f,i)=>{
+    const p=(f/mx*100).toFixed(0),n=f/mx;
+    const row=document.createElement('div');row.className='br';
+    row.innerHTML=`<span class="blbl">${i+1}</span><div class="btr"><div class="bf" style="width:${p}%;background:${fCol(n)};"></div></div><span class="bv">${p}%</span>`;
+    c.appendChild(row);
+  });
+}
+
+function drawSbMap(){
+  const cv=document.getElementById('sb-map');
+  if(!sbDrops){drawMap(cv,[]);return;}
+  drawMap(cv,sbDrops);
+  // if drag in progress, highlight dragged drop
+  if(dragIdx>=0){
+    const ctx=cv.getContext('2d'),sc=cv.width/W;
+    const d=sbDrops[dragIdx];
+    ctx.beginPath();ctx.arc(d.x*sc,d.y*sc,DR*sc+3,0,Math.PI*2);
+    ctx.strokeStyle='rgba(0,0,0,0.3)';ctx.lineWidth=2;ctx.stroke();
+  }
+}
+
+// ── Mouse/touch events for sandbox canvas ────────────────────────────────
+const sbCv=document.getElementById('sb-map');
+
+sbCv.addEventListener('mousedown',e=>{
+  if(!sbDrops) return;
+  const[cx,cy]=canvasXY(sbCv,e);
+  const wx=snap(cx),wy=snap(cy);
+  if(sbTool==='move'){
+    dragIdx=sbDropAt(cx,cy);
+    if(dragIdx>=0){
+      sbCv.style.cursor='grabbing';
+      dragOffX=sbDrops[dragIdx].x-wx;
+      dragOffY=sbDrops[dragIdx].y-wy;
+    }
+  } else if(sbTool==='erase'){
+    const idx=sbDropAt(cx,cy);
+    if(idx>=0){sbDrops.splice(idx,1);updateSbCounts();drawSbMap();sbSolveAndRender();}
+  } else if(sbTool==='gox'||sbTool==='hrp'){
+    const count=sbDrops.filter(d=>d.t===sbTool).length;
+    if(count>=12){document.getElementById('sb-status').textContent='Max 12 '+sbTool+' drops';return;}
+    // don't place on top of existing drop
+    if(sbDropAt(cx,cy)>=0) return;
+    sbDrops.push({x:snap(wx),y:snap(wy),t:sbTool});
+    updateSbCounts();drawSbMap();sbSolveAndRender();
+  }
+});
+
+sbCv.addEventListener('mousemove',e=>{
+  if(dragIdx<0||sbTool!=='move') return;
+  const[cx,cy]=canvasXY(sbCv,e);
+  const nx=Math.min(W-DR,Math.max(DR,snap(cx)+dragOffX));
+  const ny=Math.min(H-DR,Math.max(DR,snap(cy)+dragOffY));
+  sbDrops[dragIdx].x=nx; sbDrops[dragIdx].y=ny;
+  drawSbMap();
+});
+
+sbCv.addEventListener('mouseup',e=>{
+  if(dragIdx>=0){
+    dragIdx=-1;
+    sbCv.style.cursor='grab';
+    sbSolveAndRender();
+  }
+});
+
+sbCv.addEventListener('mouseleave',e=>{
+  if(dragIdx>=0){dragIdx=-1;sbCv.style.cursor='grab';sbSolveAndRender();}
+});
+</script>
+</body>
+</html>
