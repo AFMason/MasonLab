@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Figure 6: Reaction-Diffusion Geometry Explorer v2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f8f6;color:#1a1a1a;padding:1.25rem;font-size:13px;line-height:1.5;}
+.app{max-width:1100px;margin:0 auto;}
+h1{font-size:16px;font-weight:500;margin-bottom:3px;}
+.subtitle{font-size:12px;color:#666;margin-bottom:1rem;}
+
+/* ── Tabs ────────────────────────────────────────────────────────── */
+.tab-bar{display:flex;gap:0;margin-bottom:1rem;border-bottom:2px solid #e0e0e0;}
+.tbtn{padding:7px 16px;border:none;background:transparent;cursor:pointer;font-size:12px;color:#888;font-weight:400;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.tbtn:hover{color:#555;}
+.tbtn.active{color:#1a1a1a;font-weight:500;border-bottom-color:#378ADD;}
+.tbtn.disabled{color:#ccc;cursor:default;}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+
+/* ── Cards ───────────────────────────────────────────────────────── */
+.card{background:#fff;border:1px solid #e0e0e0;border-radius:9px;padding:.75rem .875rem;margin-bottom:.625rem;}
+.slbl{font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+
+/* ── Canvas wrapper ──────────────────────────────────────────────── */
+.cw{width:100%;aspect-ratio:1;max-width:320px;margin:0 auto;}
+.cw canvas{width:100%;height:100%;border-radius:5px;border:1px solid #e8e8e8;display:block;}
+
+/* ── Legend ───────────────────────────────────────────────────────── */
+.leg{display:flex;gap:12px;margin-top:6px;justify-content:center;flex-wrap:wrap;}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:#666;}
+.ld{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+
+/* ── Gradient bar ────────────────────────────────────────────────── */
+.gradbar{display:flex;align-items:center;gap:7px;margin-top:5px;justify-content:center;flex-wrap:wrap;}
+.gb{width:60px;height:6px;border-radius:3px;}
+.gradbar span{font-size:9px;color:#888;}
+
+/* ── Sliders ─────────────────────────────────────────────────────── */
+.slider-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.slider-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.sl-row{display:flex;flex-direction:column;gap:2px;}
+.sl-row label{font-size:10px;color:#666;display:flex;justify-content:space-between;gap:4px;}
+.sl-row label span{font-weight:500;color:#1a1a1a;white-space:nowrap;}
+input[type=range]{width:100%;accent-color:#378ADD;height:16px;}
+.solve-status{font-size:10px;color:#888;font-style:italic;margin-top:4px;min-height:14px;}
+
+/* ── Stats ───────────────────────────────────────────────────────── */
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin:7px 0;}
+.stat{background:#f5f5f2;border-radius:5px;padding:6px 7px;}
+.sv{font-size:16px;font-weight:500;}
+.sl-stat{font-size:9px;color:#888;margin-top:1px;}
+
+/* ── Bar chart rows ──────────────────────────────────────────────── */
+.br{display:flex;align-items:center;gap:4px;margin-bottom:2px;}
+.blbl{font-size:9px;color:#888;width:18px;text-align:right;flex-shrink:0;}
+.btr{flex:1;height:8px;background:#f0f0ee;border-radius:4px;overflow:hidden;}
+.bf{height:100%;border-radius:4px;transition:width .3s ease;}
+.bv{font-size:9px;color:#888;width:26px;flex-shrink:0;}
+
+/* ── Insight box ─────────────────────────────────────────────────── */
+.ins{font-size:10px;color:#555;line-height:1.55;padding:7px 9px;background:#f5f5f2;border-radius:5px;border-left:3px solid #B5D4F4;margin-top:5px;}
+
+/* ── Two-column layout ───────────────────────────────────────────── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;}
+@media(max-width:700px){.grid2{grid-template-columns:1fr;}}
+
+/* ── Metric badge ────────────────────────────────────────────────── */
+.metric-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;}
+.badge-green{background:#e6f5ed;color:#1D9E75;}
+.badge-amber{background:#fff3e0;color:#e08800;}
+.badge-red{background:#fde8e8;color:#cc1010;}
+
+/* ── Chart container ─────────────────────────────────────────────── */
+.chart-container{position:relative;width:100%;height:160px;}
+.chart-container canvas{width:100%;height:100%;display:block;}
+.chart-container-tall{height:200px;}
+
+/* ── Annotation ──────────────────────────────────────────────────── */
+.annotation{font-size:10px;color:#888;margin-top:4px;line-height:1.4;}
+
+/* ── Model inspector ─────────────────────────────────────────────── */
+.inspector-toggle{position:fixed;bottom:16px;right:16px;padding:6px 14px;border-radius:6px;border:1px solid #d0d0d0;background:#fff;cursor:pointer;font-size:11px;color:#666;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:100;display:flex;align-items:center;gap:5px;}
+.inspector-toggle:hover{background:#f5f5f2;}
+.inspector-panel{position:fixed;bottom:52px;right:16px;width:480px;max-height:70vh;overflow-y:auto;background:#fff;border:1px solid #e0e0e0;border-radius:9px;box-shadow:0 4px 20px rgba(0,0,0,0.12);z-index:100;padding:1rem;display:none;font-size:12px;line-height:1.6;}
+.inspector-panel.open{display:block;}
+.inspector-panel h3{font-size:13px;font-weight:600;margin:10px 0 4px;color:#1a1a1a;}
+.inspector-panel h3:first-child{margin-top:0;}
+.inspector-panel .eq{font-family:'Courier New',Courier,monospace;background:#f5f5f2;padding:6px 10px;border-radius:5px;margin:4px 0 8px;font-size:12px;color:#333;overflow-x:auto;}
+.inspector-panel table{width:100%;border-collapse:collapse;margin:4px 0 8px;font-size:11px;}
+.inspector-panel th{text-align:left;padding:3px 8px;border-bottom:1px solid #e0e0e0;font-weight:500;color:#888;font-size:10px;text-transform:uppercase;}
+.inspector-panel td{padding:3px 8px;border-bottom:1px solid #f0f0ee;}
+.inspector-panel .note{font-size:10px;color:#888;line-height:1.5;margin:4px 0;}
+@media(max-width:540px){.inspector-panel{width:calc(100vw - 32px);right:16px;}}
+
+/* ── Tab 1 specific ──────────────────────────────────────────────── */
+.t1-two-col{display:grid;grid-template-columns:340px 1fr;gap:1rem;}
+@media(max-width:780px){.t1-two-col{grid-template-columns:1fr;}}
+.window-indicator{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 10px;border-radius:12px;font-weight:500;}
+.window-ok{background:#e6f5ed;color:#157a52;}
+.window-warn{background:#fff3e0;color:#c67700;}
+.window-bad{background:#fde8e8;color:#b91c1c;}
+
+/* ── Placeholder tabs ────────────────────────────────────────────── */
+.placeholder{text-align:center;padding:3rem 1rem;color:#aaa;font-size:13px;}
+
+/* ── Tab 3 sub-tabs ─────────────────────────────────────────────── */
+.sub-tab-bar{display:flex;gap:4px;margin-bottom:.75rem;}
+.sub-tbtn{padding:5px 14px;border-radius:5px;border:1px solid #d0d0d0;background:transparent;cursor:pointer;font-size:11px;color:#666;}
+.sub-tbtn.active{background:#f0f0ee;color:#1a1a1a;border-color:#999;font-weight:500;}
+.sub-panel{display:none;}.sub-panel.active{display:block;}
+.t3-grid{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;}
+@media(max-width:700px){.t3-grid{grid-template-columns:1fr;}}
+.sb-toolbar{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+.tool-btn{padding:4px 12px;border-radius:5px;border:1px solid #d0d0d0;background:#fff;cursor:pointer;font-size:11px;color:#666;display:flex;align-items:center;gap:5px;}
+.tool-btn.active{border-color:#378ADD;color:#378ADD;background:#f0f6ff;}
+.tool-btn .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.count-row{display:flex;gap:12px;font-size:11px;color:#666;margin-top:6px;}
+
+/* ── Tab 4: Figure mock-up ──────────────────────────────────────── */
+.fig-container{background:#fff;border:1px solid #e0e0e0;border-radius:9px;padding:1rem;max-width:900px;margin:0 auto;}
+.fig-schematic{width:100%;margin-bottom:1rem;}
+.fig-schematic svg{width:100%;height:auto;display:block;}
+.fig-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:700px){.fig-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.fig-grid{grid-template-columns:1fr;}}
+.fig-panel{position:relative;}
+.fig-letter{position:absolute;top:4px;left:6px;font-size:14px;font-weight:600;color:#1a1a1a;z-index:1;background:rgba(255,255,255,0.75);padding:0 3px;border-radius:2px;line-height:1;}
+.fig-panel canvas{width:100%;aspect-ratio:1;display:block;border-radius:4px;border:1px solid #e8e8e8;}
+.fig-caption{font-size:9px;font-style:italic;color:#666;margin-top:3px;line-height:1.3;}
+.fig-panel .chart-container{height:auto;aspect-ratio:1;}
+.fig-panel .chart-container canvas{aspect-ratio:1;height:auto;}
+.fig-updating{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:#888;background:rgba(255,255,255,0.85);padding:3px 10px;border-radius:4px;z-index:2;display:none;}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>Figure 6: Reaction-Diffusion Geometry Explorer</h1>
+<p class="subtitle">GOx/HRP protocell cascade: spatial arrangement controls receiver output. Steady-state 2D reaction-diffusion model.</p>
+
+<div class="tab-bar">
+  <button class="tbtn active" onclick="switchTab('t1')">Step 1: Dial-in</button>
+  <button class="tbtn" onclick="switchTab('t2')">Step 2: Complexity</button>
+  <button class="tbtn" onclick="switchTab('t3')">Step 3: Patterns</button>
+  <button class="tbtn" onclick="switchTab('t4')">Step 4: Figure</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     TAB 1: DIAL-IN (1 sender, 1 receiver)
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="tab-panel active" id="panel-t1">
+<div class="t1-two-col">
+  <!-- Left column: canvases -->
+  <div>
+    <div class="card">
+      <div class="slbl">Print map: single sender + receiver</div>
+      <div class="cw"><canvas id="t1-map" width="320" height="320"></canvas></div>
+      <div class="leg">
+        <div class="li"><div class="ld" style="background:#1D9E75;"></div>GOx sender</div>
+        <div class="li"><div class="ld" style="background:#378ADD;"></div>HRP receiver</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="slbl">H&#8322;O&#8322; reaction-diffusion field</div>
+      <div class="cw"><canvas id="t1-heat" width="320" height="320"></canvas></div>
+      <div class="gradbar">
+        <div class="gb" style="background:linear-gradient(to right,#f5fbf8,#1D9E75);"></div><span>H&#8322;O&#8322;</span>
+        <div class="gb" style="background:linear-gradient(to right,#fff0f0,#cc1010);margin-left:6px;"></div><span>Resorufin</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right column: controls + output -->
+  <div>
+    <div class="card">
+      <div class="slbl">Physical parameters</div>
+      <div class="slider-grid" style="margin-bottom:8px;">
+        <div class="sl-row">
+          <label>Centre-to-centre distance <span id="t1-v-dist">—</span></label>
+          <input type="range" id="t1-sl-dist" min="3" max="30" step="1" value="10">
+        </div>
+        <div class="sl-row">
+          <label>Diffusion coeff. D <span id="t1-v-D">—</span></label>
+          <input type="range" id="t1-sl-D" min="2" max="3.3" step="0.02" value="2.9">
+        </div>
+      </div>
+      <div class="slider-grid" style="margin-bottom:8px;">
+        <div class="sl-row">
+          <label>[GOx] effective <span id="t1-v-gox">—</span></label>
+          <input type="range" id="t1-sl-gox" min="-2" max="3" step="0.05" value="0.3">
+        </div>
+        <div class="sl-row">
+          <label>[HRP] effective <span id="t1-v-hrp">—</span></label>
+          <input type="range" id="t1-sl-hrp" min="-2" max="3" step="0.05" value="1">
+        </div>
+      </div>
+      <div class="slider-grid">
+        <div class="sl-row">
+          <label>Glucose trigger <span id="t1-v-gluc">—</span></label>
+          <input type="range" id="t1-sl-gluc" min="0.1" max="5" step="0.1" value="1.0">
+        </div>
+        <div class="sl-row">
+          <label>Droplet diameter <span id="t1-v-diam">250 µm</span></label>
+          <input type="range" id="t1-sl-diam" min="100" max="500" step="10" value="250">
+        </div>
+      </div>
+      <p class="annotation" style="margin-top:6px;">
+        HRP/GOx ratio: <strong id="t1-ratio">—</strong>.
+        Recommended: keep HRP at ~10x GOx for pseudo-first-order kinetics.
+      </p>
+      <p class="solve-status" id="t1-status"></p>
+    </div>
+
+    <div class="card">
+      <div class="slbl">Key metrics</div>
+      <div class="stats">
+        <div class="stat">
+          <div class="sv" id="t1-thalf">—</div>
+          <div class="sl-stat">t&#189; (min)</div>
+        </div>
+        <div class="stat">
+          <div class="sv" id="t1-peak">—</div>
+          <div class="sl-stat">Peak signal (AU)</div>
+        </div>
+        <div class="stat" id="t1-window-stat">
+          <div class="sv" id="t1-window">—</div>
+          <div class="sl-stat">Imageable window</div>
+        </div>
+      </div>
+      <div class="ins" id="t1-insight">Adjust parameters to bring t&#189; into the 5 to 20 min imageable window.</div>
+    </div>
+
+    <div class="card">
+      <div class="slbl">Simulated time-course: resorufin at HRP</div>
+      <div class="chart-container"><canvas id="t1-chart-tc" width="600" height="200"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="slbl">Distance sweep: t&#189; vs centre-to-centre distance</div>
+      <div class="chart-container"><canvas id="t1-chart-sweep" width="600" height="200"></canvas></div>
+    </div>
+  </div>
+</div>
+</div><!-- end panel-t1 -->
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     TAB 2: COMPLEXITY (density and spatial segregation)
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-t2">
+
+<div class="card" style="margin-bottom:.75rem;">
+  <div class="slbl">Shared parameters (applied to both configurations)</div>
+  <div class="slider-grid-3">
+    <div class="sl-row">
+      <label>HRP reactivity Da <span id="t2-v-da">Da=1.00</span></label>
+      <input type="range" id="t2-sl-da" min="-2" max="2" step="0.05" value="0">
+    </div>
+    <div class="sl-row">
+      <label>Droplet spacing <span id="t2-v-sp">394 µm</span></label>
+      <input type="range" id="t2-sl-sp" min="7" max="14" step="1" value="9">
+    </div>
+    <div class="sl-row">
+      <label>Diffusion length <span id="t2-v-dl">1.00x</span></label>
+      <input type="range" id="t2-sl-dl" min="0.3" max="3.0" step="0.05" value="1.0">
+    </div>
+  </div>
+  <p class="solve-status" id="t2-status"></p>
+</div>
+
+<div class="grid2">
+  <!-- 2A: Checkerboard -->
+  <div>
+    <div class="card">
+      <h3 style="font-size:13px;font-weight:500;margin-bottom:2px;">2A: Checkerboard (interleaved)</h3>
+      <p class="annotation" style="margin-bottom:6px;">12 GOx + 12 HRP alternating in a 4x6 grid. Every HRP is equidistant from its nearest GOx neighbours.</p>
+      <div class="slbl">Print map</div>
+      <div class="cw"><canvas id="t2a-map" width="320" height="320"></canvas></div>
+      <div class="leg" style="margin-bottom:6px;">
+        <div class="li"><div class="ld" style="background:#1D9E75;"></div>GOx</div>
+        <div class="li"><div class="ld" style="background:#378ADD;"></div>HRP</div>
+      </div>
+      <div class="slbl">Reaction-diffusion field</div>
+      <div class="cw"><canvas id="t2a-heat" width="320" height="320"></canvas></div>
+      <div class="gradbar">
+        <div class="gb" style="background:linear-gradient(to right,#f5fbf8,#1D9E75);"></div><span>H&#8322;O&#8322;</span>
+        <div class="gb" style="background:linear-gradient(to right,#fff0f0,#cc1010);margin-left:6px;"></div><span>Resorufin</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="stats">
+        <div class="stat"><div class="sv" id="t2a-mean">—</div><div class="sl-stat">Mean signal</div></div>
+        <div class="stat"><div class="sv" id="t2a-cv">—</div><div class="sl-stat">CV%</div></div>
+        <div class="stat"><div class="sv" id="t2a-range">—</div><div class="sl-stat">Max/min ratio</div></div>
+      </div>
+      <div class="slbl">Per-HRP signal (sorted high to low)</div>
+      <div id="t2a-bars"></div>
+    </div>
+  </div>
+
+  <!-- 2B: Segregated blocks -->
+  <div>
+    <div class="card">
+      <h3 style="font-size:13px;font-weight:500;margin-bottom:2px;">2B: Segregated blocks</h3>
+      <p class="annotation" style="margin-bottom:6px;">12 GOx block (left) + 12 HRP block (right). Front-row HRP consume H&#8322;O&#8322; before it reaches the back row.</p>
+      <div class="slbl">Print map</div>
+      <div class="cw"><canvas id="t2b-map" width="320" height="320"></canvas></div>
+      <div class="leg" style="margin-bottom:6px;">
+        <div class="li"><div class="ld" style="background:#1D9E75;"></div>GOx</div>
+        <div class="li"><div class="ld" style="background:#378ADD;"></div>HRP</div>
+      </div>
+      <div class="slbl">Reaction-diffusion field</div>
+      <div class="cw"><canvas id="t2b-heat" width="320" height="320"></canvas></div>
+      <div class="gradbar">
+        <div class="gb" style="background:linear-gradient(to right,#f5fbf8,#1D9E75);"></div><span>H&#8322;O&#8322;</span>
+        <div class="gb" style="background:linear-gradient(to right,#fff0f0,#cc1010);margin-left:6px;"></div><span>Resorufin</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="stats">
+        <div class="stat"><div class="sv" id="t2b-mean">—</div><div class="sl-stat">Mean signal</div></div>
+        <div class="stat"><div class="sv" id="t2b-cv">—</div><div class="sl-stat">CV%</div></div>
+        <div class="stat"><div class="sv" id="t2b-range">—</div><div class="sl-stat">Max/min ratio</div></div>
+      </div>
+      <div class="slbl">Per-HRP signal (sorted high to low)</div>
+      <div id="t2b-bars"></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ins" id="t2-insight">Drag the Da slider to see the transition: at low Da both configurations look uniform; at high Da the segregated blocks show a dramatic front-row/back-row split while the checkerboard stays flat.</div>
+</div>
+
+</div><!-- end panel-t2 -->
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     TAB 3: COMPLEX PATTERNS (morphogen, saddle, sandbox)
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-t3">
+
+<div class="card" style="margin-bottom:.75rem;">
+  <div class="slbl">Shared parameters</div>
+  <div class="slider-grid-3">
+    <div class="sl-row">
+      <label>HRP reactivity Da <span id="t3-v-da">Da=1.00</span></label>
+      <input type="range" id="t3-sl-da" min="-2" max="2" step="0.05" value="0">
+    </div>
+    <div class="sl-row">
+      <label>Droplet spacing <span id="t3-v-sp">394 µm</span></label>
+      <input type="range" id="t3-sl-sp" min="7" max="14" step="1" value="9">
+    </div>
+    <div class="sl-row">
+      <label>Diffusion length <span id="t3-v-dl">1.00x</span></label>
+      <input type="range" id="t3-sl-dl" min="0.3" max="3.0" step="0.05" value="1.0">
+    </div>
+  </div>
+  <p class="solve-status" id="t3-status"></p>
+</div>
+
+<div class="sub-tab-bar">
+  <button class="sub-tbtn active" onclick="switchT3Sub('morph')">Morphogen gradient</button>
+  <button class="sub-tbtn" onclick="switchT3Sub('saddle')">Saddle point</button>
+  <button class="sub-tbtn" onclick="switchT3Sub('sandbox')">Free sandbox</button>
+</div>
+
+<!-- ── 3A: Morphogen gradient ──────────────────────────────────────── -->
+<div class="sub-panel active" id="t3-sub-morph">
+<div class="t3-grid">
+  <div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div class="slbl" style="margin:0;">Print map</div>
+        <button class="tool-btn" onclick="resetT3Preset('morph')" style="padding:2px 8px;font-size:10px;">&#x21BA; Reset preset</button>
+      </div>
+      <div class="cw"><canvas id="t3m-map" width="320" height="320" style="cursor:grab;"></canvas></div>
+      <div class="leg">
+        <div class="li"><div class="ld" style="background:#1D9E75;"></div>GOx</div>
+        <div class="li"><div class="ld" style="background:#378ADD;"></div>HRP</div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <div class="slbl">Reaction-diffusion field</div>
+      <div class="cw"><canvas id="t3m-heat" width="320" height="320"></canvas></div>
+      <div class="gradbar">
+        <div class="gb" style="background:linear-gradient(to right,#f5fbf8,#1D9E75);"></div><span>H&#8322;O&#8322;</span>
+        <div class="gb" style="background:linear-gradient(to right,#fff0f0,#cc1010);margin-left:6px;"></div><span>Resorufin</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="slbl">Line-scan: fluorescence intensity along HRP centreline</div>
+  <div class="chart-container"><canvas id="t3m-linescan" width="600" height="200"></canvas></div>
+  <p class="annotation">Equivalent to a horizontal line ROI in Fiji drawn through the HRP row. Each point = resorufin signal at one HRP droplet.</p>
+</div>
+<div class="card">
+  <div class="ins">GOx cluster (left) acts as a point source. Each HRP droplet encodes its distance from the source as a unique intensity, steepened by upstream depletion. This is a synthetic morphogen gradient.</div>
+</div>
+</div><!-- end morph -->
+
+<!-- ── 3B: Saddle point ────────────────────────────────────────────── -->
+<div class="sub-panel" id="t3-sub-saddle">
+<div class="t3-grid">
+  <div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div class="slbl" style="margin:0;">Print map</div>
+        <button class="tool-btn" onclick="resetT3Preset('saddle')" style="padding:2px 8px;font-size:10px;">&#x21BA; Reset preset</button>
+      </div>
+      <div class="cw"><canvas id="t3s-map" width="320" height="320" style="cursor:grab;"></canvas></div>
+      <div class="leg">
+        <div class="li"><div class="ld" style="background:#1D9E75;"></div>GOx</div>
+        <div class="li"><div class="ld" style="background:#378ADD;"></div>HRP</div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <div class="slbl">Reaction-diffusion field</div>
+      <div class="cw"><canvas id="t3s-heat" width="320" height="320"></canvas></div>
+      <div class="gradbar">
+        <div class="gb" style="background:linear-gradient(to right,#f5fbf8,#1D9E75);"></div><span>H&#8322;O&#8322;</span>
+        <div class="gb" style="background:linear-gradient(to right,#fff0f0,#cc1010);margin-left:6px;"></div><span>Resorufin</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="slbl">Line-scan: fluorescence intensity along HRP centreline</div>
+  <div class="chart-container"><canvas id="t3s-linescan" width="600" height="200"></canvas></div>
+  <p class="annotation">Predicts a W-shaped profile: high signal near each GOx cluster, suppressed at the midpoint where the two H&#8322;O&#8322; fields overlap but HRP depletion creates a saddle.</p>
+</div>
+<div class="card">
+  <div class="ins">Two GOx clusters create competing H&#8322;O&#8322; fields. HRP droplets between them consume H&#8322;O&#8322; from both sides, creating a suppression zone at the midpoint. Source topology, not just concentration, shapes the receiver output.</div>
+</div>
+</div><!-- end saddle -->
+
+<!-- ── 3C: Free sandbox ────────────────────────────────────────────── -->
+<div class="sub-panel" id="t3-sub-sandbox">
+<div class="sb-toolbar">
+  <button class="tool-btn active" id="t3-tool-move" onclick="setT3Tool('move')">
+    <span style="font-size:13px;">&#x22B9;</span> Move
+  </button>
+  <button class="tool-btn" id="t3-tool-gox" onclick="setT3Tool('gox')">
+    <span class="dot" style="background:#1D9E75;border:1.5px solid #1D9E75;"></span> Place GOx
+  </button>
+  <button class="tool-btn" id="t3-tool-hrp" onclick="setT3Tool('hrp')">
+    <span class="dot" style="background:#378ADD;border:1.5px solid #378ADD;"></span> Place HRP
+  </button>
+  <button class="tool-btn" id="t3-tool-erase" onclick="setT3Tool('erase')">
+    <span style="font-size:12px;">&#x2715;</span> Erase
+  </button>
+  <button class="tool-btn" onclick="resetT3Sandbox()" style="margin-left:auto;">&#x21BA; Clear</button>
+</div>
+<div class="count-row">
+  <span>GOx: <strong id="t3sb-gox-count">0</strong>/12</span>
+  <span>HRP: <strong id="t3sb-hrp-count">0</strong>/12</span>
+  <span id="t3sb-status" style="color:#888;font-style:italic;"></span>
+</div>
+<div class="t3-grid" style="margin-top:.625rem;">
+  <div>
+    <div class="card">
+      <div class="slbl">Sandbox: click to place, drag to move</div>
+      <div class="cw"><canvas id="t3sb-map" width="320" height="320" style="cursor:crosshair;"></canvas></div>
+      <div class="leg">
+        <div class="li"><div class="ld" style="background:#1D9E75;"></div>GOx (12 max)</div>
+        <div class="li"><div class="ld" style="background:#378ADD;"></div>HRP (12 max)</div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <div class="slbl">Reaction-diffusion field</div>
+      <div class="cw"><canvas id="t3sb-heat" width="320" height="320"></canvas></div>
+      <div class="gradbar">
+        <div class="gb" style="background:linear-gradient(to right,#f5fbf8,#1D9E75);"></div><span>H&#8322;O&#8322;</span>
+        <div class="gb" style="background:linear-gradient(to right,#fff0f0,#cc1010);margin-left:6px;"></div><span>Resorufin</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="slbl">Line-scan: fluorescence intensity along HRP centreline (y = centre)</div>
+  <div class="chart-container"><canvas id="t3sb-linescan" width="600" height="200"></canvas></div>
+</div>
+</div><!-- end sandbox -->
+
+</div><!-- end panel-t3 -->
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     TAB 4: FIGURE MOCK-UP (live)
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-t4">
+
+<div class="fig-container">
+  <!-- Top panel: schematic SVG -->
+  <div class="fig-schematic">
+    <svg viewBox="0 0 800 130" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+      <!-- GOx sender -->
+      <circle cx="120" cy="52" r="30" fill="#1D9E7533" stroke="#1D9E75" stroke-width="2"/>
+      <text x="120" y="56" text-anchor="middle" font-size="13" font-weight="600" fill="#1D9E75">GOx</text>
+      <text x="120" y="20" text-anchor="middle" font-size="10" fill="#888">Sender</text>
+      <!-- Glucose arrow in -->
+      <line x1="50" y1="52" x2="85" y2="52" stroke="#888" stroke-width="1.2" marker-end="url(#arr)"/>
+      <text x="30" y="56" text-anchor="middle" font-size="9" fill="#888">Glucose</text>
+      <!-- H2O2 out arrow -->
+      <line x1="155" y1="52" x2="310" y2="52" stroke="#1D9E75" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr-g)"/>
+      <text x="232" y="42" text-anchor="middle" font-size="9" fill="#1D9E75">H&#8322;O&#8322; diffusion</text>
+      <!-- Equation -->
+      <text x="400" y="48" text-anchor="middle" font-size="11" fill="#333" font-weight="500">D&#x2207;&#x00B2;[H&#8322;O&#8322;] = Da&#x00B7;[H&#8322;O&#8322;] &#x2212; S</text>
+      <text x="400" y="68" text-anchor="middle" font-size="9" fill="#888">S = GOx source flux, Da = HRP reactivity / diffusion</text>
+      <!-- H2O2 in arrow -->
+      <line x1="490" y1="52" x2="620" y2="52" stroke="#378ADD" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr-b)"/>
+      <!-- HRP receiver -->
+      <circle cx="670" cy="52" r="30" fill="#378ADD33" stroke="#378ADD" stroke-width="2"/>
+      <text x="670" y="56" text-anchor="middle" font-size="13" font-weight="600" fill="#378ADD">HRP</text>
+      <text x="670" y="20" text-anchor="middle" font-size="10" fill="#888">Receiver</text>
+      <!-- Resorufin out -->
+      <line x1="705" y1="52" x2="760" y2="52" stroke="#cc1010" stroke-width="1.5" marker-end="url(#arr-r)"/>
+      <text x="780" y="56" text-anchor="end" font-size="9" fill="#cc1010">Resorufin</text>
+      <text x="670" y="96" text-anchor="middle" font-size="8" fill="#888">H&#8322;O&#8322; + Amplex Red</text>
+      <!-- Legend below -->
+      <text x="400" y="115" text-anchor="middle" font-size="9" fill="#555">Spatial distribution of resorufin reports the H&#8322;O&#8322; concentration field. Geometry of the array controls which HRP droplets get signal and how much.</text>
+      <!-- Arrow markers -->
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="none" stroke="#888" stroke-width="1"/></marker>
+        <marker id="arr-g" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="none" stroke="#1D9E75" stroke-width="1"/></marker>
+        <marker id="arr-b" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="none" stroke="#378ADD" stroke-width="1"/></marker>
+        <marker id="arr-r" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="none" stroke="#cc1010" stroke-width="1"/></marker>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- 3x2 panel grid -->
+  <div class="fig-grid">
+    <!-- Panel A: Step 1 heatmap -->
+    <div class="fig-panel">
+      <div class="fig-letter">A</div>
+      <span class="fig-updating" id="t4-updating">Updating...</span>
+      <canvas id="t4-panelA" width="320" height="320"></canvas>
+      <div class="fig-caption">Single sender/receiver pair. RD field at current Tab 1 distance.</div>
+    </div>
+    <!-- Panel B: t½ vs distance -->
+    <div class="fig-panel">
+      <div class="fig-letter">B</div>
+      <div class="chart-container" style="aspect-ratio:1;height:auto;">
+        <canvas id="t4-panelB" width="320" height="320"></canvas>
+      </div>
+      <div class="fig-caption">Half-time vs distance. Green band = imageable window (5 to 20 min).</div>
+    </div>
+    <!-- Panel C: Checkerboard -->
+    <div class="fig-panel">
+      <div class="fig-letter">C</div>
+      <canvas id="t4-panelC" width="320" height="320"></canvas>
+      <div class="fig-caption">Checkerboard (interleaved). Uniform signal distribution, low CV%.</div>
+    </div>
+    <!-- Panel D: Segregated blocks -->
+    <div class="fig-panel">
+      <div class="fig-letter">D</div>
+      <canvas id="t4-panelD" width="320" height="320"></canvas>
+      <div class="fig-caption">Segregated blocks. Front-row depletion creates a signal cliff.</div>
+    </div>
+    <!-- Panel E: Morphogen -->
+    <div class="fig-panel">
+      <div class="fig-letter">E</div>
+      <canvas id="t4-panelE" width="320" height="320"></canvas>
+      <div class="fig-caption">Morphogen gradient. Each HRP encodes distance as unique intensity.</div>
+    </div>
+    <!-- Panel F: Saddle -->
+    <div class="fig-panel">
+      <div class="fig-letter">F</div>
+      <canvas id="t4-panelF" width="320" height="320"></canvas>
+      <div class="fig-caption">Saddle point. W-shaped profile from competing source fields.</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end panel-t4 -->
+
+</div><!-- end .app -->
+
+<!-- ── Model inspector (always accessible) ───────────────────────── -->
+<button class="inspector-toggle" id="inspector-btn" onclick="toggleInspector()">
+  &#x1D6BB; Model inspector
+</button>
+<div class="inspector-panel" id="inspector-panel">
+  <h3>Governing equation</h3>
+  <div class="eq">&#x2202;C/&#x2202;t = D&#x2207;&#x00B2;C &#x2212; k&#x00B7;C + S(x,y)</div>
+  <p class="note">Steady-state form (&#x2202;C/&#x2202;t = 0):</p>
+  <div class="eq">D&#x2207;&#x00B2;C = k&#x00B7;C &#x2212; S(x,y)</div>
+  <p class="note">where C = [H&#8322;O&#8322;], D = diffusion coefficient, k = first-order HRP consumption rate, S(x,y) = GOx source term.</p>
+
+  <h3>Discretisation</h3>
+  <p class="note">2D finite difference on a uniform Cartesian grid (80 x 80 cells). Gauss-Seidel iterative solver, 600 iterations. Field of view is fixed at 3500 µm (matching experimental microscope FOV).</p>
+  <div class="eq">&#x0394;x = 3500 µm / 80 = 43.75 µm per cell</div>
+  <p class="note">Droplet radius in cells: R_CELLS = round(diameter / (2 &#x00D7; &#x0394;x)). Current R_CELLS = <span id="insp-rcells">3</span>, droplet diameter &#x2248; <span id="insp-dx">262</span> µm on grid.</p>
+
+  <h3>Boundary conditions</h3>
+  <p class="note">Dirichlet: C = 0 at all four edges. Physical justification: open dish geometry where H&#8322;O&#8322; escapes to bulk solution. The 3500 µm field provides ample buffer between the droplet array and the boundary.</p>
+
+  <h3>Source/sink model</h3>
+  <p class="note">Each droplet stamps a disc of radius R_CELLS grid cells as either a uniform source (GOx) or a first-order sink (HRP). R_CELLS scales with the droplet diameter slider. All droplets at a given diameter share an identical precomputed disc footprint. This is a well-mixed droplet approximation. Source strength and sink rate both scale with droplet volume (d/d_ref)&#x00B3; (reference diameter = 250 µm), reflecting the total number of enzyme molecules contained in the droplet at a given concentration.</p>
+
+  <h3>Damk&#246;hler number</h3>
+  <div class="eq">Da = k &#x00B7; &#x0394;x&#x00B2; / D</div>
+  <p class="note">Da relates reaction rate to diffusion rate. Da &lt;&lt; 1: diffusion-dominated (uniform field). Da &gt;&gt; 1: reaction-dominated (steep gradients, depletion). The HRP concentration slider sets Da via: k = [HRP] &#x00B7; k_cat_eff, then Da = k &#x00B7; &#x0394;x&#x00B2; / D.</p>
+
+  <h3>Time-course model (Tab 1)</h3>
+  <div class="eq">S(t) = S_max &#x00D7; (1 &#x2212; exp(&#x2212;ln2 &#x00D7; t / t&#189;))</div>
+  <p class="note">t&#189; is derived from the steady-state solution using a diffusion timescale heuristic: t&#189; = d&#x00B2; / (2D) &#x00D7; 1/(1 + Da&#x2080;), where d = centre-to-centre distance, D = diffusion coefficient, Da&#x2080; = local Damk&#246;hler number at the HRP site. This captures: (1) t&#189; increases with distance squared (diffusion-limited), (2) t&#189; decreases with higher Da (faster consumption pulls the front forward).</p>
+
+  <h3>Known limitations</h3>
+  <p class="note">
+    1. Steady-state only: no true temporal dynamics; the time-course is a heuristic exponential approach.<br>
+    2. Resorufin treated as non-diffusing (remains at HRP site where produced).<br>
+    3. Amplex Red depletion not modelled (assumed excess).<br>
+    4. Droplet interior assumed well-mixed: no intra-droplet concentration gradients.<br>
+    5. 2D approximation of a 3D system (thin-layer geometry assumed).<br>
+    6. No droplet-droplet steric exclusion in the solver (overlap possible at very close spacing).
+  </p>
+
+  <h3>Live parameter table</h3>
+  <table>
+    <tr><th>Parameter</th><th>Value</th><th>Unit</th></tr>
+    <tr><td>Field of view</td><td>3500</td><td>µm</td></tr>
+    <tr><td>Grid cell &#x0394;x</td><td id="insp-cell">43.75</td><td>µm</td></tr>
+    <tr><td>Field size (80 cells)</td><td id="insp-field2">3500</td><td>µm</td></tr>
+    <tr><td>Droplet diameter (slider)</td><td id="insp-diam">—</td><td>µm</td></tr>
+    <tr><td>R_CELLS (droplet radius)</td><td id="insp-rcells2">—</td><td>cells</td></tr>
+    <tr><td>Droplet diameter (on grid)</td><td id="insp-griddiam">—</td><td>µm</td></tr>
+    <tr><td>Diffusion coeff. D</td><td id="insp-D">—</td><td>µm&#x00B2;/s</td></tr>
+    <tr><td>[GOx] effective</td><td id="insp-gox">—</td><td>µM</td></tr>
+    <tr><td>[HRP] effective</td><td id="insp-hrp">—</td><td>µM</td></tr>
+    <tr><td>GOx source flux q</td><td id="insp-q">—</td><td>AU (relative)</td></tr>
+    <tr><td>HRP Da (Damk&#246;hler)</td><td id="insp-da">—</td><td>dimensionless</td></tr>
+    <tr><td>k (sink rate)</td><td id="insp-k">—</td><td>s&#x207B;&#x00B9;</td></tr>
+    <tr><td>Centre-to-centre dist.</td><td id="insp-dist">—</td><td>µm</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SCRIPT
+     ═══════════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ── Colour constants ─────────────────────────────────────────────────
+const GC = '#1D9E75', HC = '#378ADD';
+
+// ── Grid constants ───────────────────────────────────────────────────
+// The canvas always represents a fixed 3500 µm square field of view
+// (matching the experimental microscope FOV). The grid is 80x80 cells.
+// Cell size in µm is fixed: 3500/80 = 43.75 µm.
+// Droplet radius in cells (R_CELLS) varies with the diameter slider.
+const W = 320, H = 320, CX = W/2, CY = H/2;
+const RD_DX = 4;                 // px per grid cell (fixed)
+const RD_N = W / RD_DX;          // = 80 cells (fixed)
+const FIELD_UM = 3500;            // physical field of view in µm (fixed)
+const CELL_UM = FIELD_UM / RD_N;  // = 43.75 µm per cell (fixed)
+const PX_TO_UM = FIELD_UM / W;    // = 10.9375 µm per px (fixed)
+
+// ── Global state ─────────────────────────────────────────────────────
+// All tabs write to this; Tab 4 reads from all of it.
+const STATE = {
+  // Tab 1
+  t1_distCells: 10,
+  t1_goxConc: 2.0,     // µM (effective in droplet)
+  t1_hrpConc: 10.0,    // µM
+  t1_glucTrigger: 1.0, // multiplier
+  t1_D: 800,           // µm²/s
+  t1_diamUM: 250,      // droplet diameter in µm
+
+  // Derived from diameter (updated by updateDropletGeometry)
+  rCells: 3,           // droplet radius in grid cells
+  drPx: 12,            // droplet radius in canvas px
+  disc: null,          // precomputed disc footprint
+
+  // Tab 2 (placeholder)
+  t2_daLog: 0,
+  t2_spCells: 9,
+  t2_diffScale: 1.0,
+
+  // Tab 3 (placeholder)
+  t3_daLog: 0,
+  t3_spCells: 9,
+  t3_diffScale: 1.0,
+};
+
+function updateDropletGeometry() {
+  // R_CELLS = round(diameter_um / (2 * cell_um)), clamped to [1, 10]
+  STATE.rCells = Math.max(1, Math.min(10, Math.round(STATE.t1_diamUM / (2 * CELL_UM))));
+  STATE.drPx = STATE.rCells * RD_DX;
+  STATE.disc = buildDisc(STATE.rCells);
+}
+
+// ── Solver utilities (carried forward exactly) ───────────────────────
+function snap(v) { return Math.round(v / RD_DX) * RD_DX; }
+function pt(x, y, t) { return {x: snap(x), y: snap(y), t}; }
+
+function buildDisc(rCells) {
+  const cells = [];
+  for (let di = -rCells; di <= rCells; di++)
+    for (let dj = -rCells; dj <= rCells; dj++)
+      if (di*di + dj*dj <= rCells*rCells) cells.push([di, dj]);
+  return cells;
+}
+
+function solveRD(drops, goxQ, hrpK, diffScale) {
+  const disc = STATE.disc || buildDisc(3); // fallback
+  const gox = drops.filter(d => d.t === 'gox');
+  const hrp = drops.filter(d => d.t === 'hrp');
+  const src = new Float32Array(RD_N * RD_N);
+  const snk = new Float32Array(RD_N * RD_N);
+  function stamp(drops2, arr, val) {
+    drops2.forEach(d => {
+      const gc = Math.round(d.x / RD_DX), gr = Math.round(d.y / RD_DX);
+      disc.forEach(([di, dj]) => {
+        const gi = gr + di, gj = gc + dj;
+        if (gi >= 0 && gi < RD_N && gj >= 0 && gj < RD_N) arr[gi * RD_N + gj] += val;
+      });
+    });
+  }
+  stamp(gox, src, goxQ);
+  stamp(hrp, snk, hrpK);
+  // Gauss-Seidel: ∇²C = -src + snk·C  →  C[i] = (nb + src·eff) / (4 + snk·eff)
+  const eff = RD_DX * RD_DX / diffScale;
+  const C = new Float32Array(RD_N * RD_N);
+  for (let it = 0; it < 600; it++) {
+    for (let gy = 1; gy < RD_N - 1; gy++)
+      for (let gx = 1; gx < RD_N - 1; gx++) {
+        const i = gy * RD_N + gx;
+        const nb = C[(gy-1)*RD_N+gx] + C[(gy+1)*RD_N+gx] + C[gy*RD_N+gx-1] + C[gy*RD_N+gx+1];
+        C[i] = (nb + src[i] * eff) / (4 + snk[i] * eff);
+      }
+    // Dirichlet boundaries: C=0 at all edges
+    for (let k = 0; k < RD_N; k++) {
+      C[k] = 0; C[(RD_N-1)*RD_N+k] = 0;
+      C[k*RD_N] = 0; C[k*RD_N+RD_N-1] = 0;
+    }
+  }
+  const hrpSig = hrp.map(d => {
+    const gx = Math.round(d.x / RD_DX), gy = Math.round(d.y / RD_DX);
+    return C[gy * RD_N + gx];
+  });
+  return {C, hrpSig};
+}
+
+// ── Drawing utilities (carried forward) ──────────────────────────────
+function lerp(a, b, t) { return a + (b - a) * t; }
+function fCol(n) {
+  return `rgb(${Math.round(lerp(255,200,n))},${Math.round(lerp(240,20,n))},${Math.round(lerp(240,20,n))})`;
+}
+
+function drawGrid(ctx, cvW, cvH, sc) {
+  const step = RD_DX * sc;
+  const nX = Math.ceil(cvW / step), nY = Math.ceil(cvH / step);
+  for (let i = 0; i <= nX; i++) {
+    const x = i * step, major = i % 10 === 0;
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, cvH);
+    ctx.strokeStyle = major ? 'rgba(0,0,0,0.10)' : 'rgba(0,0,0,0.04)';
+    ctx.lineWidth = major ? 0.8 : 0.4; ctx.stroke();
+  }
+  for (let j = 0; j <= nY; j++) {
+    const y = j * step, major = j % 10 === 0;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(cvW, y);
+    ctx.strokeStyle = major ? 'rgba(0,0,0,0.10)' : 'rgba(0,0,0,0.04)';
+    ctx.lineWidth = major ? 0.8 : 0.4; ctx.stroke();
+  }
+}
+
+function drawScaleBar(ctx, cvW, cvH, sc) {
+  // Draw a scale bar in the bottom-right corner.
+  // Field is fixed at FIELD_UM, so scale is constant regardless of droplet size.
+  const candidates = [1000, 500, 250, 100];
+  let barUM = 100;
+  for (const c of candidates) {
+    const barPx = (c / PX_TO_UM) * sc;
+    if (barPx < cvW * 0.35 && barPx > 20) { barUM = c; break; }
+  }
+  const barPx = (barUM / PX_TO_UM) * sc;
+  const margin = 10;
+  const x0 = cvW - margin - barPx;
+  const y0 = cvH - margin - 4;
+
+  // Bar
+  ctx.fillStyle = 'rgba(0,0,0,0.7)';
+  ctx.fillRect(x0, y0, barPx, 3);
+  // End caps
+  ctx.fillRect(x0, y0 - 3, 1.5, 9);
+  ctx.fillRect(x0 + barPx - 1.5, y0 - 3, 1.5, 9);
+  // Label
+  ctx.fillStyle = 'rgba(0,0,0,0.7)';
+  ctx.font = '9px -apple-system, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText(barUM + ' µm', x0 + barPx / 2, y0 - 5);
+}
+
+function drawMap(cv, drops, mini) {
+  const ctx = cv.getContext('2d'), sc = cv.width / W, r = mini ? 5 : STATE.drPx;
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  if (!mini) drawGrid(ctx, cv.width, cv.height, sc);
+  drops.forEach(d => {
+    if (d.t === 'gap') {
+      const x = d.x * sc, y = d.y * sc;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.setLineDash([2, 2]); ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+      return;
+    }
+    const x = d.x * sc, y = d.y * sc, c = d.t === 'gox' ? GC : HC;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = c + '33'; ctx.fill();
+    ctx.strokeStyle = c; ctx.lineWidth = mini ? 0.8 : 1.5; ctx.stroke();
+    if (!mini) {
+      ctx.fillStyle = c; ctx.font = 'bold 7px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(d.t === 'gox' ? 'G' : 'H', x, y);
+    }
+  });
+  if (!mini) drawScaleBar(ctx, cv.width, cv.height, sc);
+}
+
+function drawHeat(cv, drops, rd) {
+  const ctx = cv.getContext('2d'), sc = cv.width / W, cvW = cv.width, cvH = cv.height;
+  ctx.clearRect(0, 0, cvW, cvH);
+  const {C, hrpSig} = rd;
+  const hrp = drops.filter(d => d.t === 'hrp');
+  const gox = drops.filter(d => d.t === 'gox');
+  const maxC = Math.max(...C, 1e-9), maxS = Math.max(...hrpSig, 1e-9);
+  const cellPx = cvW / RD_N;
+  const img = ctx.createImageData(cvW, cvH);
+  for (let gy = 0; gy < RD_N; gy++)
+    for (let gx = 0; gx < RD_N; gx++) {
+      const n = C[gy * RD_N + gx] / maxC;
+      // White (#f8f8f6) → teal-green (#1D9E75) at 70% intensity
+      const t = n * 0.7;
+      const rv = Math.round(lerp(248, 29, t));
+      const gv = Math.round(lerp(248, 158, t));
+      const bv = Math.round(lerp(246, 117, t));
+      const x0 = Math.round(gx * cellPx), y0 = Math.round(gy * cellPx);
+      const x1 = Math.round((gx+1) * cellPx), y1 = Math.round((gy+1) * cellPx);
+      for (let py = y0; py < y1 && py < cvH; py++)
+        for (let px = x0; px < x1 && px < cvW; px++) {
+          const i = (py * cvW + px) * 4;
+          img.data[i] = rv; img.data[i+1] = gv; img.data[i+2] = bv; img.data[i+3] = 255;
+        }
+    }
+  ctx.putImageData(img, 0, 0);
+  // Draw grid on heatmap
+  drawGrid(ctx, cvW, cvH, sc);
+  const dr = STATE.drPx;
+  // HRP resorufin glow + disc
+  hrp.forEach((h, i) => {
+    const n = hrpSig[i] / maxS, x = h.x * sc, y = h.y * sc;
+    const gr = ctx.createRadialGradient(x, y, dr*sc*0.4, x, y, (dr + 24*n)*sc);
+    gr.addColorStop(0, `rgba(210,40,40,${(0.25 + 0.65*n).toFixed(2)})`);
+    gr.addColorStop(1, 'rgba(210,40,40,0)');
+    ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, y, (dr + 24*n)*sc, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x, y, dr*sc, 0, Math.PI*2);
+    ctx.fillStyle = fCol(n); ctx.fill();
+    ctx.strokeStyle = HC; ctx.lineWidth = 1.4*sc; ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = `bold ${Math.max(6, Math.round(7*sc))}px sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText((n*100).toFixed(0) + '%', x, y);
+  });
+  // GOx discs
+  gox.forEach(g => {
+    const x = g.x * sc, y = g.y * sc;
+    ctx.beginPath(); ctx.arc(x, y, dr*sc, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(29,158,117,0.18)'; ctx.fill();
+    ctx.strokeStyle = GC; ctx.lineWidth = 1.4*sc; ctx.stroke();
+    ctx.fillStyle = GC; ctx.font = `bold ${Math.max(6, Math.round(7*sc))}px sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('G', x, y);
+  });
+  drawScaleBar(ctx, cvW, cvH, sc);
+}
+
+// ── Lightweight chart drawing ────────────────────────────────────────
+// Self-contained canvas charting: no Chart.js needed.
+const CHART = {
+  // Draw a line chart on a canvas element.
+  // data: {xs, datasets:[{ys, color, label, dashed?, points?}], xLabel, yLabel, xFmt?, yFmt?, annotations?}
+  draw(cv, data) {
+    const ctx = cv.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const cw = cv.parentElement.clientWidth || cv.width;
+    const ch = cv.parentElement.clientHeight || cv.height;
+    cv.width = cw * dpr;
+    cv.height = ch * dpr;
+    cv.style.width = cw + 'px';
+    cv.style.height = ch + 'px';
+    ctx.scale(dpr, dpr);
+
+    const pad = {top: 20, right: 16, bottom: 32, left: 48};
+    const pw = cw - pad.left - pad.right;
+    const ph = ch - pad.top - pad.bottom;
+
+    // Compute ranges
+    let xMin = Math.min(...data.xs), xMax = Math.max(...data.xs);
+    if (xMin === xMax) xMax = xMin + 1;
+    let yMin = 0, yMax = 0;
+    data.datasets.forEach(ds => {
+      ds.ys.forEach(v => { if (v > yMax) yMax = v; if (v < yMin) yMin = v; });
+    });
+    if (data.yMax !== undefined) yMax = data.yMax;
+    if (data.yMin !== undefined) yMin = data.yMin;
+    if (yMax === yMin) yMax = yMin + 1;
+    // Add 10% headroom
+    yMax *= 1.1;
+
+    function tx(x) { return pad.left + (x - xMin) / (xMax - xMin) * pw; }
+    function ty(y) { return pad.top + ph - (y - yMin) / (yMax - yMin) * ph; }
+
+    ctx.clearRect(0, 0, cw, ch);
+
+    // Grid lines
+    const nYTicks = 5;
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.font = '9px -apple-system, sans-serif';
+    for (let i = 0; i <= nYTicks; i++) {
+      const yv = yMin + (yMax - yMin) * i / nYTicks;
+      const py = ty(yv);
+      ctx.beginPath(); ctx.moveTo(pad.left, py); ctx.lineTo(cw - pad.right, py);
+      ctx.strokeStyle = 'rgba(0,0,0,0.06)'; ctx.lineWidth = 0.5; ctx.stroke();
+      ctx.fillStyle = '#999';
+      ctx.fillText(data.yFmt ? data.yFmt(yv) : yv.toFixed(1), pad.left - 4, py);
+    }
+
+    // X-axis ticks
+    const nXTicks = Math.min(data.xs.length, 8);
+    const xStep = Math.max(1, Math.floor(data.xs.length / nXTicks));
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    for (let i = 0; i < data.xs.length; i += xStep) {
+      const px = tx(data.xs[i]);
+      ctx.beginPath(); ctx.moveTo(px, pad.top); ctx.lineTo(px, pad.top + ph);
+      ctx.strokeStyle = 'rgba(0,0,0,0.04)'; ctx.lineWidth = 0.5; ctx.stroke();
+      ctx.fillStyle = '#999';
+      ctx.fillText(data.xFmt ? data.xFmt(data.xs[i]) : data.xs[i].toFixed(0), px, pad.top + ph + 4);
+    }
+
+    // Axis labels
+    ctx.fillStyle = '#888'; ctx.font = '9px -apple-system, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText(data.xLabel || '', pad.left + pw / 2, ch - 6);
+    ctx.save();
+    ctx.translate(10, pad.top + ph / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText(data.yLabel || '', 0, 0);
+    ctx.restore();
+
+    // Annotations (horizontal bands)
+    if (data.annotations) {
+      data.annotations.forEach(a => {
+        const y0 = ty(Math.min(a.yMax, yMax)), y1 = ty(Math.max(a.yMin, yMin));
+        ctx.fillStyle = a.color || 'rgba(29,158,117,0.08)';
+        ctx.fillRect(pad.left, y0, pw, y1 - y0);
+        if (a.label) {
+          ctx.fillStyle = a.labelColor || '#1D9E75';
+          ctx.font = '8px -apple-system, sans-serif';
+          ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+          ctx.fillText(a.label, pad.left + 4, y0 + 2);
+        }
+      });
+    }
+
+    // Vertical annotation lines
+    if (data.vLines) {
+      data.vLines.forEach(vl => {
+        const px = tx(vl.x);
+        ctx.beginPath(); ctx.moveTo(px, pad.top); ctx.lineTo(px, pad.top + ph);
+        ctx.strokeStyle = vl.color || 'rgba(0,0,0,0.2)';
+        ctx.lineWidth = 1; ctx.setLineDash(vl.dashed ? [3,3] : []);
+        ctx.stroke(); ctx.setLineDash([]);
+        if (vl.label) {
+          ctx.fillStyle = vl.color || '#888';
+          ctx.font = '8px -apple-system, sans-serif';
+          ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+          ctx.fillText(vl.label, px + 3, pad.top + ph - 2);
+        }
+      });
+    }
+
+    // Datasets
+    data.datasets.forEach(ds => {
+      ctx.beginPath();
+      ctx.strokeStyle = ds.color || '#378ADD';
+      ctx.lineWidth = ds.width || 1.5;
+      ctx.setLineDash(ds.dashed ? [4, 3] : []);
+      let started = false;
+      for (let i = 0; i < data.xs.length; i++) {
+        const px = tx(data.xs[i]), py = ty(ds.ys[i]);
+        if (!started) { ctx.moveTo(px, py); started = true; }
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Points
+      if (ds.points) {
+        for (let i = 0; i < data.xs.length; i++) {
+          const px = tx(data.xs[i]), py = ty(ds.ys[i]);
+          ctx.beginPath(); ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = ds.color || '#378ADD'; ctx.fill();
+        }
+      }
+    });
+
+    // Legend (top right)
+    if (data.datasets.length > 1 || data.datasets[0].label) {
+      let lx = cw - pad.right - 4, ly = pad.top + 4;
+      ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+      ctx.font = '9px -apple-system, sans-serif';
+      data.datasets.forEach(ds => {
+        if (!ds.label) return;
+        ctx.fillStyle = ds.color || '#378ADD';
+        ctx.fillRect(lx - 40, ly + 1, 12, 3);
+        ctx.fillStyle = '#666';
+        ctx.fillText(ds.label, lx, ly - 1);
+        ly += 12;
+      });
+    }
+  }
+};
+
+// ── Tab switching ────────────────────────────────────────────────────
+let activeTab = 't1';
+let t2Initialized = false;
+let t3Initialized = false;
+function switchTab(id) {
+  activeTab = id;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.querySelectorAll('.tbtn').forEach(b => {
+    const step = b.textContent.match(/Step (\d)/);
+    if (step && 't' + step[1] === id) b.classList.add('active');
+  });
+  if (id === 't1') solveTab1();
+  if (id === 't2') {
+    if (!t2Initialized) { t2Initialized = true; solveTab2(); }
+  }
+  if (id === 't3') {
+    if (!t3Initialized) { t3Initialized = true; readTab3Sliders(); updateTab3Labels(); solveTab3Active(); }
+  }
+  if (id === 't4') {
+    // Always re-solve on entering Tab 4 to pick up changes from other tabs
+    solveTab4();
+  }
+}
+
+// ── Model inspector ──────────────────────────────────────────────────
+function toggleInspector() {
+  document.getElementById('inspector-panel').classList.toggle('open');
+}
+
+function updateInspector() {
+  updateDropletGeometry();
+  const s = STATE;
+  // Grid diameter on grid = 2 * R_CELLS * CELL_UM
+  const gridDiamUM = 2 * s.rCells * CELL_UM;
+  document.getElementById('insp-dx').textContent = gridDiamUM.toFixed(0);
+  document.getElementById('insp-rcells').textContent = s.rCells;
+  document.getElementById('insp-D').textContent = s.t1_D.toFixed(0);
+  document.getElementById('insp-diam').textContent = s.t1_diamUM.toFixed(0);
+  document.getElementById('insp-cell').textContent = CELL_UM.toFixed(1);
+  document.getElementById('insp-field2').textContent = FIELD_UM.toFixed(0);
+  document.getElementById('insp-gox').textContent = s.t1_goxConc.toFixed(2);
+  document.getElementById('insp-hrp').textContent = s.t1_hrpConc.toFixed(2);
+
+  // Compute derived solver params
+  const goxQ = concentrationToSourceQ(s.t1_goxConc, s.t1_diamUM);
+  const da = concentrationToDa(s.t1_hrpConc, s.t1_D, s.t1_diamUM);
+  const k = da * s.t1_D / (CELL_UM * CELL_UM);
+
+  document.getElementById('insp-q').textContent = goxQ.toFixed(3);
+  document.getElementById('insp-da').textContent = da.toFixed(3);
+  document.getElementById('insp-k').textContent = k.toExponential(2);
+  document.getElementById('insp-dist').textContent = (s.t1_distCells * CELL_UM).toFixed(0);
+  document.getElementById('insp-rcells2').textContent = s.rCells;
+  document.getElementById('insp-griddiam').textContent = (2 * s.rCells * CELL_UM).toFixed(0);
+}
+
+// ── Concentration to solver parameter mappings ───────────────────────
+// These are the key functions that translate physical concentrations
+// to the dimensionless solver parameters.
+//
+// GOx: source strength scales linearly with concentration.
+//   Reference: 2 µM effective GOx → goxQ = 1.0
+//   (2 µM is the target after diluting 100 µM stock at 2% v/v)
+const GOX_REF_UM = 2.0;
+const DIAM_REF_UM = 250; // reference droplet diameter
+
+function concentrationToSourceQ(goxUM, diamUM) {
+  // Source strength scales with concentration AND droplet volume.
+  // A bigger droplet at the same concentration contains more enzyme molecules.
+  // Volume ratio = (d/d_ref)^3; we use d_ref = 250 µm.
+  const volRatio = Math.pow((diamUM || DIAM_REF_UM) / DIAM_REF_UM, 3);
+  return (goxUM / GOX_REF_UM) * volRatio;
+}
+
+// HRP: maps to Damköhler number.
+//   Da = [HRP] * k_cat_eff * Δx² / D
+//   We define k_cat_eff such that [HRP] = 10 µM → Da = 1.0 at D = 800 µm²/s
+//   So k_cat_eff = Da * D / ([HRP] * Δx²) = 1.0 * 800 / (10 * 83²) = 0.0116 s⁻¹µM⁻¹
+//   But we keep it simpler: Da = ([HRP] / HRP_REF) * (D_REF / D)
+const HRP_REF_UM = 10.0;
+const D_REF = 800; // µm²/s
+
+function concentrationToDa(hrpUM, D_um2s, diamUM) {
+  // Da scales with concentration AND droplet volume (more enzyme = faster sink).
+  const volRatio = Math.pow((diamUM || DIAM_REF_UM) / DIAM_REF_UM, 3);
+  return (hrpUM / HRP_REF_UM) * (D_REF / D_um2s) * volRatio;
+}
+
+// Diffusion scale factor for the solver.
+// The solver uses diffScale as a multiplier on effective diffusion.
+// diffScale = D / D_REF (so D=800 → diffScale=1.0)
+function diffusionScale(D_um2s) {
+  return D_um2s / D_REF;
+}
+
+// ── t½ heuristic ─────────────────────────────────────────────────────
+// t½ = d² / (2·D) × 1/(1 + Da_local)
+// d in µm, D in µm²/s → t½ in seconds, convert to minutes
+function computeThalf(distUM, D_um2s, Da) {
+  const t_s = (distUM * distUM) / (2 * D_um2s) * (1 / (1 + Da));
+  return t_s / 60; // minutes
+}
+
+// ── Tab 1: Dial-in ───────────────────────────────────────────────────
+let t1SolveTimer = null;
+
+function readTab1Sliders() {
+  const distCells = parseInt(document.getElementById('t1-sl-dist').value);
+  const goxLog = parseFloat(document.getElementById('t1-sl-gox').value);
+  const hrpLog = parseFloat(document.getElementById('t1-sl-hrp').value);
+  const gluc = parseFloat(document.getElementById('t1-sl-gluc').value);
+  const Dlog = parseFloat(document.getElementById('t1-sl-D').value);
+  const diam = parseFloat(document.getElementById('t1-sl-diam').value);
+
+  STATE.t1_distCells = distCells;
+  STATE.t1_goxConc = Math.pow(10, goxLog);
+  STATE.t1_hrpConc = Math.pow(10, hrpLog);
+  STATE.t1_glucTrigger = gluc;
+  STATE.t1_D = Math.pow(10, Dlog);
+  STATE.t1_diamUM = diam;
+  updateDropletGeometry();
+}
+
+function updateTab1Labels() {
+  const s = STATE;
+  document.getElementById('t1-v-dist').textContent = (s.t1_distCells * CELL_UM).toFixed(0) + ' µm (' + s.t1_distCells + ' cells)';
+  document.getElementById('t1-v-gox').textContent = fmtConc(s.t1_goxConc);
+  document.getElementById('t1-v-hrp').textContent = fmtConc(s.t1_hrpConc);
+  document.getElementById('t1-v-gluc').textContent = s.t1_glucTrigger.toFixed(1) + 'x';
+  document.getElementById('t1-v-D').textContent = s.t1_D.toFixed(0) + ' µm\u00B2/s';
+  document.getElementById('t1-v-diam').textContent = s.t1_diamUM.toFixed(0) + ' µm (R=' + s.rCells + ' cells)';
+  document.getElementById('t1-ratio').textContent = (s.t1_hrpConc / s.t1_goxConc).toFixed(1) + 'x';
+}
+
+function fmtConc(um) {
+  if (um >= 100) return um.toFixed(0) + ' µM';
+  if (um >= 10) return um.toFixed(1) + ' µM';
+  if (um >= 1) return um.toFixed(2) + ' µM';
+  if (um >= 0.1) return um.toFixed(2) + ' µM';
+  return um.toFixed(3) + ' µM';
+}
+
+function fmtSignal(v) {
+  if (v === 0) return '0';
+  const abs = Math.abs(v);
+  if (abs >= 100) return v.toFixed(0);
+  if (abs >= 10) return v.toFixed(1);
+  if (abs >= 1) return v.toFixed(2);
+  if (abs >= 0.01) return v.toFixed(3);
+  return v.toExponential(1);
+}
+
+function makeTab1Drops(distCells) {
+  // Single GOx on left, single HRP on right, both on centreline
+  const halfDist = Math.round(distCells / 2);
+  const goxX = snap(CX - halfDist * RD_DX);
+  const hrpX = snap(CX + (distCells - halfDist) * RD_DX);
+  return [
+    pt(goxX, CY, 'gox'),
+    pt(hrpX, CY, 'hrp')
+  ];
+}
+
+function solveTab1() {
+  readTab1Sliders();
+  updateTab1Labels();
+  updateInspector();
+
+  const s = STATE;
+  const goxQ = concentrationToSourceQ(s.t1_goxConc, s.t1_diamUM);
+  const da = concentrationToDa(s.t1_hrpConc, s.t1_D, s.t1_diamUM);
+  const dScale = diffusionScale(s.t1_D);
+
+  // Build drops
+  const drops = makeTab1Drops(s.t1_distCells);
+
+  // Solve RD
+  const rd = solveRD(drops, goxQ, da, dScale);
+
+  // Draw map + heatmap
+  drawMap(document.getElementById('t1-map'), drops);
+  drawHeat(document.getElementById('t1-heat'), drops, rd);
+
+  // Compute metrics
+  const distUM = s.t1_distCells * CELL_UM;
+  const thalf = computeThalf(distUM, s.t1_D, da);
+  const sMax = rd.hrpSig[0] || 0; // signal at HRP
+  const peakSignal = sMax * s.t1_glucTrigger;
+
+  // Display metrics
+  document.getElementById('t1-thalf').textContent = thalf.toFixed(1);
+  document.getElementById('t1-peak').textContent = fmtSignal(peakSignal);
+
+  // Window assessment
+  let windowClass, windowText;
+  if (thalf >= 5 && thalf <= 20) {
+    windowClass = 'window-ok'; windowText = '5-20 min \u2714';
+  } else if (thalf >= 3 && thalf <= 30) {
+    windowClass = 'window-warn'; windowText = (thalf < 5 ? 'Fast' : 'Slow');
+  } else {
+    windowClass = 'window-bad'; windowText = (thalf < 3 ? 'Too fast' : 'Too slow');
+  }
+  const wEl = document.getElementById('t1-window');
+  wEl.textContent = windowText;
+  const wStat = document.getElementById('t1-window-stat');
+  wStat.className = 'stat';
+  wStat.style.background = windowClass === 'window-ok' ? '#e6f5ed' :
+    windowClass === 'window-warn' ? '#fff3e0' : '#fde8e8';
+
+  // Insight text
+  const insEl = document.getElementById('t1-insight');
+  if (thalf < 1) {
+    insEl.textContent = 'Reaction completes in under 1 min. This is the current experimental problem: enzyme loading is too high. Reduce [GOx] and [HRP] to slow the reaction.';
+  } else if (thalf < 5) {
+    insEl.textContent = 'Getting close, but t\u00BD is still below the 5 min imaging threshold. Try reducing [GOx] further or increasing distance.';
+  } else if (thalf <= 20) {
+    insEl.textContent = 'In the imageable window (5 to 20 min). Spatial gradients will be resolvable at this timescale. Good starting conditions for the experiment.';
+  } else {
+    insEl.textContent = 'Reaction is very slow. Signal may be too faint to image reliably. Consider increasing [GOx] or reducing distance.';
+  }
+
+  // Time-course chart
+  drawTimeCourseChart(thalf, peakSignal);
+
+  // Distance sweep chart
+  drawDistanceSweepChart(da, s.t1_D);
+
+  document.getElementById('t1-status').textContent = '';
+}
+
+function drawTimeCourseChart(thalf, sMax) {
+  const cv = document.getElementById('t1-chart-tc');
+  const xs = [];
+  const ys = [];
+  // Normalize to percentage of steady-state max
+  for (let t = 0; t <= 30; t += 0.5) {
+    xs.push(t);
+    if (thalf > 0 && sMax > 0) {
+      ys.push(100 * (1 - Math.exp(-Math.LN2 * t / thalf)));
+    } else {
+      ys.push(100);
+    }
+  }
+
+  CHART.draw(cv, {
+    xs,
+    datasets: [{ys, color: '#cc1010', label: 'Resorufin at HRP'}],
+    xLabel: 'Time (min)',
+    yLabel: 'Signal (% of max)',
+    yMax: 110,
+    xFmt: v => v.toFixed(0),
+    yFmt: v => v.toFixed(0) + '%',
+    annotations: [{
+      yMin: 0, yMax: 110,
+      color: 'rgba(0,0,0,0)',
+    }],
+    vLines: [
+      {x: thalf, color: '#888', dashed: true, label: 't\u00BD = ' + thalf.toFixed(1) + ' min'},
+      {x: 5, color: 'rgba(29,158,117,0.3)', dashed: true, label: '5 min'},
+      {x: 20, color: 'rgba(29,158,117,0.3)', dashed: true, label: '20 min'},
+    ],
+  });
+}
+
+function drawDistanceSweepChart(da, D_um2s) {
+  const cv = document.getElementById('t1-chart-sweep');
+  const xs = [], ys = [];
+  // Sweep distance from 3 to 30 cells
+  for (let dc = 3; dc <= 30; dc++) {
+    const dUM = dc * CELL_UM;
+    xs.push(dUM);
+    ys.push(computeThalf(dUM, D_um2s, da));
+  }
+
+  // Mark current distance
+  const curDist = STATE.t1_distCells * CELL_UM;
+  const curThalf = computeThalf(curDist, D_um2s, da);
+
+  CHART.draw(cv, {
+    xs,
+    datasets: [{ys, color: '#378ADD', label: 't\u00BD vs distance'}],
+    xLabel: 'Centre-to-centre distance (µm)',
+    yLabel: 't\u00BD (min)',
+    xFmt: v => v.toFixed(0),
+    yFmt: v => v.toFixed(1),
+    annotations: [{
+      yMin: 5, yMax: 20,
+      color: 'rgba(29,158,117,0.08)',
+      label: 'Imageable window (5-20 min)',
+      labelColor: '#1D9E75',
+    }],
+    vLines: [
+      {x: curDist, color: '#cc1010', dashed: true, label: 'Current: ' + curDist.toFixed(0) + ' µm'},
+    ],
+  });
+}
+
+// ── Slider event listeners for Tab 1 ─────────────────────────────────
+['t1-sl-dist','t1-sl-gox','t1-sl-hrp','t1-sl-gluc','t1-sl-D','t1-sl-diam'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    readTab1Sliders();
+    updateTab1Labels();
+    document.getElementById('t1-status').textContent = 'Solving\u2026';
+    clearTimeout(t1SolveTimer);
+    t1SolveTimer = setTimeout(solveTab1, 200);
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════════
+// TAB 2: COMPLEXITY
+// ══════════════════════════════════════════════════════════════════════
+
+function makeCheckerboard(spCells) {
+  // 4x6 checkerboard, centred. Same as original Config A.
+  const sp = spCells * RD_DX;
+  const d = [];
+  const cols = 6, rows = 4;
+  const x0 = snap(CX - (cols-1)/2 * sp), y0 = snap(CY - (rows-1)/2 * sp);
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++)
+      d.push(pt(x0 + c*sp, y0 + r*sp, (r+c) % 2 === 0 ? 'gox' : 'hrp'));
+  return d;
+}
+
+function makeBlocks(spCells) {
+  // GOx 3x4 block left, HRP 3x4 block right, adjacent (no extra gap).
+  // 6 columns total (0-5), 5 spans centre-to-centre, centred on CX.
+  const sp = spCells * RD_DX;
+  const d = [];
+  const totalSpans = 5;
+  const x0 = snap(CX - totalSpans/2 * sp);
+  const gy0 = snap(CY - 1.5 * sp);
+  // GOx block: columns 0, 1, 2
+  for (let r = 0; r < 4; r++)
+    for (let c = 0; c < 3; c++)
+      d.push(pt(x0 + c*sp, gy0 + r*sp, 'gox'));
+  // HRP block: columns 3, 4, 5
+  for (let r = 0; r < 4; r++)
+    for (let c = 0; c < 3; c++)
+      d.push(pt(x0 + (c+3)*sp, gy0 + r*sp, 'hrp'));
+  return d;
+}
+
+function computeStats(hrpSig) {
+  if (!hrpSig || hrpSig.length === 0) return {mean: 0, cv: 0, range: 0, normMean: 0};
+  const mx = Math.max(...hrpSig, 1e-9);
+  const mn = Math.min(...hrpSig);
+  const mean = hrpSig.reduce((a, b) => a + b, 0) / hrpSig.length;
+  const std = Math.sqrt(hrpSig.reduce((s, v) => s + (v - mean)**2, 0) / hrpSig.length);
+  const cv = mean > 0 ? std / mean * 100 : 0;
+  const range = mx / Math.max(mn, 1e-9);
+  const normMean = mean / mx * 100;
+  return {mean, cv, range, normMean, mx, mn};
+}
+
+function renderBars(containerId, hrpSig) {
+  const sorted = [...hrpSig].sort((a, b) => b - a);
+  const mx = sorted[0] || 1;
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  sorted.forEach((f, i) => {
+    const p = (f / mx * 100).toFixed(0);
+    const n = f / mx;
+    const row = document.createElement('div');
+    row.className = 'br';
+    row.innerHTML = '<span class="blbl">' + (i+1) + '</span>' +
+      '<div class="btr"><div class="bf" style="width:' + p + '%;background:' + fCol(n) + ';"></div></div>' +
+      '<span class="bv">' + p + '%</span>';
+    c.appendChild(row);
+  });
+}
+
+let t2SolveTimer = null;
+
+function readTab2Sliders() {
+  const daLog = parseFloat(document.getElementById('t2-sl-da').value);
+  const spCells = parseInt(document.getElementById('t2-sl-sp').value);
+  const dl = parseFloat(document.getElementById('t2-sl-dl').value);
+  STATE.t2_daLog = daLog;
+  STATE.t2_spCells = spCells;
+  STATE.t2_diffScale = dl;
+}
+
+function updateTab2Labels() {
+  const da = Math.pow(10, STATE.t2_daLog);
+  document.getElementById('t2-v-da').textContent = 'Da=' + da.toFixed(2);
+  document.getElementById('t2-v-sp').textContent = Math.round(STATE.t2_spCells * CELL_UM) + ' µm';
+  document.getElementById('t2-v-dl').textContent = STATE.t2_diffScale.toFixed(2) + 'x';
+}
+
+function solveTab2() {
+  readTab2Sliders();
+  updateTab2Labels();
+
+  const da = Math.pow(10, STATE.t2_daLog);
+  const sp = STATE.t2_spCells;
+  const dl = STATE.t2_diffScale;
+
+  // GOx source strength: use 1.0 (reference) for Tab 2
+  const goxQ = 1.0;
+
+  // Build drops
+  const dropsA = makeCheckerboard(sp);
+  const dropsB = makeBlocks(sp);
+
+  // Solve both
+  const rdA = solveRD(dropsA, goxQ, da, dl);
+  const rdB = solveRD(dropsB, goxQ, da, dl);
+
+  // Draw 2A
+  drawMap(document.getElementById('t2a-map'), dropsA);
+  drawHeat(document.getElementById('t2a-heat'), dropsA, rdA);
+
+  // Draw 2B
+  drawMap(document.getElementById('t2b-map'), dropsB);
+  drawHeat(document.getElementById('t2b-heat'), dropsB, rdB);
+
+  // Stats 2A
+  const stA = computeStats(rdA.hrpSig);
+  document.getElementById('t2a-mean').textContent = stA.normMean.toFixed(0) + '%';
+  document.getElementById('t2a-cv').textContent = stA.cv.toFixed(0) + '%';
+  document.getElementById('t2a-range').textContent = stA.range.toFixed(1) + 'x';
+  renderBars('t2a-bars', rdA.hrpSig);
+
+  // Stats 2B
+  const stB = computeStats(rdB.hrpSig);
+  document.getElementById('t2b-mean').textContent = stB.normMean.toFixed(0) + '%';
+  document.getElementById('t2b-cv').textContent = stB.cv.toFixed(0) + '%';
+  document.getElementById('t2b-range').textContent = stB.range.toFixed(1) + 'x';
+  renderBars('t2b-bars', rdB.hrpSig);
+
+  // Insight text
+  const insEl = document.getElementById('t2-insight');
+  if (da < 0.3) {
+    insEl.textContent = 'Low Da regime: diffusion dominates. Both configurations show similar, relatively uniform signal across all HRP droplets. Geometry has minimal impact at this reaction rate.';
+  } else if (da < 3) {
+    insEl.textContent = 'Intermediate Da: spatial effects are emerging. The segregated blocks (2B) are starting to show a front-to-back gradient, while the checkerboard (2A) remains more uniform. This is the regime where geometry matters most.';
+  } else {
+    insEl.textContent = 'High Da regime: reaction dominates. The segregated blocks (2B) show a dramatic front-row/back-row split (CV=' + stB.cv.toFixed(0) + '%). Back-row HRP droplets receive almost no H\u2082O\u2082. The checkerboard (2A) stays relatively flat (CV=' + stA.cv.toFixed(0) + '%) because every HRP has a neighbouring GOx.';
+  }
+
+  // Store results for Tab 4
+  STATE.t2_rdA = rdA;
+  STATE.t2_rdB = rdB;
+  STATE.t2_dropsA = dropsA;
+  STATE.t2_dropsB = dropsB;
+
+  document.getElementById('t2-status').textContent = '';
+}
+
+// Slider listeners for Tab 2
+['t2-sl-da', 't2-sl-sp', 't2-sl-dl'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    readTab2Sliders();
+    updateTab2Labels();
+    document.getElementById('t2-status').textContent = 'Solving\u2026';
+    clearTimeout(t2SolveTimer);
+    t2SolveTimer = setTimeout(solveTab2, 250);
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════════
+// TAB 3: COMPLEX PATTERNS
+// ══════════════════════════════════════════════════════════════════════
+
+// ── Preset drop generators ───────────────────────────────────────────
+
+function makeMorphogen(spCells) {
+  // GOx 3x4 block left, 12 HRP in a horizontal row extending right.
+  // Centred vertically. GOx block starts ~25% from left edge.
+  const sp = spCells * RD_DX;
+  const d = [];
+  const gx0 = snap(W * 0.15);
+  const gy0 = snap(CY - 1.5 * sp);
+  for (let r = 0; r < 4; r++)
+    for (let c = 0; c < 3; c++)
+      d.push(pt(gx0 + c*sp, gy0 + r*sp, 'gox'));
+  // HRP row: start one sp after rightmost GOx, step by sp, capped to canvas
+  const hx0 = snap(gx0 + 3*sp);
+  const drPx = STATE.drPx || 12;
+  const hrpSp = Math.min(sp, Math.max(RD_DX, Math.floor((W - hx0 - drPx) / 11)));
+  for (let i = 0; i < 12; i++)
+    d.push(pt(hx0 + i * hrpSp, CY, 'hrp'));
+  return d;
+}
+
+function makeSaddle(spCells) {
+  // Two tight GOx clusters of 6, near left/right of field.
+  // 12 HRP in a single line between them at y=CY.
+  const sp = spCells * RD_DX;
+  const d = [];
+  const CR = 2 * RD_DX; // cluster ring radius = 8px (tight)
+  const cx1 = snap(W * 0.22), cx2 = snap(W * 0.78);
+  for (let i = 0; i < 6; i++) {
+    const a = i / 6 * Math.PI * 2;
+    d.push(pt(cx1 + CR * Math.cos(a), CY + CR * Math.sin(a), 'gox'));
+  }
+  for (let i = 0; i < 6; i++) {
+    const a = i / 6 * Math.PI * 2;
+    d.push(pt(cx2 + CR * Math.cos(a), CY + CR * Math.sin(a), 'gox'));
+  }
+  // HRP line centred
+  const hx0 = snap(CX - 5.5 * sp);
+  for (let i = 0; i < 12; i++)
+    d.push(pt(hx0 + i * sp, CY, 'hrp'));
+  return d;
+}
+
+// ── Tab 3 state ──────────────────────────────────────────────────────
+let t3ActiveSub = 'morph';
+let t3SolveTimer = null;
+let t3MorphDrops = null;
+let t3SaddleDrops = null;
+let t3SandboxDrops = [];
+
+// Drag state for preset maps (morph, saddle)
+const t3Drag = {active: false, subId: null, idx: -1, offX: 0, offY: 0};
+
+// Sandbox tool state
+let t3SbTool = 'move';
+const t3SbDrag = {active: false, idx: -1, offX: 0, offY: 0};
+
+function switchT3Sub(sub) {
+  t3ActiveSub = sub;
+  ['morph', 'saddle', 'sandbox'].forEach(s => {
+    const el = document.getElementById('t3-sub-' + s);
+    if (el) el.classList.toggle('active', s === sub);
+  });
+  document.querySelectorAll('.sub-tbtn').forEach(b => {
+    b.classList.toggle('active',
+      (sub === 'morph' && b.textContent.includes('Morphogen')) ||
+      (sub === 'saddle' && b.textContent.includes('Saddle')) ||
+      (sub === 'sandbox' && b.textContent.includes('sandbox')));
+  });
+  solveTab3Active();
+}
+
+function readTab3Sliders() {
+  STATE.t3_daLog = parseFloat(document.getElementById('t3-sl-da').value);
+  STATE.t3_spCells = parseInt(document.getElementById('t3-sl-sp').value);
+  STATE.t3_diffScale = parseFloat(document.getElementById('t3-sl-dl').value);
+}
+
+function updateTab3Labels() {
+  const da = Math.pow(10, STATE.t3_daLog);
+  document.getElementById('t3-v-da').textContent = 'Da=' + da.toFixed(2);
+  document.getElementById('t3-v-sp').textContent = Math.round(STATE.t3_spCells * CELL_UM) + ' µm';
+  document.getElementById('t3-v-dl').textContent = STATE.t3_diffScale.toFixed(2) + 'x';
+}
+
+function resetT3Preset(which) {
+  const sp = STATE.t3_spCells;
+  if (which === 'morph') {
+    t3MorphDrops = makeMorphogen(sp);
+  } else if (which === 'saddle') {
+    t3SaddleDrops = makeSaddle(sp);
+  }
+  solveTab3Active();
+}
+
+function resetT3Sandbox() {
+  t3SandboxDrops = [];
+  updateT3SbCounts();
+  solveTab3Active();
+}
+
+function initTab3Presets() {
+  const sp = STATE.t3_spCells;
+  if (!t3MorphDrops) t3MorphDrops = makeMorphogen(sp);
+  if (!t3SaddleDrops) t3SaddleDrops = makeSaddle(sp);
+}
+
+// ── Line-scan chart ──────────────────────────────────────────────────
+
+function drawLineScan(canvasId, drops, rd) {
+  const cv = document.getElementById(canvasId);
+  const hrp = drops.filter(d => d.t === 'hrp');
+  if (hrp.length === 0) {
+    const ctx = cv.getContext('2d');
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    return;
+  }
+  const {C, hrpSig} = rd;
+
+  // Sort HRP by x position for the line scan
+  const indexed = hrp.map((h, i) => ({x: h.x, y: h.y, sig: hrpSig[i]}));
+  indexed.sort((a, b) => a.x - b.x);
+
+  // Continuous H2O2 field along y=CY
+  const centreRow = Math.round(CY / RD_DX);
+  const fieldXs = [], fieldYs = [];
+  const maxC = Math.max(...C, 1e-9);
+  for (let gx = 0; gx < RD_N; gx++) {
+    fieldXs.push(gx * CELL_UM);
+    fieldYs.push(C[centreRow * RD_N + gx] / maxC * 100);
+  }
+
+  // Discrete HRP resorufin points
+  const maxSig = Math.max(...hrpSig, 1e-9);
+  const hrpXs = indexed.map(h => h.x * PX_TO_UM);
+  const hrpYs = indexed.map(h => h.sig / maxSig * 100);
+
+  CHART.draw(cv, {
+    xs: fieldXs,
+    datasets: [
+      {ys: fieldYs, color: 'rgba(29,158,117,0.3)', label: 'H\u2082O\u2082 field', width: 1},
+      {ys: hrpYs, color: '#cc1010', label: 'Resorufin at HRP', points: true, width: 1.5,
+       // Override xs for this dataset
+       _customXs: hrpXs},
+    ],
+    xLabel: 'Position along centreline (µm)',
+    yLabel: 'Signal (% of max)',
+    yMax: 110,
+    xFmt: v => v.toFixed(0),
+    yFmt: v => v.toFixed(0) + '%',
+  });
+}
+
+// Patch CHART.draw to support per-dataset custom X coords
+const _origChartDraw = CHART.draw.bind(CHART);
+CHART.draw = function(cv, data) {
+  // Separate out datasets with custom X coords, draw them after
+  const customDs = [];
+  const normalDs = [];
+  data.datasets.forEach(ds => {
+    if (ds._customXs) customDs.push(ds);
+    else normalDs.push(ds);
+  });
+
+  // Draw with normal datasets first
+  const origDatasets = data.datasets;
+  data.datasets = normalDs;
+  _origChartDraw(cv, data);
+  data.datasets = origDatasets;
+
+  // Now overlay custom-X datasets using same scale
+  if (customDs.length === 0) return;
+  const ctx = cv.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const cw = parseInt(cv.style.width);
+  const ch = parseInt(cv.style.height);
+  const pad = {top: 20, right: 16, bottom: 32, left: 48};
+  const pw = cw - pad.left - pad.right;
+  const ph = ch - pad.top - pad.bottom;
+  let xMin = Math.min(...data.xs), xMax = Math.max(...data.xs);
+  if (xMin === xMax) xMax = xMin + 1;
+  let yMin = 0, yMax = 0;
+  data.datasets.forEach(ds => {
+    const ysArr = ds.ys || [];
+    ysArr.forEach(v => { if (v > yMax) yMax = v; });
+  });
+  if (data.yMax !== undefined) yMax = data.yMax;
+  if (yMax === 0) yMax = 1;
+  yMax *= 1.1;
+
+  function tx(x) { return (pad.left + (x - xMin) / (xMax - xMin) * pw) * dpr; }
+  function ty(y) { return (pad.top + ph - (y - yMin) / (yMax - yMin) * ph) * dpr; }
+
+  customDs.forEach(ds => {
+    const xs = ds._customXs;
+    ctx.beginPath();
+    ctx.strokeStyle = ds.color || '#cc1010';
+    ctx.lineWidth = (ds.width || 1.5) * dpr;
+    ctx.setLineDash(ds.dashed ? [4*dpr, 3*dpr] : []);
+    let started = false;
+    for (let i = 0; i < xs.length; i++) {
+      const px = tx(xs[i]), py = ty(ds.ys[i]);
+      if (!started) { ctx.moveTo(px, py); started = true; }
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    if (ds.points) {
+      for (let i = 0; i < xs.length; i++) {
+        ctx.beginPath();
+        ctx.arc(tx(xs[i]), ty(ds.ys[i]), 3 * dpr, 0, Math.PI * 2);
+        ctx.fillStyle = ds.color || '#cc1010';
+        ctx.fill();
+      }
+    }
+  });
+};
+
+// ── Solve and render active sub-tab ──────────────────────────────────
+
+function solveTab3Active() {
+  readTab3Sliders();
+  updateTab3Labels();
+  const da = Math.pow(10, STATE.t3_daLog);
+  const dl = STATE.t3_diffScale;
+  const goxQ = 1.0;
+
+  initTab3Presets();
+
+  if (t3ActiveSub === 'morph' || t3ActiveSub === 'all') {
+    const drops = t3MorphDrops;
+    const rd = solveRD(drops, goxQ, da, dl);
+    drawMap(document.getElementById('t3m-map'), drops);
+    drawHeat(document.getElementById('t3m-heat'), drops, rd);
+    drawLineScan('t3m-linescan', drops, rd);
+    STATE.t3_rdMorph = rd;
+    STATE.t3_dropsMorph = drops;
+  }
+  if (t3ActiveSub === 'saddle' || t3ActiveSub === 'all') {
+    const drops = t3SaddleDrops;
+    const rd = solveRD(drops, goxQ, da, dl);
+    drawMap(document.getElementById('t3s-map'), drops);
+    drawHeat(document.getElementById('t3s-heat'), drops, rd);
+    drawLineScan('t3s-linescan', drops, rd);
+    STATE.t3_rdSaddle = rd;
+    STATE.t3_dropsSaddle = drops;
+  }
+  if (t3ActiveSub === 'sandbox') {
+    const drops = t3SandboxDrops;
+    if (drops.length > 0) {
+      const rd = solveRD(drops, goxQ, da, dl);
+      drawMap(document.getElementById('t3sb-map'), drops);
+      drawHeat(document.getElementById('t3sb-heat'), drops, rd);
+      drawLineScan('t3sb-linescan', drops, rd);
+    } else {
+      drawMap(document.getElementById('t3sb-map'), []);
+      const ctx = document.getElementById('t3sb-heat').getContext('2d');
+      ctx.clearRect(0, 0, 320, 320);
+      const ctx2 = document.getElementById('t3sb-linescan').getContext('2d');
+      ctx2.clearRect(0, 0, 600, 200);
+    }
+    updateT3SbCounts();
+  }
+  document.getElementById('t3-status').textContent = '';
+}
+
+// ── Drag-to-reposition for preset maps ───────────────────────────────
+
+function getT3Drops(subId) {
+  if (subId === 'morph') return t3MorphDrops;
+  if (subId === 'saddle') return t3SaddleDrops;
+  return null;
+}
+
+function t3DropAt(drops, cx, cy) {
+  const sc = 320 / W;
+  const dr = STATE.drPx;
+  for (let i = 0; i < drops.length; i++) {
+    const dx = drops[i].x * sc - cx, dy = drops[i].y * sc - cy;
+    if (dx*dx + dy*dy <= (dr*sc + 2)**2) return i;
+  }
+  return -1;
+}
+
+function canvasXY(cv, e) {
+  const r = cv.getBoundingClientRect();
+  const sc = W / cv.offsetWidth;
+  return [(e.clientX - r.left) * sc, (e.clientY - r.top) * sc];
+}
+
+// Set up drag for morph and saddle map canvases
+['t3m-map', 't3s-map'].forEach(cvId => {
+  const subId = cvId === 't3m-map' ? 'morph' : 'saddle';
+  const cv = document.getElementById(cvId);
+
+  cv.addEventListener('mousedown', e => {
+    const drops = getT3Drops(subId);
+    if (!drops) return;
+    const [cx, cy] = canvasXY(cv, e);
+    const idx = t3DropAt(drops, cx, cy);
+    if (idx >= 0) {
+      t3Drag.active = true;
+      t3Drag.subId = subId;
+      t3Drag.idx = idx;
+      t3Drag.offX = drops[idx].x - snap(cx);
+      t3Drag.offY = drops[idx].y - snap(cy);
+      cv.style.cursor = 'grabbing';
+    }
+  });
+
+  cv.addEventListener('mousemove', e => {
+    if (!t3Drag.active || t3Drag.subId !== subId) return;
+    const drops = getT3Drops(subId);
+    const [cx, cy] = canvasXY(cv, e);
+    const dr = STATE.drPx;
+    drops[t3Drag.idx].x = Math.min(W - dr, Math.max(dr, snap(cx + t3Drag.offX)));
+    drops[t3Drag.idx].y = Math.min(H - dr, Math.max(dr, snap(cy + t3Drag.offY)));
+    drawMap(cv, drops);
+    // Highlight dragged drop
+    const ctx = cv.getContext('2d'), sc = cv.width / W;
+    const d = drops[t3Drag.idx];
+    ctx.beginPath(); ctx.arc(d.x*sc, d.y*sc, dr*sc + 3, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2; ctx.stroke();
+  });
+
+  cv.addEventListener('mouseup', e => {
+    if (t3Drag.active && t3Drag.subId === subId) {
+      t3Drag.active = false;
+      t3Drag.idx = -1;
+      cv.style.cursor = 'grab';
+      solveTab3Active();
+    }
+  });
+
+  cv.addEventListener('mouseleave', e => {
+    if (t3Drag.active && t3Drag.subId === subId) {
+      t3Drag.active = false;
+      t3Drag.idx = -1;
+      cv.style.cursor = 'grab';
+      solveTab3Active();
+    }
+  });
+});
+
+// ── Sandbox tools ────────────────────────────────────────────────────
+
+function setT3Tool(t) {
+  t3SbTool = t;
+  ['move', 'gox', 'hrp', 'erase'].forEach(id => {
+    const el = document.getElementById('t3-tool-' + id);
+    if (el) el.classList.toggle('active', id === t);
+  });
+  const cv = document.getElementById('t3sb-map');
+  cv.style.cursor = t === 'move' ? 'grab' : t === 'erase' ? 'crosshair' : 'cell';
+}
+
+function updateT3SbCounts() {
+  document.getElementById('t3sb-gox-count').textContent = t3SandboxDrops.filter(d => d.t === 'gox').length;
+  document.getElementById('t3sb-hrp-count').textContent = t3SandboxDrops.filter(d => d.t === 'hrp').length;
+}
+
+// Sandbox canvas events
+(function() {
+  const cv = document.getElementById('t3sb-map');
+
+  function sbDropAt(cx, cy) {
+    const sc = 320 / W;
+    const dr = STATE.drPx;
+    for (let i = 0; i < t3SandboxDrops.length; i++) {
+      const dx = t3SandboxDrops[i].x * sc - cx, dy = t3SandboxDrops[i].y * sc - cy;
+      if (dx*dx + dy*dy <= (dr*sc + 2)**2) return i;
+    }
+    return -1;
+  }
+
+  cv.addEventListener('mousedown', e => {
+    const [cx, cy] = canvasXY(cv, e);
+    const wx = snap(cx), wy = snap(cy);
+
+    if (t3SbTool === 'move') {
+      const idx = sbDropAt(cx, cy);
+      if (idx >= 0) {
+        t3SbDrag.active = true;
+        t3SbDrag.idx = idx;
+        t3SbDrag.offX = t3SandboxDrops[idx].x - wx;
+        t3SbDrag.offY = t3SandboxDrops[idx].y - wy;
+        cv.style.cursor = 'grabbing';
+      }
+    } else if (t3SbTool === 'erase') {
+      const idx = sbDropAt(cx, cy);
+      if (idx >= 0) {
+        t3SandboxDrops.splice(idx, 1);
+        updateT3SbCounts();
+        solveTab3Active();
+      }
+    } else if (t3SbTool === 'gox' || t3SbTool === 'hrp') {
+      const count = t3SandboxDrops.filter(d => d.t === t3SbTool).length;
+      if (count >= 12) {
+        document.getElementById('t3sb-status').textContent = 'Max 12 ' + t3SbTool + ' drops';
+        return;
+      }
+      if (sbDropAt(cx, cy) >= 0) return;
+      t3SandboxDrops.push({x: snap(wx), y: snap(wy), t: t3SbTool});
+      updateT3SbCounts();
+      document.getElementById('t3sb-status').textContent = '';
+      solveTab3Active();
+    }
+  });
+
+  cv.addEventListener('mousemove', e => {
+    if (!t3SbDrag.active || t3SbTool !== 'move') return;
+    const [cx, cy] = canvasXY(cv, e);
+    const dr = STATE.drPx;
+    t3SandboxDrops[t3SbDrag.idx].x = Math.min(W - dr, Math.max(dr, snap(cx) + t3SbDrag.offX));
+    t3SandboxDrops[t3SbDrag.idx].y = Math.min(H - dr, Math.max(dr, snap(cy) + t3SbDrag.offY));
+    drawMap(cv, t3SandboxDrops);
+    // Highlight
+    const ctx = cv.getContext('2d'), sc = cv.width / W;
+    const d = t3SandboxDrops[t3SbDrag.idx];
+    ctx.beginPath(); ctx.arc(d.x*sc, d.y*sc, dr*sc + 3, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2; ctx.stroke();
+  });
+
+  cv.addEventListener('mouseup', e => {
+    if (t3SbDrag.active) {
+      t3SbDrag.active = false;
+      t3SbDrag.idx = -1;
+      cv.style.cursor = 'grab';
+      solveTab3Active();
+    }
+  });
+
+  cv.addEventListener('mouseleave', e => {
+    if (t3SbDrag.active) {
+      t3SbDrag.active = false;
+      t3SbDrag.idx = -1;
+      cv.style.cursor = 'grab';
+      solveTab3Active();
+    }
+  });
+})();
+
+// ── Tab 3 slider listeners ───────────────────────────────────────────
+
+['t3-sl-da', 't3-sl-sp', 't3-sl-dl'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    readTab3Sliders();
+    updateTab3Labels();
+    document.getElementById('t3-status').textContent = 'Solving\u2026';
+    clearTimeout(t3SolveTimer);
+    t3SolveTimer = setTimeout(() => {
+      // Regenerate presets when spacing changes
+      t3MorphDrops = makeMorphogen(STATE.t3_spCells);
+      t3SaddleDrops = makeSaddle(STATE.t3_spCells);
+      solveTab3Active();
+    }, 250);
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════════
+// TAB 4: FIGURE MOCK-UP
+// ══════════════════════════════════════════════════════════════════════
+
+let t4Timer = null;
+let t4Initialized = false;
+
+// Clean heatmap for figure panels: subtle drop outlines, no labels, with scale bar
+function drawHeatClean(cv, drops, rd) {
+  const ctx = cv.getContext('2d'), sc = cv.width / W, cvW = cv.width, cvH = cv.height;
+  ctx.clearRect(0, 0, cvW, cvH);
+  const {C, hrpSig} = rd;
+  const hrp = drops.filter(d => d.t === 'hrp');
+  const gox = drops.filter(d => d.t === 'gox');
+  const maxC = Math.max(...C, 1e-9), maxS = Math.max(...hrpSig, 1e-9);
+  const cellPx = cvW / RD_N;
+
+  // Draw H2O2 field
+  const img = ctx.createImageData(cvW, cvH);
+  for (let gy = 0; gy < RD_N; gy++)
+    for (let gx = 0; gx < RD_N; gx++) {
+      const n = C[gy * RD_N + gx] / maxC;
+      const t = n * 0.7;
+      const rv = Math.round(lerp(248, 29, t));
+      const gv = Math.round(lerp(248, 158, t));
+      const bv = Math.round(lerp(246, 117, t));
+      const x0 = Math.round(gx * cellPx), y0 = Math.round(gy * cellPx);
+      const x1 = Math.round((gx+1) * cellPx), y1 = Math.round((gy+1) * cellPx);
+      for (let py = y0; py < y1 && py < cvH; py++)
+        for (let px = x0; px < x1 && px < cvW; px++) {
+          const i = (py * cvW + px) * 4;
+          img.data[i] = rv; img.data[i+1] = gv; img.data[i+2] = bv; img.data[i+3] = 255;
+        }
+    }
+  ctx.putImageData(img, 0, 0);
+
+  const dr = STATE.drPx;
+
+  // HRP resorufin glow + subtle outline
+  hrp.forEach((h, i) => {
+    const n = hrpSig[i] / maxS, x = h.x * sc, y = h.y * sc;
+    const gr = ctx.createRadialGradient(x, y, dr*sc*0.4, x, y, (dr + 20*n)*sc);
+    gr.addColorStop(0, `rgba(210,40,40,${(0.2 + 0.6*n).toFixed(2)})`);
+    gr.addColorStop(1, 'rgba(210,40,40,0)');
+    ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, y, (dr + 20*n)*sc, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x, y, dr*sc, 0, Math.PI*2);
+    ctx.fillStyle = fCol(n); ctx.fill();
+    ctx.strokeStyle = 'rgba(55,138,221,0.5)'; ctx.lineWidth = 0.8*sc; ctx.stroke();
+  });
+
+  // GOx subtle outline only
+  gox.forEach(g => {
+    const x = g.x * sc, y = g.y * sc;
+    ctx.beginPath(); ctx.arc(x, y, dr*sc, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(29,158,117,0.12)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(29,158,117,0.5)'; ctx.lineWidth = 0.8*sc; ctx.stroke();
+  });
+
+  // Scale bar
+  drawScaleBar(ctx, cvW, cvH, sc);
+}
+
+function solveTab4() {
+  const indicator = document.getElementById('t4-updating');
+  indicator.style.display = 'block';
+
+  // Use a timeout so the indicator renders before blocking on solves
+  setTimeout(() => {
+    // ── Panel A: Tab 1 single pair ──
+    const s = STATE;
+    updateDropletGeometry();
+    const goxQ1 = concentrationToSourceQ(s.t1_goxConc, s.t1_diamUM);
+    const da1 = concentrationToDa(s.t1_hrpConc, s.t1_D, s.t1_diamUM);
+    const dScale1 = diffusionScale(s.t1_D);
+    const drops1 = makeTab1Drops(s.t1_distCells);
+    const rd1 = solveRD(drops1, goxQ1, da1, dScale1);
+    drawHeatClean(document.getElementById('t4-panelA'), drops1, rd1);
+
+    // ── Panel B: t½ vs distance chart ──
+    drawT4DistanceSweep(da1, s.t1_D);
+
+    // ── Panel C: Checkerboard ──
+    const da2 = Math.pow(10, s.t2_daLog);
+    const dl2 = s.t2_diffScale;
+    const dropsC = makeCheckerboard(s.t2_spCells);
+    const rdC = solveRD(dropsC, 1.0, da2, dl2);
+    drawHeatClean(document.getElementById('t4-panelC'), dropsC, rdC);
+
+    // ── Panel D: Segregated blocks ──
+    const dropsD = makeBlocks(s.t2_spCells);
+    const rdD = solveRD(dropsD, 1.0, da2, dl2);
+    drawHeatClean(document.getElementById('t4-panelD'), dropsD, rdD);
+
+    // ── Panel E: Morphogen ──
+    const da3 = Math.pow(10, s.t3_daLog);
+    const dl3 = s.t3_diffScale;
+    initTab3Presets();
+    const dropsE = t3MorphDrops;
+    const rdE = solveRD(dropsE, 1.0, da3, dl3);
+    drawHeatClean(document.getElementById('t4-panelE'), dropsE, rdE);
+
+    // ── Panel F: Saddle ──
+    const dropsF = t3SaddleDrops;
+    const rdF = solveRD(dropsF, 1.0, da3, dl3);
+    drawHeatClean(document.getElementById('t4-panelF'), dropsF, rdF);
+
+    indicator.style.display = 'none';
+  }, 30);
+}
+
+function drawT4DistanceSweep(da, D_um2s) {
+  const cv = document.getElementById('t4-panelB');
+  // Force square aspect from CSS, but need to set canvas size for chart
+  const ctx = cv.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const cw = cv.parentElement.clientWidth || 320;
+  const ch = cw; // square
+  cv.width = cw * dpr;
+  cv.height = ch * dpr;
+  cv.style.width = cw + 'px';
+  cv.style.height = ch + 'px';
+
+  const xs = [], ys = [];
+  for (let dc = 3; dc <= 30; dc++) {
+    const dUM = dc * CELL_UM;
+    xs.push(dUM);
+    ys.push(computeThalf(dUM, D_um2s, da));
+  }
+  const curDist = STATE.t1_distCells * CELL_UM;
+
+  // Use the chart system but need to handle the square aspect
+  // Re-scale context
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
+
+  const pad = {top: 20, right: 12, bottom: 28, left: 40};
+  const pw = cw - pad.left - pad.right;
+  const ph = ch - pad.top - pad.bottom;
+
+  let xMin = Math.min(...xs), xMax = Math.max(...xs);
+  let yMin = 0, yMax = Math.max(...ys) * 1.1;
+  if (yMax === 0) yMax = 1;
+
+  function tx(x) { return pad.left + (x - xMin) / (xMax - xMin) * pw; }
+  function ty(y) { return pad.top + ph - (y - yMin) / (yMax - yMin) * ph; }
+
+  ctx.clearRect(0, 0, cw, ch);
+
+  // Imageable window band
+  const bandTop = ty(Math.min(20, yMax));
+  const bandBot = ty(5);
+  ctx.fillStyle = 'rgba(29,158,117,0.1)';
+  ctx.fillRect(pad.left, bandTop, pw, bandBot - bandTop);
+  ctx.fillStyle = '#1D9E75'; ctx.font = '7px -apple-system,sans-serif';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillText('5-20 min', pad.left + 3, bandTop + 2);
+
+  // Grid
+  ctx.font = '8px -apple-system,sans-serif';
+  ctx.fillStyle = '#999';
+  for (let i = 0; i <= 4; i++) {
+    const yv = yMin + (yMax - yMin) * i / 4;
+    const py = ty(yv);
+    ctx.beginPath(); ctx.moveTo(pad.left, py); ctx.lineTo(cw - pad.right, py);
+    ctx.strokeStyle = 'rgba(0,0,0,0.06)'; ctx.lineWidth = 0.5; ctx.stroke();
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.fillText(yv.toFixed(1), pad.left - 3, py);
+  }
+  for (let i = 0; i < xs.length; i += 6) {
+    const px = tx(xs[i]);
+    ctx.beginPath(); ctx.moveTo(px, pad.top); ctx.lineTo(px, pad.top + ph);
+    ctx.strokeStyle = 'rgba(0,0,0,0.04)'; ctx.lineWidth = 0.5; ctx.stroke();
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText(xs[i].toFixed(0), px, pad.top + ph + 3);
+  }
+
+  // Axis labels
+  ctx.fillStyle = '#888'; ctx.font = '8px -apple-system,sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText('Distance (µm)', pad.left + pw/2, ch - 5);
+  ctx.save();
+  ctx.translate(8, pad.top + ph/2); ctx.rotate(-Math.PI/2);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText('t\u00BD (min)', 0, 0);
+  ctx.restore();
+
+  // Line
+  ctx.beginPath(); ctx.strokeStyle = '#378ADD'; ctx.lineWidth = 1.5;
+  for (let i = 0; i < xs.length; i++) {
+    const px = tx(xs[i]), py = ty(ys[i]);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+
+  // Current distance marker
+  const cpx = tx(curDist);
+  ctx.beginPath(); ctx.moveTo(cpx, pad.top); ctx.lineTo(cpx, pad.top + ph);
+  ctx.strokeStyle = 'rgba(204,16,16,0.5)'; ctx.lineWidth = 1;
+  ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+}
+
+// ── Initial render ───────────────────────────────────────────────────
+readTab1Sliders();
+updateTab1Labels();
+document.getElementById('t1-status').textContent = 'Solving\u2026';
+setTimeout(solveTab1, 50);
+
+</script>
+</body>
+</html>
