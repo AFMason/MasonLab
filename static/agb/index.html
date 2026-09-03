@@ -199,7 +199,7 @@
 
 <script>
   // ---- Posts to the same-origin Pages Function, which forwards to Qualtrics. ----
-  const FORM_ENDPOINT = "/api/join";
+  const FORM_ENDPOINT = ""; // TEMP: set to the Qualtrics link when available
   // ------------------------------------------------------------------------------
 
   const form   = document.getElementById("joinForm");
@@ -221,7 +221,7 @@
     }
 
     if (!FORM_ENDPOINT){
-      showErr("This form is not connected yet. Set FORM_ENDPOINT in the page to a UOW-governed destination before going live.");
+      showErr("The sign-up form is not live yet. Please email alexanderm@uow.edu.au and we will add you to the list.");
       return;
     }
 
