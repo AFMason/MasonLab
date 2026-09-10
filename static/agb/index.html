@@ -129,6 +129,16 @@
       <h2>Keep in touch</h2>
       <p class="muted">Tell us a little and we will keep you posted, and reach out if there is a fit. No spam, and you can ask us to remove your details at any time.</p>
 
+      <p><a class="cta" style="margin-top:8px" href="https://uowcommercial.qualtrics.com/jfe/form/SV_bQHYF40q85SSHRk" target="_blank" rel="noopener">Open the form</a></p>
+      <p class="muted" style="font-size:15px">The form opens in a new tab and takes about a minute.</p>
+
+      <!-- ============================================================
+           EMBEDDED FORM, DISABLED.
+           Restored by: uncommenting this block, removing the two lines
+           above, and re-enabling the <script> at the foot of the page.
+           Requires Qualtrics API access on the commercial brand plus the
+           Pages Function at functions/api/join.js. See SETUP_qualtrics.md.
+           ============================================================
       <form id="joinForm" novalidate>
         <div class="row">
           <label for="name">Name</label>
@@ -169,6 +179,11 @@
           <label class="check"><input type="checkbox" name="interest" value="updates"> Just keeping up with progress</label>
         </fieldset>
 
+        <div class="row">
+          <label for="cargo">What cargo would you like me to help you release for your cell model of MND? <span class="opt">(optional)</span></label>
+          <textarea id="cargo" name="cargo" placeholder="e.g. a morphogen, a small molecule, a growth factor"></textarea>
+        </div>
+
         <fieldset>
           <label class="check">
             <input type="checkbox" id="consent" name="consent" required>
@@ -181,6 +196,8 @@
         <div class="msg" id="okMsg">You are on the list. Thanks, we will be in touch.</div>
         <div class="msg" id="errMsg"></div>
       </form>
+      -->
+
 
       <p class="note" style="margin-top:24px">
         Collection notice. The University of Wollongong (Synthetic Biomimetic Compartments group, Molecular Horizons) collects the details on this form to contact you about the Active Guidance Beads platform and, where relevant, to discuss collaboration. Providing your details is voluntary. We will not disclose them to third parties outside UOW without your consent. You can request access to, correction of, or deletion of your details, or opt out, by emailing <a href="mailto:alexanderm@uow.edu.au">alexanderm@uow.edu.au</a>. Handling of your information is subject to the <a href="#" rel="noopener">UOW Privacy Policy</a>. [Confirm final wording and link with UOW before going live.]
@@ -197,9 +214,10 @@
     </div>
   </footer>
 
-<script>
+<script type="text/plain" id="joinFormScript">
+  // DISABLED while the page links out to Qualtrics. Change type to text/javascript to restore.
   // ---- Posts to the same-origin Pages Function, which forwards to Qualtrics. ----
-  const FORM_ENDPOINT = ""; // TEMP: set to the Qualtrics link when available
+  const FORM_ENDPOINT = "/api/join";
   // ------------------------------------------------------------------------------
 
   const form   = document.getElementById("joinForm");
@@ -221,7 +239,7 @@
     }
 
     if (!FORM_ENDPOINT){
-      showErr("The sign-up form is not live yet. Please email alexanderm@uow.edu.au and we will add you to the list.");
+      showErr("This form is not connected yet. Set FORM_ENDPOINT in the page to a UOW-governed destination before going live.");
       return;
     }
 
