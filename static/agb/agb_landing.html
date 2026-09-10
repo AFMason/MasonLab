@@ -1,0 +1,267 @@
+<!--
+  AGB interest-list landing page.
+  Deploy as index.html (e.g. Cloudflare Pages).
+
+  WIRE-UP: this page posts to a same-origin Cloudflare Pages Function at /api/join
+  (see functions/api/join.js), which forwards the submission to Qualtrics server-side.
+  The Qualtrics API token stays out of the browser, held as an encrypted secret in the
+  Cloudflare project. Setup steps are in SETUP_qualtrics.md.
+
+  PRIVACY: the collection notice below is a starting point. Confirm the final
+  wording and the privacy-policy link with UOW before going live.
+-->
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Active Guidance Beads — retinoic acid interest list</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f9fa; --ink:#14343d; --muted:#586b70; --line:#dbe3e5;
+    --cool:#1f6f8b; --warm:#c65d21; --field:#ffffff; --focus:#1f6f8b;
+    --maxw:680px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px}
+  a{color:var(--cool)}
+  h1,h2{line-height:1.1; letter-spacing:-0.02em; font-weight:700; margin:0}
+
+  /* hero: a point source diffusing into a field, the platform's whole idea */
+  .hero{position:relative; overflow:hidden; padding:96px 0 64px}
+  .field{
+    position:absolute; inset:-40% -20% auto -20%; height:520px; z-index:0;
+    background:radial-gradient(circle at 30% 30%,
+      rgba(31,111,139,0.42) 0%, rgba(31,111,139,0.16) 26%, rgba(31,111,139,0) 62%);
+    transform:scale(0.72); transform-origin:30% 30%; opacity:0;
+    animation:diffuse 1400ms cubic-bezier(.2,.7,.2,1) 120ms forwards;
+  }
+  @keyframes diffuse{to{transform:scale(1); opacity:1}}
+  .hero .wrap{position:relative; z-index:1}
+  h1{font-size:clamp(38px,7vw,60px)}
+  .lede{font-size:clamp(18px,2.4vw,21px); color:var(--muted); max-width:34em; margin:20px 0 0}
+  .cta{
+    display:inline-block; margin-top:32px; background:var(--ink); color:#fff;
+    text-decoration:none; font-weight:600; padding:14px 26px; border-radius:2px;
+  }
+  .cta:hover{background:#0e262c}
+
+  section{padding:40px 0; border-top:1px solid var(--line)}
+  section:first-of-type{border-top:0}
+  h2{font-size:clamp(22px,3.4vw,28px); margin-bottom:14px}
+  p{margin:0 0 16px}
+  .muted{color:var(--muted)}
+  .note{
+    font-size:15px; color:var(--muted); background:#eef4f5;
+    border-left:3px solid var(--cool); padding:14px 16px; border-radius:2px;
+  }
+
+  form{display:grid; gap:20px; margin-top:8px}
+  .row{display:grid; gap:6px}
+  label{font-weight:600; font-size:15px}
+  label .opt{font-weight:400; color:var(--muted)}
+  input[type=text], input[type=email], select, textarea{
+    font:inherit; color:var(--ink); background:var(--field);
+    border:1px solid var(--line); border-radius:2px; padding:11px 12px; width:100%;
+  }
+  textarea{min-height:84px; resize:vertical}
+  input:focus, select:focus, textarea:focus{
+    outline:2px solid var(--focus); outline-offset:1px; border-color:var(--focus)
+  }
+  fieldset{border:0; padding:0; margin:0; display:grid; gap:9px}
+  fieldset legend{font-weight:600; font-size:15px; padding:0; margin-bottom:3px}
+  .check{display:flex; gap:10px; align-items:flex-start; font-weight:400; font-size:16px}
+  .check input{margin-top:4px; width:18px; height:18px; accent-color:var(--cool); flex:0 0 auto}
+  .submit{
+    justify-self:start; background:var(--cool); color:#fff; border:0; cursor:pointer;
+    font:inherit; font-weight:600; padding:13px 28px; border-radius:2px;
+  }
+  .submit:hover{background:#195a71}
+  .submit:disabled{opacity:.55; cursor:default}
+
+  .msg{padding:14px 16px; border-radius:2px; font-size:15px; display:none}
+  .msg.ok{display:block; background:#e7f2ec; border-left:3px solid #2e7d5b; color:#1c4736}
+  .msg.err{display:block; background:#fbece6; border-left:3px solid var(--warm); color:#7a3413}
+
+  footer{padding:36px 0 64px; border-top:1px solid var(--line); color:var(--muted); font-size:14px}
+  footer p{margin:0 0 8px}
+
+  @media (prefers-reduced-motion:reduce){
+    .field{animation:none; transform:scale(1); opacity:1}
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="field" aria-hidden="true"></div>
+    <div class="wrap">
+      <h1>Do you work with retinoic acid?</h1>
+      <p class="lede">We are building cell-sized beads that place retinoic acid where you want it, so your cells see a gradient rather than a bath. Early-stage, non-clinical, and open to collaborators.</p>
+      <a class="cta" href="#join">Join the list</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section>
+      <h2>The problem, briefly</h2>
+      <p>Retinoic acid goes into culture as a uniform bath and gets treated as a fixed dose. It is not fixed: it isomerises under ambient light, oxidises, and adsorbs to plastic and protein, so the delivered dose differs from the nominal one. And a bath has no position, so every cell sees the same input and protocols converge on a narrow band of regional identity.</p>
+      <p>In development the same molecule carries position as a spatial gradient. We are putting the source back in the dish: small beads, placed where you choose, releasing locally.</p>
+    </section>
+
+    <section>
+      <h2>Where this is up to</h2>
+      <p>Honest version. We can place beads at defined positions in standard plates, and we can show tunable, sustained release of a model cargo. Quantitative release of retinoic acid is still being measured, and we draw no conclusions yet on release kinetics or dose response.</p>
+      <p class="muted">If you run a retinoic-acid-dependent protocol and want to know what your cells actually see, or want to try a placed source instead of a bath, that is exactly who we are looking for. The biology comes from you; the delivery and the measurement come from us.</p>
+    </section>
+
+    <section id="join">
+      <h2>Keep in touch</h2>
+      <p class="muted">Tell us a little and we will keep you posted, and reach out if there is a fit. No spam, and you can ask us to remove your details at any time.</p>
+
+      <p><a class="cta" style="margin-top:8px" href="https://uowcommercial.qualtrics.com/jfe/form/SV_bQHYF40q85SSHRk" target="_blank" rel="noopener">Open the form</a></p>
+      <p class="muted" style="font-size:15px">The form opens in a new tab and takes about a minute.</p>
+
+      <!-- ============================================================
+           EMBEDDED FORM, DISABLED.
+           Restored by: uncommenting this block, removing the two lines
+           above, and re-enabling the <script> at the foot of the page.
+           Requires Qualtrics API access on the commercial brand plus the
+           Pages Function at functions/api/join.js. See SETUP_qualtrics.md.
+           ============================================================
+      <form id="joinForm" novalidate>
+        <div class="row">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required>
+        </div>
+
+        <div class="row">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+        </div>
+
+        <div class="row">
+          <label for="org">Institution or organisation</label>
+          <input id="org" name="organisation" type="text" autocomplete="organization" required>
+        </div>
+
+        <div class="row">
+          <label for="role">Which best describes you?</label>
+          <select id="role" name="role" required>
+            <option value="" selected disabled>Choose one</option>
+            <option>Academic lab</option>
+            <option>Core or shared research facility</option>
+            <option>Industry or biotech</option>
+            <option>Clinician or clinical researcher</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <label for="work">What do you use retinoic acid for? <span class="opt">(optional)</span></label>
+          <textarea id="work" name="work" placeholder="e.g. motor neuron differentiation, organoid patterning, a specific protocol"></textarea>
+        </div>
+
+        <fieldset>
+          <legend>I am interested in</legend>
+          <label class="check"><input type="checkbox" name="interest" value="collaboration"> A possible collaboration</label>
+          <label class="check"><input type="checkbox" name="interest" value="try-platform"> Trying the platform when it is ready</label>
+          <label class="check"><input type="checkbox" name="interest" value="updates"> Just keeping up with progress</label>
+        </fieldset>
+
+        <div class="row">
+          <label for="cargo">What cargo would you like me to help you release for your cell model of MND? <span class="opt">(optional)</span></label>
+          <textarea id="cargo" name="cargo" placeholder="e.g. a morphogen, a small molecule, a growth factor"></textarea>
+        </div>
+
+        <fieldset>
+          <label class="check">
+            <input type="checkbox" id="consent" name="consent" required>
+            <span>I agree to the University of Wollongong contacting me about this work and storing the details above for that purpose. I understand this is voluntary and I can ask to access, correct or delete my details at any time.</span>
+          </label>
+        </fieldset>
+
+        <button class="submit" type="submit">Join the list</button>
+
+        <div class="msg" id="okMsg">You are on the list. Thanks, we will be in touch.</div>
+        <div class="msg" id="errMsg"></div>
+      </form>
+      -->
+
+
+      <p class="note" style="margin-top:24px">
+        Collection notice. The University of Wollongong (Synthetic Biomimetic Compartments group, Molecular Horizons) collects the details on this form to contact you about the Active Guidance Beads platform and, where relevant, to discuss collaboration. Providing your details is voluntary. We will not disclose them to third parties outside UOW without your consent. You can request access to, correction of, or deletion of your details, or opt out, by emailing <a href="mailto:alexanderm@uow.edu.au">alexanderm@uow.edu.au</a>. Handling of your information is subject to the <a href="#" rel="noopener">UOW Privacy Policy</a>. [Confirm final wording and link with UOW before going live.]
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>Synthetic Biomimetic Compartments group, Molecular Horizons and School of Chemistry and Molecular Bioscience, University of Wollongong.</p>
+      <p>Supported by the Australian Research Council (DECRA) and MND Australia.</p>
+      <p>Contact: <a href="mailto:alexanderm@uow.edu.au">alexanderm@uow.edu.au</a></p>
+    </div>
+  </footer>
+
+<script type="text/plain" id="joinFormScript">
+  // DISABLED while the page links out to Qualtrics. Change type to text/javascript to restore.
+  // ---- Posts to the same-origin Pages Function, which forwards to Qualtrics. ----
+  const FORM_ENDPOINT = "/api/join";
+  // ------------------------------------------------------------------------------
+
+  const form   = document.getElementById("joinForm");
+  const okMsg  = document.getElementById("okMsg");
+  const errMsg = document.getElementById("errMsg");
+  const btn    = form.querySelector(".submit");
+
+  function showErr(text){ okMsg.classList.remove("ok"); errMsg.textContent = text; errMsg.classList.add("err"); }
+  function clearMsgs(){ okMsg.classList.remove("ok"); errMsg.classList.remove("err"); errMsg.textContent = ""; }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearMsgs();
+
+    if (!form.checkValidity()){
+      showErr("Please complete the required fields, including the consent box.");
+      form.reportValidity();
+      return;
+    }
+
+    if (!FORM_ENDPOINT){
+      showErr("This form is not connected yet. Set FORM_ENDPOINT in the page to a UOW-governed destination before going live.");
+      return;
+    }
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.interest = [...form.querySelectorAll('input[name="interest"]:checked')].map(i => i.value);
+
+    btn.disabled = true;
+    try{
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("bad response");
+      form.reset();
+      okMsg.classList.add("ok");
+    }catch(_){
+      showErr("Something went wrong sending that. Please email alexanderm@uow.edu.au and we will add you.");
+    }finally{
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
