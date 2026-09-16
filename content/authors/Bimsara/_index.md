@@ -1,10 +1,10 @@
 ---
 # Display name
-title: Bimsara Pusweldiniya
+title: Bimsara Pusweldeniya
 
 # Full name (for SEO)
 first_name: Bimsara
-last_name: Pusweldiniya
+last_name: Pusweldeniya
 
 # Username (this should match the folder name)
 authors:
@@ -22,7 +22,7 @@ organizations:
     url: 'https://www.uow.edu.au/'
 
 # Short bio (displayed in user profile at end of posts)
-bio: ''
+bio: 'HDR Candidate engineering spatial morphogen gradients to direct motor neuron differentiation using Active Guidance Beads (AGBs).'
 
 interests: []
 
@@ -41,4 +41,8 @@ user_groups:
   - Researchers
 ---
 
-Bio coming soon.
+Bimsara is an HDR Candidate engineering spatial morphogen gradients to direct region-specific motor neuron differentiation using Active Guidance Beads (AGBs), all within a single culture.
+
+They were drawn to the project by a fascination with stem cell biology and the elegance of how the human embryonic spinal cord forms in nature, and by the challenge of translating that developmental process into the lab using concepts from synthetic cell biology to guide stem cells toward a model that mirrors nature's own blueprint.
+
+Outside the lab, Bimsara enjoys travelling, music, and reading.
