@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Animal-free by design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #10212a;
+    --teal-950: #082a35;
+    --teal-900: #0b3340;
+    --teal-700: #13576a;
+    --teal-500: #2f8197;
+    --teal-100: #e2eef1;
+    --teal-050: #f1f7f8;
+    --ochre: #e0a019;
+    --ochre-ink: #855600;
+    --ochre-wash: #fbf0d6;
+    --grey-700: #4b5a62;
+    --grey-500: #7c8a92;
+    --line: #d3dde1;
+    --paper: #ffffff;
+    --on-dark: #eaf3f5;
+    --on-dark-2: #a9c3ca;
+    --rail: 230px;
+    --gutter: clamp(16px, 4vw, 56px);
+  }
+  /* Layout: strategy-document cover, then a contents rail beside a single reading column. Deliberately single-theme (light). */
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scrollbar-color: var(--teal-500) var(--teal-050); }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Public Sans", "Segoe UI", sans-serif; font-size: 17px; line-height: 1.6;
+    font-variant-numeric: tabular-nums lining-nums; -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--ochre); color: var(--teal-950); }
+  :focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius: 2px; }
+  a { color: inherit; text-underline-offset: .22em; text-decoration-thickness: 1px; }
+  h1, h2, h3 { margin: 0; line-height: 1.08; letter-spacing: -.015em; text-wrap: balance; }
+  h2 { font-size: clamp(30px, 3.6vw, 44px); font-weight: 800; color: var(--teal-900); margin-bottom: 18px; }
+  h3 { font-size: 20px; font-weight: 700; letter-spacing: -.005em; }
+  p { margin: 0 0 1em; max-width: 68ch; }
+  .lede { font-size: clamp(18px, 1.5vw, 21px); line-height: 1.55; color: var(--grey-700); }
+
+  /* ---------- Cover ---------- */
+  .cover { background: var(--teal-900); color: var(--on-dark); position: relative; overflow: hidden; }
+  .cover::after { content: ""; position: absolute; right: -8vw; bottom: -30%; width: 58vw; height: 120%; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(47,129,151,.55), rgba(11,51,64,0)); pointer-events: none; }
+  .cover-inner { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
+  .masthead { display: flex; justify-content: space-between; gap: 16px; padding: 22px 0; font-size: 14px; color: var(--on-dark-2); border-bottom: 1px solid rgba(234,243,245,.18); }
+  .masthead b { color: var(--on-dark); font-weight: 700; }
+  .cover-body { display: grid; grid-template-columns: 1.2fr .8fr; gap: clamp(28px, 5vw, 80px); padding: clamp(56px, 9vw, 120px) 0 clamp(48px, 7vw, 88px); align-items: end; }
+  .cover h1 { font-size: clamp(52px, 7.6vw, 100px); font-weight: 800; letter-spacing: -.035em; line-height: .95; }
+  .cover h1 span { color: var(--ochre); }
+  .cover .lede { color: var(--on-dark); margin-top: 28px; }
+  .cover .by { color: var(--on-dark-2); font-size: 15px; }
+  .cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 10px; padding: 14px 22px; background: var(--ochre); color: var(--teal-950); font-weight: 700; font-size: 16.5px;
+    text-decoration: none; border-radius: 999px; transition: transform .3s cubic-bezier(.16,1,.3,1), background .2s; }
+  .cta:hover { background: #f0b437; transform: translateY(-1px); }
+  .cta svg { width: 16px; height: 16px; }
+  .context { border-left: 1px solid rgba(234,243,245,.22); padding-left: clamp(18px, 2.5vw, 36px); }
+  .context h2 { color: var(--on-dark); font-size: 15px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px; }
+  .context ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+  .context li { font-size: 15.5px; line-height: 1.45; color: var(--on-dark-2); }
+  .context li b { display: block; color: var(--on-dark); font-size: 26px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin-bottom: 2px; }
+  .context li b.au { color: var(--ochre); }
+
+  /* ---------- Body with contents rail ---------- */
+  .doc { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); display: grid; grid-template-columns: var(--rail) 1fr; gap: clamp(28px, 4vw, 64px); }
+  .rail { position: sticky; top: env(safe-area-inset-top, 0px); align-self: start; padding: 64px 0 24px; }
+  .rail p { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-500); margin: 0 0 12px; }
+  .rail ol { list-style: none; margin: 0; padding: 0; counter-reset: c; display: grid; gap: 2px; }
+  .rail li { counter-increment: c; }
+  .rail a { display: grid; grid-template-columns: 26px 1fr; padding: 7px 0; text-decoration: none; font-size: 15px; line-height: 1.35; color: var(--grey-700); border-top: 1px solid var(--line); }
+  .rail a::before { content: counter(c); font-weight: 700; color: var(--teal-500); }
+  .rail a:hover { color: var(--teal-900); }
+  .content { min-width: 0; }
+  .chapter { padding: 64px 0 56px; border-top: 1px solid var(--line); }
+  .chapter:first-child { border-top: none; }
+  .chapter .num { display: block; font-size: 15px; font-weight: 700; color: var(--teal-500); margin-bottom: 10px; }
+
+  /* Two gaps */
+  .stations { display: grid; grid-template-columns: 1fr 120px 1fr 120px 1fr; margin-top: 28px; }
+  .station { background: var(--teal-050); border-radius: 10px; padding: 20px 18px; display: flex; flex-direction: column; }
+  .station.lead { background: var(--ochre-wash); box-shadow: inset 0 0 0 2px var(--ochre); }
+  .station h3 { margin-bottom: 10px; }
+  .station svg { width: 100%; height: 80px; display: block; margin-bottom: 12px; }
+  .station p { font-size: 15px; color: var(--grey-700); margin: auto 0 0; }
+  .gap { display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 0 8px; font-size: 14px; line-height: 1.35; color: var(--grey-700); }
+  .gap strong { display: block; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--teal-700); }
+  .gap svg { width: 100%; height: 16px; margin: 8px 0; }
+  .gap .vdim { display: none; }
+  .gap strong { overflow-wrap: normal; letter-spacing: .03em; font-size: 12px; }
+  .gap.open strong, .gap.open span { color: var(--ochre-ink); font-weight: 700; }
+  .spans { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; margin-top: 16px; font-size: 15px; }
+  .spans div { border-top: 2px solid var(--line); padding-top: 8px; color: var(--grey-700); }
+  .spans div.uow { border-color: var(--ochre); color: var(--ochre-ink); font-weight: 700; }
+
+  /* Inside gap 2 */
+  .tracks { margin-top: 26px; display: grid; gap: 12px; }
+  .track { display: grid; grid-template-columns: 150px repeat(4, 1fr); gap: 12px 26px; }
+  .track .who { font-weight: 700; font-size: 17px; line-height: 1.2; align-self: center; color: var(--grey-700); }
+  .track .who small { display: block; font-weight: 400; font-size: 14px; }
+  .track.eng .who { color: var(--teal-900); }
+  .cell { border-radius: 8px; padding: 14px; background: var(--teal-050); position: relative; }
+  .cell h3 { font-size: 17px; margin-bottom: 4px; }
+  .cell p { font-size: 14.5px; line-height: 1.45; color: var(--grey-700); margin: 0; }
+  .track.today .cell.box { background: repeating-linear-gradient(135deg, #eef3f5 0 7px, #e1e9ec 7px 9px); outline: 1px dashed var(--grey-500); outline-offset: -1px; }
+  .track.today .q { font-size: 24px; font-weight: 800; color: var(--grey-500); line-height: 1; margin-top: 4px; }
+  .track.eng .cell { background: var(--teal-900); }
+  .track.eng .cell h3 { color: var(--on-dark); }
+  .track.eng .cell p { color: var(--on-dark-2); }
+  .cell + .cell::before { content: ""; position: absolute; left: -24px; top: 50%; width: 16px; height: 2px; background: var(--grey-500); }
+  .cell + .cell::after { content: ""; position: absolute; left: -10px; top: calc(50% - 6px); border: 6px solid transparent; border-left: 8px solid var(--grey-500); border-right: 0; }
+  .track.eng .cell + .cell::after { border-left-color: var(--teal-700); }
+  .track.eng .cell + .cell::before { background: var(--teal-700); height: 3px; }
+  .fieldbar { height: 9px; border-radius: 9px; margin: 8px 0 6px; background: linear-gradient(90deg, var(--ochre), rgba(224,160,25,.08)); }
+  .loopnote { margin: 14px 0 0 176px; padding: 10px 16px; border-radius: 999px; background: var(--ochre-wash); color: var(--ochre-ink); font-weight: 600; font-size: 15px; display: inline-block; }
+  .evidence { margin-top: 26px; font-size: 15.5px; color: var(--grey-700); }
+  .evidence b { color: var(--ink); }
+
+  /* Whitworth spread */
+  .spread { background: var(--teal-950); color: var(--on-dark); }
+  .spread-inner { max-width: 1240px; margin: 0 auto; padding: clamp(64px, 9vw, 120px) var(--gutter); display: grid; grid-template-columns: var(--rail) 1fr; gap: clamp(28px, 4vw, 64px); }
+  .spread .label { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--on-dark-2); padding-top: 10px; }
+  .spread .hist { font-size: clamp(19px, 1.7vw, 23px); color: var(--on-dark-2); max-width: 54ch; margin-bottom: 22px; }
+  .spread .now { font-size: clamp(34px, 4.4vw, 58px); font-weight: 800; line-height: 1.04; letter-spacing: -.03em; max-width: 19ch; margin: 0; }
+  .spread .now span { color: var(--ochre); }
+
+  /* Where UOW fits */
+  .fit { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; margin-top: 26px; align-items: start; }
+  .layers { display: grid; gap: 8px; }
+  .layer { padding: 16px 18px; border-radius: 8px; background: var(--teal-050); display: flex; justify-content: space-between; gap: 14px; align-items: baseline; }
+  .layer h3 { font-size: 18px; }
+  .layer span { font-size: 14.5px; color: var(--grey-700); text-align: right; }
+  .layer.uow { background: var(--teal-900); color: var(--on-dark); }
+  .layer.uow span { color: var(--ochre); font-weight: 700; }
+  .note { background: var(--ochre-wash); border-radius: 10px; padding: 18px 20px; }
+  .note h3 { font-size: 18px; margin-bottom: 6px; color: var(--ochre-ink); }
+  .note p { font-size: 15.5px; margin: 0; color: var(--ink); }
+  .note.precedent { margin-top: 18px; background: var(--teal-050); }
+  .note.precedent h3 { color: var(--teal-900); }
+
+  /* Roadmap */
+  .roadmap { margin-top: 30px; position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .roadmap::before { content: ""; position: absolute; left: 10px; right: 10px; top: 11px; height: 3px; background: linear-gradient(90deg, var(--ochre) 0 20%, var(--teal-100) 20% 100%); border-radius: 3px; }
+  .stop { position: relative; padding-top: 38px; }
+  .stop::before { content: ""; position: absolute; top: 2px; left: 0; width: 18px; height: 18px; border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 3px var(--teal-500); }
+  .stop.now::before { background: var(--ochre); box-shadow: 0 0 0 5px rgba(224,160,25,.25); }
+  .stop .when { font-size: 13px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--teal-500); }
+  .stop.now .when { color: var(--ochre-ink); }
+  .stop h3 { font-size: 18px; margin: 4px 0 12px; }
+  .stop .ret { font-size: 14.5px; line-height: 1.45; color: var(--grey-700); border-top: 1px solid var(--line); padding-top: 10px; }
+  .stop .ret b { display: block; color: var(--teal-900); font-size: 13px; letter-spacing: .05em; text-transform: uppercase; }
+  .stop.now { background: var(--ochre-wash); border-radius: 10px; padding: 38px 14px 14px; margin-top: -10px; }
+  .stop.now::before { left: 14px; top: 12px; }
+  .roadmap-note { margin-top: 20px; font-size: 15.5px; color: var(--grey-700); }
+
+  /* Investment */
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+  .stage { border-radius: 8px; padding: 16px; background: var(--teal-050); position: relative; }
+  .stage.uow { background: var(--teal-900); color: var(--on-dark); }
+  .stage.uow p { color: var(--on-dark-2); }
+  .stage.users { background: var(--ochre-wash); }
+  .stage h3 { font-size: 17px; margin-bottom: 6px; }
+  .stage p { font-size: 14.5px; line-height: 1.45; color: var(--grey-700); margin: 0; }
+  .stage em { display: block; font-style: normal; font-size: 13.5px; font-weight: 700; margin-top: 10px; color: var(--ochre); }
+  .stage.users em { color: var(--ochre-ink); }
+  .stage + .stage::before { content: ""; position: absolute; left: -12px; top: 50%; width: 12px; height: 2px; background: var(--teal-500); }
+  .flowloop { margin-top: 12px; font-size: 15px; font-weight: 600; color: var(--teal-700); }
+  .fine { font-size: 14px; color: var(--grey-500); margin-top: 6px; }
+  h3.sub { font-size: 24px; font-weight: 800; color: var(--teal-900); margin-top: 48px; }
+  .bar { display: flex; height: 54px; border-radius: 8px; overflow: hidden; margin-top: 16px; }
+  .bar div { display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; padding: 0 6px; text-align: center; min-width: 0; line-height: 1.15; }
+  .b-std { flex: 280.3; background: var(--teal-700); color: #fff; }
+  .b-stip { flex: 134.5; background: var(--teal-950); color: #fff; }
+  .b-ra { flex: 246.2; background: var(--ochre); color: var(--teal-950); }
+  .b-stay { flex: 7.95; background: var(--ochre-ink); }
+  .b-fac { flex: 40; background: var(--teal-500); color: #fff; }
+  .barnote { display: flex; justify-content: space-between; gap: 16px; font-size: 14.5px; color: var(--grey-700); margin-top: 8px; }
+  .legend { display: grid; gap: 6px 24px; grid-template-columns: repeat(2, auto); justify-content: start; margin-top: 12px; font-size: 14.5px; color: var(--grey-700); }
+  .legend span { display: inline-flex; gap: 8px; align-items: center; }
+  .legend i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+  .spec { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 15px; }
+  .spec th { text-align: left; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-500); border-bottom: 2px solid var(--teal-900); padding: 8px 12px 8px 0; }
+  .spec td { border-bottom: 1px solid var(--line); padding: 12px 12px 12px 0; vertical-align: top; line-height: 1.45; }
+  .spec td.line { font-weight: 700; width: 20%; }
+  .spec td.amt { font-weight: 800; color: var(--teal-900); white-space: nowrap; width: 12%; }
+  .spec td.ret { color: var(--ochre-ink); font-weight: 600; width: 28%; }
+  .spec tr.hl td { background: var(--ochre-wash); }
+  .spec tr.hl td:first-child { padding-left: 10px; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 30px; }
+  .panel { border-radius: 10px; padding: 20px 22px; }
+  .panel h3 { font-size: 19px; margin-bottom: 8px; }
+  .panel p { font-size: 15px; margin: 0; }
+  .panel.income { background: var(--teal-900); color: var(--on-dark); }
+  .panel.income p { color: var(--on-dark-2); }
+  .panel.income ul { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; font-size: 15px; }
+  .panel.income li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(234,243,245,.15); padding-bottom: 8px; }
+  .panel.income li i { font-style: normal; font-weight: 700; font-size: 13.5px; color: var(--teal-950); background: var(--ochre); padding: 1px 9px; border-radius: 999px; white-space: nowrap; align-self: start; }
+  .panel.income li i.none { background: none; color: var(--on-dark-2); }
+  .panel.staged { background: var(--teal-050); }
+  .panel.staged b { color: var(--teal-900); }
+
+  .legend span, .panel.income li span, .flow > *, .tracks > *, .stations > *, .fit > *, .panels > * { min-width: 0; }
+  body { overflow-wrap: break-word; }
+  footer { background: var(--teal-950); color: var(--on-dark-2); font-size: 13.5px; }
+  footer .inner { max-width: 1240px; margin: 0 auto; padding: 32px var(--gutter) 40px; }
+  footer p { max-width: none; margin-bottom: .6em; }
+
+  @media (max-width: 1000px) {
+    .doc, .spread-inner { grid-template-columns: 1fr; }
+    .rail { display: none; }
+    .spread .label { padding: 0; }
+    .cover-body, .fit { grid-template-columns: 1fr; }
+    .context { border-left: none; padding-left: 0; border-top: 1px solid rgba(234,243,245,.22); padding-top: 24px; }
+    .stations { grid-template-columns: 1fr; gap: 0; }
+    .gap { flex-direction: row; text-align: left; gap: 12px; padding: 12px 6px; align-items: center; }
+    .gap svg { width: 16px; height: 40px; margin: 0; flex: none; }
+    .spans { grid-template-columns: 1fr; }
+    .track { grid-template-columns: 1fr; }
+    .stage + .stage::before { display: none; }
+    .track { gap: 30px; }
+    .track > .who { margin-bottom: -14px; }
+    .cell + .cell::before { left: 50%; top: -26px; width: 2px; height: 16px; }
+    .track.eng .cell + .cell::before { width: 3px; height: 16px; }
+    .cell + .cell::after { left: calc(50% - 6px); top: -12px; border: 6px solid transparent; border-top: 8px solid var(--grey-500); border-bottom: 0; }
+    .track.eng .cell + .cell::after { border-left-color: transparent; border-top-color: var(--teal-700); }
+    .gap { display: grid; grid-template-columns: 30px 1fr; grid-template-rows: auto auto; column-gap: 14px; row-gap: 2px; align-items: center; text-align: left;
+      margin: 12px 0; padding: 14px 16px; border-radius: 10px; background: var(--teal-050); border: 1.5px dashed var(--teal-500); }
+    .gap .vdim { display: block; grid-row: 1 / span 2; width: 30px; height: 76px; }
+    .gap > svg:not(.vdim) { display: none; }
+    .gap strong { font-size: 17px; align-self: end; }
+    .gap span { font-size: 16px; align-self: start; }
+    .gap.open { background: var(--ochre-wash); border: 2px solid var(--ochre); padding: 18px 16px; }
+    .gap.open strong { font-size: 19px; }
+    .loopnote { margin-left: 0; border-radius: 10px; }
+    .roadmap { grid-template-columns: 1fr; gap: 0; }
+    .roadmap::before { left: 8px; right: auto; top: 10px; bottom: 10px; width: 3px; height: auto; background: linear-gradient(180deg, var(--ochre) 0 18%, var(--teal-100) 18% 100%); }
+    .stop { padding: 0 0 20px 36px; }
+    .stop::before { top: 2px; }
+    .stop.now { margin: 0 0 16px; padding: 14px 14px 14px 36px; }
+    .stop.now::before { left: 0; top: 16px; }
+    .flow, .panels { grid-template-columns: 1fr; }
+    .legend { grid-template-columns: 1fr; }
+    .bar div { font-size: 12.5px; }
+    .bar .hide-s { display: none; }
+    .barnote { flex-direction: column; gap: 2px; }
+    .spec thead { display: none; }
+    .spec, .spec tbody, .spec tr, .spec td { display: block; width: auto !important; }
+    .spec tr { border-bottom: 1px solid var(--line); padding: 12px 0; }
+    .spec tr.hl { background: var(--ochre-wash); padding: 12px; border-radius: 8px; margin: 6px 0; }
+    .spec td { border: none; padding: 2px 0; background: none !important; }
+    .spec td.del::before { content: "Delivers: "; font-weight: 700; }
+    .spec td.ret::before { content: "Return: "; font-weight: 700; }
+  }
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    .masthead { flex-direction: column; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+<header class="cover">
+  <div class="cover-inner">
+    <div class="masthead"><span><b>University of Wollongong</b> · Molecular Horizons</span><span>A proposal for the University of Wollongong · October 2026</span></div>
+    <div class="cover-body">
+      <div>
+        <h1>Animal-free, <span>by design</span></h1>
+        <p class="lede">Human models are replacing animal models worldwide, but they are not yet reproducible: the same protocol gives different results in different laboratories.
+          Synthetic cell engineering can specify and measure the signal these models are missing. This is an investment in a capability UOW will own, and I will lead it,
+          starting with a Future Fellowship.</p>
+        <p class="lede" style="margin-top:0">Now is the time to invest. The DECRA paid the cost of building the lab from scratch, and its outputs, trained people and network are landing now.</p>
+        <p class="by">Dr Alexander Mason · ARC DECRA Fellow · Synthetic Biomimetic Compartments Lab</p>
+        <a class="cta" href="#roadmap">See the investment and the return
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v11M3 8.5 8 13.5l5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+      <aside class="context" aria-labelledby="ctx">
+        <h2 id="ctx">The context</h2>
+        <ol>
+          <li><b>€124.5M</b>Dutch National Growth Fund stake in Ombion, a national animal-free centre (2025)</li>
+          <li><b>250</b>researchers in Roche's new Institute of Human Biology, Basel (2026)</li>
+          <li><b class="au">Action 28</b>Australia's proposed national platform for non-animal technologies. Not yet funded</li>
+          <li><b>$5M</b>QUT ARC Training Centre for organ-on-chip systems (MiPSET, 2025)</li>
+        </ol>
+      </aside>
+    </div>
+  </div>
+</header>
+
+<div class="doc">
+  <nav class="rail" aria-label="Contents">
+    <p>Contents</p>
+    <ol>
+      <li><a href="#problem">The problem: two gaps</a></li>
+      <li><a href="#inside">Where the gap is</a></li>
+      <li><a href="#fit">Where UOW fits</a></li>
+      <li><a href="#roadmap">The investment and the return</a></li>
+    </ol>
+  </nav>
+
+  <main class="content">
+    <section class="chapter" id="problem">
+      
+      <h2>Two gaps between animal models and reliable human biology</h2>
+      <div class="stations">
+        <div class="station">
+          <h3>Animal models</h3>
+          <svg viewBox="0 0 200 80" aria-hidden="true">
+            <path d="M58,50 C40,52 38,68 22,64" fill="none" stroke="#7c8a92" stroke-width="2.2" stroke-linecap="round"/>
+            <ellipse cx="94" cy="48" rx="36" ry="22" fill="#b9c8ce"/><circle cx="130" cy="38" r="16" fill="#b9c8ce"/>
+            <circle cx="125" cy="23" r="9" fill="#d6e2e6" stroke="#b9c8ce" stroke-width="2"/>
+            <circle cx="137" cy="36" r="2.2" fill="#10212a"/><circle cx="146" cy="41" r="2.6" fill="#d98c9b"/>
+            <path d="M78,68 v6 M112,68 v6" stroke="#7c8a92" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+          <p>Not human biology. Slow ethics, costly housing.</p>
+        </div>
+        <div class="gap"><svg class="vdim" viewBox="0 0 24 80" aria-hidden="true"><line x1="12" y1="10" x2="12" y2="70" stroke="#2f8197" stroke-width="3"/><path d="M12,1 4,13 20,13Z M12,79 4,67 20,67Z" fill="#2f8197"/></svg><strong>Gap 1: species</strong>
+          <svg viewBox="0 0 120 16" preserveAspectRatio="none" aria-hidden="true"><line x1="6" y1="8" x2="114" y2="8" stroke="#2f8197" stroke-width="2"/><path d="M2,8 10,3 10,13Z M118,8 110,3 110,13Z" fill="#2f8197"/></svg>
+          <span>Closing: organoids, organs-on-chip</span></div>
+        <div class="station">
+          <h3>Human stem-cell models</h3>
+          <svg viewBox="0 0 200 80" aria-hidden="true">
+            <g fill="none" stroke="#10212a" stroke-width="1.6"><path d="M14,12 V60 a4,4 0 0 0 4,4 H62 a4,4 0 0 0 4,-4 V12"/><path d="M76,12 V60 a4,4 0 0 0 4,4 H124 a4,4 0 0 0 4,-4 V12"/><path d="M138,12 V60 a4,4 0 0 0 4,4 H186 a4,4 0 0 0 4,-4 V12"/></g>
+            <g opacity=".22" fill="#e0a019"><rect x="15" y="22" width="50" height="41"/><rect x="77" y="22" width="50" height="41"/><rect x="139" y="22" width="50" height="41"/></g>
+            <g stroke-width="1"><g fill="#4B3A8C" stroke="#2E2360"><path d="M17,63 a5,6 0 0 1 11,0Z"/><path d="M29,63 a5,6 0 0 1 11,0Z"/><path d="M41,63 a5,6 0 0 1 11,0Z"/><path d="M91,63 a5,6 0 0 1 11,0Z"/><path d="M141,63 a5,6 0 0 1 11,0Z"/><path d="M177,63 a5,6 0 0 1 11,0Z"/></g>
+            <g fill="#9FD8C4" stroke="#3F7F6A"><path d="M53,63 a5,6 0 0 1 11,0Z"/><path d="M79,63 a5,6 0 0 1 11,0Z"/><path d="M103,63 a5,6 0 0 1 11,0Z"/><path d="M115,63 a5,6 0 0 1 11,0Z"/><path d="M153,63 a5,6 0 0 1 11,0Z"/><path d="M165,63 a5,6 0 0 1 11,0Z"/></g></g>
+            <g font-family="Public Sans" font-size="11" font-weight="700" fill="#4b5a62" text-anchor="middle"><text x="40" y="78">Lab 1</text><text x="102" y="78">Lab 2</text><text x="164" y="78">Lab 3</text></g>
+          </svg>
+          <p>Human, but a nominal recipe: same protocol, different outcome.</p>
+        </div>
+        <div class="gap open"><svg class="vdim" viewBox="0 0 24 80" aria-hidden="true"><line x1="12" y1="10" x2="12" y2="70" stroke="#e0a019" stroke-width="4"/><path d="M12,1 4,13 20,13Z M12,79 4,67 20,67Z" fill="#e0a019"/></svg><strong>Gap 2: reproducibility</strong>
+          <svg viewBox="0 0 120 16" preserveAspectRatio="none" aria-hidden="true"><line x1="6" y1="8" x2="114" y2="8" stroke="#e0a019" stroke-width="3"/><path d="M2,8 11,2 11,14Z M118,8 109,2 109,14Z" fill="#e0a019"/></svg>
+          <span>Open: bridged by synthetic cell engineering</span></div>
+        <div class="station lead">
+          <h3>Engineered human models</h3>
+          <svg viewBox="0 0 200 80" aria-hidden="true">
+            <defs><linearGradient id="fg" x1="0" x2="1"><stop offset="0" stop-color="#e0a019" stop-opacity=".9"/><stop offset=".55" stop-color="#e0a019" stop-opacity=".3"/><stop offset="1" stop-color="#e0a019" stop-opacity="0"/></linearGradient></defs>
+            <path d="M8,20 V60 a4,4 0 0 0 4,4 H188 a4,4 0 0 0 4,-4 V20" fill="none" stroke="#10212a" stroke-width="1.6"/>
+            <rect x="9" y="28" width="182" height="35" fill="url(#fg)"/>
+            <circle cx="20" cy="55" r="8" fill="#e0a019" stroke="#855600" stroke-width="1.5"/>
+            <g stroke-width="1"><g fill="#4B3A8C" stroke="#2E2360"><path d="M32,63 a5,6 0 0 1 11,0Z"/><path d="M45,63 a5,6 0 0 1 11,0Z"/><path d="M58,63 a5,6 0 0 1 11,0Z"/><path d="M71,63 a5,6 0 0 1 11,0Z"/></g>
+            <g fill="#9FD8C4" stroke="#3F7F6A"><path d="M84,63 a5,6 0 0 1 11,0Z"/><path d="M97,63 a5,6 0 0 1 11,0Z"/><path d="M110,63 a5,6 0 0 1 11,0Z"/><path d="M123,63 a5,6 0 0 1 11,0Z"/><path d="M136,63 a5,6 0 0 1 11,0Z"/><path d="M149,63 a5,6 0 0 1 11,0Z"/><path d="M162,63 a5,6 0 0 1 11,0Z"/><path d="M175,63 a5,6 0 0 1 11,0Z"/></g></g>
+            <path d="M96,2 h12 q-5,8 -5,17 q0,3 2,6 h-6 q2,-3 2,-6 q0,-9 -5,-17Z" fill="#d6e2e6" stroke="#4b5a62" stroke-width="1.2"/>
+          </svg>
+          <p>Signal specified and measured; outcome predicted, then tested.</p>
+        </div>
+      </div>
+      <div class="spans"><div>Where the world is investing: Ombion (NL), Roche IHB (CH), QUT MiPSET (AU)</div><div class="uow">Where UOW can lead</div></div>
+    </section>
+
+    <section class="chapter" id="inside">
+      
+      <h2>Inside gap 2: what reaches the cell is almost never measured</h2>
+      <div class="tracks">
+        <div class="track today">
+          <div class="who">Today<small>nominal dosing</small></div>
+          <div class="cell"><h3>Dose added</h3><p>Pipetted into the well as a uniform bath</p></div>
+          <div class="cell box"><h3>Black box</h3><p>Diffusion · binding · uptake · feeding · geometry</p></div>
+          <div class="cell"><h3>Field at the cell</h3><p>Never measured</p><div class="q" aria-hidden="true">?</div></div>
+          <div class="cell"><h3>Cell fate</h3><p>Varies by laboratory, batch and line</p></div>
+        </div>
+        <div class="track eng">
+          <div class="who">Synthetic cell engineering</div>
+          <div class="cell"><h3>Designed source</h3><p>A synthetic cell that releases signal by design</p></div>
+          <div class="cell"><h3>Measured in situ</h3><p>Single-molecule methods, absolute concentration</p></div>
+          <div class="cell"><h3>Field at the cell</h3><div class="fieldbar" aria-hidden="true"></div><p>Known, not assumed</p></div>
+          <div class="cell"><h3>Cell fate</h3><p>Predicted from the field, then tested</p></div>
+        </div>
+      </div>
+      <span class="loopnote">Closed loop: fabricate · measure · learn · refine (automated on DIB-BOT)</span>
+      <p class="evidence"><b>Evidence.</b> Same two stem-cell lines, one protocol, five laboratories: the laboratory was the largest source of variation, and only 15 differentially
+        expressed genes were shared by all five (Volpato et al. 2018).</p>
+    </section>
+  </main>
+</div>
+
+<section class="spread" aria-label="Whitworth">
+  <div class="spread-inner">
+    <div class="label" aria-hidden="true"></div>
+    <blockquote style="margin:0">
+      <p class="hist">Before 1841, every workshop cut its own screw threads. Joseph Whitworth standardised the thread and built a machine that measured to a millionth of an inch.
+        Interchangeable parts and mass production followed.</p>
+      <p class="now">Today, every laboratory's differentiation protocol fits only its own laboratory. <span>We are building the thread gauge.</span></p>
+    </blockquote>
+  </div>
+</section>
+
+<div class="doc">
+  <div class="rail" aria-hidden="true"></div>
+  <main class="content">
+    <section class="chapter" id="fit">
+      
+      <h2>Where UOW fits: they build the organ; we make sure it gets the same signal every time</h2>
+      <div class="fit">
+        <div class="layers">
+          <div class="layer"><h3>Human tissue models</h3><span>QUT MiPSET, Roche IHB, NAT-Net</span></div>
+          <div class="layer uow"><h3>Signal control and measurement: UOW</h3><span>The missing layer</span></div>
+          <div class="layer"><h3>Coordination</h3><span>Action 28 (proposed) · NAT-Net · Ombion</span></div>
+        </div>
+        <div class="note"><h3>A category the strategy has not named</h3>
+          <p>Its definition of non-animal technologies lists organoids, computational models and biochemical assays, not synthetic or biomimetic systems. UOW can define that category and lead it.</p></div>
+      </div>
+    </section>
+
+    <section class="chapter" id="roadmap">
+      
+      <h2>The investment and the return</h2>
+      <p class="lede">Each step builds on the last; I lead every one.</p>
+      <div class="roadmap">
+        <div class="stop now"><span class="when">Now</span><h3>Invest in the Fellowship</h3><div class="ret"><b>Return</b>A retained Future Fellow; three HDR completions</div></div>
+        <div class="stop"><span class="when">Next</span><h3>Seed a UOW Animal-Free Hub</h3><div class="ret"><b>Return</b>A shared measurement capability UOW owns</div></div>
+        <div class="stop"><span class="when">Evidence</span><h3>Pilot the animal-house transition</h3><div class="ret"><b>Return</b>UOW's own cost data for strategy</div></div>
+        <div class="stop"><span class="when">National</span><h3>Become a national node</h3><div class="ret"><b>Return</b>Centre-scale external income</div></div>
+        <div class="stop"><span class="when">Horizon</span><h3>Services and spin-outs</h3><div class="ret"><b>Return</b>IP and service income</div></div>
+      </div>
+      <p class="roadmap-note">The first step is the decision in front of UOW now. The rest are where it leads.</p>
+    </section>
+
+    
+  </main>
+</div>
+
+<footer>
+  <div class="inner">
+    <p>Sources: Ombion and Utrecht University (2025); Roche media release, 23 March 2026; Proposed National Health and Medical Research Strategy 2026–2036, Action 28 and definitions
+      (March 2026; proposed, not yet funded); ARC IC25 selection report (MiPSET); Volpato et al., <i>Stem Cell Reports</i> 11, 897–911 (2018).</p>
+    <p>Dr Alexander Mason, Synthetic Biomimetic Compartments Lab, Molecular Horizons, University of Wollongong.</p>
+  </div>
+</footer>
+
+</body>
+</html>
