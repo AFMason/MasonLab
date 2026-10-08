@@ -83,6 +83,20 @@
   .field { height: 10px; border-radius: 6px; margin: 8px 0 4px; background: linear-gradient(90deg, var(--signal), rgba(230,159,0,.08)); }
   .loop { margin-top: 16px; display: inline-block; padding: 9px 16px; border-radius: 999px; background: var(--signal-wash); color: var(--signal-dk); font-weight: 600; font-size: 15px; }
 
+  /* ---------- Whitworth ---------- */
+  .whit { background: #eef2f7; border-top: 1px solid #d6dfea; border-bottom: 1px solid #d6dfea; }
+  .whit-grid { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: center; }
+  .drawing { margin: 0; background: #fbfcfe; border: 1px solid #c9d5e3; border-radius: 12px; padding: 10px;
+    background-image: linear-gradient(#e4ebf3 1px, transparent 1px), linear-gradient(90deg, #e4ebf3 1px, transparent 1px); background-size: 20px 20px; }
+  .drawing svg { display: block; width: 100%; height: auto; }
+  .drawing figcaption { font-size: 13.5px; color: var(--muted); margin-top: 8px; }
+  .dw { font-family: Inter, sans-serif; font-size: 17px; font-weight: 600; fill: #1f3a5f; }
+  .dw.red { fill: #c0392b; }
+  .dw.sm { font-size: 13px; font-weight: 500; }
+  .whit-punch { font-size: clamp(22px, 3vw, 30px); font-weight: 800; line-height: 1.2; letter-spacing: -.015em; margin: 6px 0 0; }
+  .whit-punch span { color: var(--signal-dk); }
+  @media (min-width: 860px) { .whit-grid { grid-template-columns: 1.15fr 1fr; gap: 44px; } }
+
   /* ---------- Tiers ---------- */
   .tiers { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 26px; }
   .tier { all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 16px; cursor: pointer;
@@ -230,6 +244,54 @@
           <li><b>Cell fate</b><span>Purer neuronal and glial populations, every time</span></li>
         </ol>
         <span class="loop">Closed loop: fabricate · measure · learn · refine (automated on DIB-BOT)</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="whit">
+    <div class="wrap whit-grid">
+      <figure class="drawing">
+        <svg viewBox="0 0 640 340" role="img" aria-label="Engineering drawing of the British Standard Whitworth thread profile: 55 degree flank angle, pitch P, fundamental triangle height H = 0.960P, thread depth h = 0.640P, crest and root radius r = 0.137P">
+          <defs>
+            <marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 Z" fill="#1f3a5f"/></marker>
+            <pattern id="hatch-w" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#1f3a5f" stroke-width="1" opacity=".35"/></pattern>
+          </defs>
+          <rect x="6" y="6" width="628" height="328" fill="none" stroke="#1f3a5f" stroke-width="1.2" opacity=".5"/>
+          <!-- fundamental triangle (sharp V), dashed -->
+          <polyline points="90,225.3 150,110 210,225.3 270,110 330,225.3 390,110 450,225.3 510,110" fill="none" stroke="#1f3a5f" stroke-width="1" stroke-dasharray="5 4" opacity=".55"/>
+          <!-- rounded BSW profile (P = 120, H = 0.960P, h = 0.640P, r = 0.137P) -->
+          <path d="M60,290 V205 L73.75,194.1 Q90,218.3 106.25,194.1 L133.75,141.2 Q150,117 166.25,141.2 L193.75,194.1 Q210,218.3 226.25,194.1 L253.75,141.2 Q270,117 286.25,141.2 L313.75,194.1 Q330,218.3 346.25,194.1 L373.75,141.2 Q390,117 406.25,141.2 L433.75,194.1 Q450,218.3 466.25,194.1 L493.75,141.2 Q510,117 526.25,141.2 L540,167.5 V290 Z"
+                fill="url(#hatch-w)" stroke="#1f3a5f" stroke-width="2.2" stroke-linejoin="round"/>
+          <!-- 55 degree flank angle at a root -->
+          <line x1="330" y1="225.3" x2="291" y2="150.3" stroke="#c0392b" stroke-width="1.2"/>
+          <line x1="330" y1="225.3" x2="369" y2="150.3" stroke="#c0392b" stroke-width="1.2"/>
+          <path d="M309.2,185.4 A45,45 0 0 1 350.8,185.4" fill="none" stroke="#c0392b" stroke-width="1.6"/>
+          <text x="330" y="166" text-anchor="middle" class="dw red">55°</text>
+          <!-- pitch -->
+          <line x1="150" y1="104" x2="150" y2="62" stroke="#1f3a5f" stroke-width=".8"/><line x1="270" y1="104" x2="270" y2="62" stroke="#1f3a5f" stroke-width=".8"/>
+          <line x1="153" y1="70" x2="267" y2="70" stroke="#1f3a5f" stroke-width="1.2" marker-start="url(#arr)" marker-end="url(#arr)"/>
+          <text x="210" y="60" text-anchor="middle" class="dw">P (pitch)</text>
+          <!-- H and h -->
+          <line x1="512" y1="110" x2="566" y2="110" stroke="#1f3a5f" stroke-width=".8" stroke-dasharray="3 3"/><line x1="452" y1="225.3" x2="566" y2="225.3" stroke="#1f3a5f" stroke-width=".8" stroke-dasharray="3 3"/>
+          <line x1="560" y1="113" x2="560" y2="222" stroke="#1f3a5f" stroke-width="1.2" marker-start="url(#arr)" marker-end="url(#arr)"/>
+          <text x="568" y="173" class="dw">H</text><text x="608" y="173" class="dw red">h</text>
+          <line x1="528" y1="129.2" x2="606" y2="129.2" stroke="#c0392b" stroke-width=".8"/><line x1="468" y1="206" x2="606" y2="206" stroke="#c0392b" stroke-width=".8"/>
+          <line x1="600" y1="132" x2="600" y2="203" stroke="#c0392b" stroke-width="1.2" marker-start="url(#arr)" marker-end="url(#arr)"/>
+          <!-- crest radius -->
+          <line x1="390" y1="128" x2="430" y2="80" stroke="#c0392b" stroke-width="1"/><circle cx="390" cy="129.5" r="2.5" fill="#c0392b"/>
+          <text x="432" y="76" class="dw red">r = 0.137P</text>
+          <!-- key -->
+          <text x="24" y="314" class="dw sm">H = 0.960P · h = 0.640P · r = 0.137P · crests and roots cut back by H/6</text>
+          <text x="616" y="314" text-anchor="end" class="dw sm">BSW · 1841</text>
+        </svg>
+        <figcaption>British Standard Whitworth thread profile, drawn to its published proportions. h (red) is the working depth of the thread.</figcaption>
+      </figure>
+      <div>
+        <span class="label">A precedent</span>
+        <h2 style="margin-top:6px">Every workshop cut its own threads</h2>
+        <p class="lede">Before 1841, a nut from one workshop rarely fitted a bolt from another. Joseph Whitworth fixed one angle (55°) and a set of
+          proportions, and built a machine that measured to a millionth of an inch. Interchangeable parts and mass production followed.</p>
+        <p class="whit-punch">Today, every laboratory's differentiation protocol fits only its own laboratory. <span>We are building the thread gauge.</span></p>
       </div>
     </div>
   </section>
