@@ -2,435 +2,295 @@
 <html lang="en-AU">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Animal-free by design</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+  /* Animal-free by design: public overview */
   :root {
-    --ink: #10212a;
-    --teal-950: #082a35;
-    --teal-900: #0b3340;
-    --teal-700: #13576a;
-    --teal-500: #2f8197;
-    --teal-100: #e2eef1;
-    --teal-050: #f1f7f8;
-    --ochre: #e0a019;
-    --ochre-ink: #855600;
-    --ochre-wash: #fbf0d6;
-    --grey-700: #4b5a62;
-    --grey-500: #7c8a92;
-    --line: #d3dde1;
-    --paper: #ffffff;
-    --on-dark: #eaf3f5;
-    --on-dark-2: #a9c3ca;
-    --rail: 230px;
-    --gutter: clamp(16px, 4vw, 56px);
+    --ink: #1d2430; --slate: #4a5566; --muted: #6b7685; --line: #d5dae1; --wash: #f3f5f8;
+    --signal: #E69F00; --signal-dk: #8F5A00; --signal-wash: #fdf3e0;
+    --violet: #4B3A8C; --teal: #3F7F6A; --teal-wash: #e9f6f1;
   }
-  /* Layout: strategy-document cover, then a contents rail beside a single reading column. Deliberately single-theme (light). */
-  :root { color-scheme: light; }
+  @page { size: A4; margin: 0; }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scrollbar-color: var(--teal-500) var(--teal-050); }
-  body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Public Sans", "Segoe UI", sans-serif; font-size: 17px; line-height: 1.6;
-    font-variant-numeric: tabular-nums lining-nums; -webkit-font-smoothing: antialiased; }
-  ::selection { background: var(--ochre); color: var(--teal-950); }
-  :focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius: 2px; }
-  a { color: inherit; text-underline-offset: .22em; text-decoration-thickness: 1px; }
-  h1, h2, h3 { margin: 0; line-height: 1.08; letter-spacing: -.015em; text-wrap: balance; }
-  h2 { font-size: clamp(30px, 3.6vw, 44px); font-weight: 800; color: var(--teal-900); margin-bottom: 18px; }
-  h3 { font-size: 20px; font-weight: 700; letter-spacing: -.005em; }
-  p { margin: 0 0 1em; max-width: 68ch; }
-  .lede { font-size: clamp(18px, 1.5vw, 21px); line-height: 1.55; color: var(--grey-700); }
+  html, body { margin: 0; background: #e6e9ee; color: var(--ink); font-family: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; }
+  .page { width: 210mm; height: 297mm; margin: 16px auto; background: #fff; padding: 8mm 11mm 6mm; display: flex; flex-direction: column;
+    gap: 2.4mm; overflow: hidden; box-shadow: 0 2px 14px rgba(0,0,0,.12); }
+  @media print { html, body { background: #fff; } .page { margin: 0; box-shadow: none; } .page + .page { break-before: page; } }
 
-  /* ---------- Cover ---------- */
-  .cover { background: var(--teal-900); color: var(--on-dark); position: relative; overflow: hidden; }
-  .cover::after { content: ""; position: absolute; right: -8vw; bottom: -30%; width: 58vw; height: 120%; border-radius: 50%;
-    background: radial-gradient(closest-side, rgba(47,129,151,.55), rgba(11,51,64,0)); pointer-events: none; }
-  .cover-inner { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
-  .masthead { display: flex; justify-content: space-between; gap: 16px; padding: 22px 0; font-size: 14px; color: var(--on-dark-2); border-bottom: 1px solid rgba(234,243,245,.18); }
-  .masthead b { color: var(--on-dark); font-weight: 700; }
-  .cover-body { display: grid; grid-template-columns: 1.2fr .8fr; gap: clamp(28px, 5vw, 80px); padding: clamp(56px, 9vw, 120px) 0 clamp(48px, 7vw, 88px); align-items: end; }
-  .cover h1 { font-size: clamp(52px, 7.6vw, 100px); font-weight: 800; letter-spacing: -.035em; line-height: .95; }
-  .cover h1 span { color: var(--ochre); }
-  .cover .lede { color: var(--on-dark); margin-top: 28px; }
-  .cover .by { color: var(--on-dark-2); font-size: 15px; }
-  .cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 10px; padding: 14px 22px; background: var(--ochre); color: var(--teal-950); font-weight: 700; font-size: 16.5px;
-    text-decoration: none; border-radius: 999px; transition: transform .3s cubic-bezier(.16,1,.3,1), background .2s; }
-  .cta:hover { background: #f0b437; transform: translateY(-1px); }
-  .cta svg { width: 16px; height: 16px; }
-  .context { border-left: 1px solid rgba(234,243,245,.22); padding-left: clamp(18px, 2.5vw, 36px); }
-  .context h2 { color: var(--on-dark); font-size: 15px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px; }
-  .context ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
-  .context li { font-size: 15.5px; line-height: 1.45; color: var(--on-dark-2); }
-  .context li b { display: block; color: var(--on-dark); font-size: 26px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin-bottom: 2px; }
-  .context li b.au { color: var(--ochre); }
+  header { background: var(--ink); color: #fff; border-radius: 3mm; padding: 4.5mm 6mm 4mm; }
+  .eyebrow { font-size: 6.8pt; letter-spacing: .14em; text-transform: uppercase; color: #f2c46a; font-weight: 600; }
+  h1 { font-size: 22pt; line-height: 1.05; margin: 1mm 0 1.4mm; font-weight: 800; letter-spacing: -.01em; }
+  h1 span { color: var(--signal); }
+  .why { font-size: 10.5pt; line-height: 1.35; font-weight: 600; margin: 0; color: #fff; max-width: 175mm; }
+  .byline { font-size: 7pt; color: #aab3bf; margin-top: 1.4mm; }
+  .snap { display: grid; grid-template-columns: 1.15fr .75fr 1.3fr; gap: 2.4mm; margin-top: 3mm; }
+  .snap div { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); border-radius: 2mm; padding: 2mm 2.6mm; }
+  .snap b { display: block; font-size: 6.5pt; letter-spacing: .1em; text-transform: uppercase; color: #f2c46a; font-weight: 700; margin-bottom: .6mm; }
+  .snap span { display: block; font-size: 8pt; line-height: 1.32; color: #e6eaee; }
+  .snap strong { color: #fff; font-weight: 700; }
 
-  /* ---------- Body with contents rail ---------- */
-  .doc { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); display: grid; grid-template-columns: var(--rail) 1fr; gap: clamp(28px, 4vw, 64px); }
-  .rail { position: sticky; top: env(safe-area-inset-top, 0px); align-self: start; padding: 64px 0 24px; }
-  .rail p { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-500); margin: 0 0 12px; }
-  .rail ol { list-style: none; margin: 0; padding: 0; counter-reset: c; display: grid; gap: 2px; }
-  .rail li { counter-increment: c; }
-  .rail a { display: grid; grid-template-columns: 26px 1fr; padding: 7px 0; text-decoration: none; font-size: 15px; line-height: 1.35; color: var(--grey-700); border-top: 1px solid var(--line); }
-  .rail a::before { content: counter(c); font-weight: 700; color: var(--teal-500); }
-  .rail a:hover { color: var(--teal-900); }
-  .content { min-width: 0; }
-  .chapter { padding: 64px 0 56px; border-top: 1px solid var(--line); }
-  .chapter:first-child { border-top: none; }
-  .chapter .num { display: block; font-size: 15px; font-weight: 700; color: var(--teal-500); margin-bottom: 10px; }
+  h2 { font-size: 10.5pt; font-weight: 700; margin: 0 0 1.2mm; display: flex; align-items: baseline; gap: 2mm; }
+  h2 .n { display: inline-grid; place-items: center; width: 4.8mm; height: 4.8mm; border-radius: 50%; background: var(--ink); color: #fff;
+    font-size: 7pt; flex: none; transform: translateY(-.3mm); }
+  h2 .sub { font-weight: 400; color: var(--muted); font-size: 8.3pt; }
+  p { margin: 0; }
+  .lead { font-size: 8.6pt; line-height: 1.42; color: var(--slate); }
+  .lead b { color: var(--ink); }
 
-  /* Two gaps */
-  .stations { display: grid; grid-template-columns: 1fr 120px 1fr 120px 1fr; margin-top: 28px; }
-  .station { background: var(--teal-050); border-radius: 10px; padding: 20px 18px; display: flex; flex-direction: column; }
-  .station.lead { background: var(--ochre-wash); box-shadow: inset 0 0 0 2px var(--ochre); }
-  .station h3 { margin-bottom: 10px; }
-  .station svg { width: 100%; height: 80px; display: block; margin-bottom: 12px; }
-  .station p { font-size: 15px; color: var(--grey-700); margin: auto 0 0; }
-  .gap { display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 0 8px; font-size: 14px; line-height: 1.35; color: var(--grey-700); }
-  .gap strong { display: block; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--teal-700); }
-  .gap svg { width: 100%; height: 16px; margin: 8px 0; }
-  .gap .vdim { display: none; }
-  .gap strong { overflow-wrap: normal; letter-spacing: .03em; font-size: 12px; }
-  .gap.open strong, .gap.open span { color: var(--ochre-ink); font-weight: 700; }
-  .spans { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; margin-top: 16px; font-size: 15px; }
-  .spans div { border-top: 2px solid var(--line); padding-top: 8px; color: var(--grey-700); }
-  .spans div.uow { border-color: var(--ochre); color: var(--ochre-ink); font-weight: 700; }
+  .case { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.6mm; }
+  .case > div { background: var(--wash); border-radius: 2mm; padding: 2.4mm 3mm; }
+  .case h3 { font-size: 9.2pt; margin: 0 0 1.2mm; }
+  .case ul { margin: 0; padding-left: 3.6mm; font-size: 7.7pt; line-height: 1.38; color: var(--slate); }
+  .case li { margin-bottom: .8mm; }
+  .case li b { color: var(--ink); }
+  .case .pm { background: var(--signal-wash); border: 1px solid var(--signal); }
 
-  /* Inside gap 2 */
-  .tracks { margin-top: 26px; display: grid; gap: 12px; }
-  .track { display: grid; grid-template-columns: 150px repeat(4, 1fr); gap: 12px 26px; }
-  .track .who { font-weight: 700; font-size: 17px; line-height: 1.2; align-self: center; color: var(--grey-700); }
-  .track .who small { display: block; font-weight: 400; font-size: 14px; }
-  .track.eng .who { color: var(--teal-900); }
-  .cell { border-radius: 8px; padding: 14px; background: var(--teal-050); position: relative; }
-  .cell h3 { font-size: 17px; margin-bottom: 4px; }
-  .cell p { font-size: 14.5px; line-height: 1.45; color: var(--grey-700); margin: 0; }
-  .track.today .cell.box { background: repeating-linear-gradient(135deg, #eef3f5 0 7px, #e1e9ec 7px 9px); outline: 1px dashed var(--grey-500); outline-offset: -1px; }
-  .track.today .q { font-size: 24px; font-weight: 800; color: var(--grey-500); line-height: 1; margin-top: 4px; }
-  .track.eng .cell { background: var(--teal-900); }
-  .track.eng .cell h3 { color: var(--on-dark); }
-  .track.eng .cell p { color: var(--on-dark-2); }
-  .cell + .cell::before { content: ""; position: absolute; left: -24px; top: 50%; width: 16px; height: 2px; background: var(--grey-500); }
-  .cell + .cell::after { content: ""; position: absolute; left: -10px; top: calc(50% - 6px); border: 6px solid transparent; border-left: 8px solid var(--grey-500); border-right: 0; }
-  .track.eng .cell + .cell::after { border-left-color: var(--teal-700); }
-  .track.eng .cell + .cell::before { background: var(--teal-700); height: 3px; }
-  .fieldbar { height: 9px; border-radius: 9px; margin: 8px 0 6px; background: linear-gradient(90deg, var(--ochre), rgba(224,160,25,.08)); }
-  .loopnote { margin: 14px 0 0 176px; padding: 10px 16px; border-radius: 999px; background: var(--ochre-wash); color: var(--ochre-ink); font-weight: 600; font-size: 15px; display: inline-block; }
-  .evidence { margin-top: 26px; font-size: 15.5px; color: var(--grey-700); }
-  .evidence b { color: var(--ink); }
+  svg { display: block; width: 100%; height: auto; font-family: inherit; }
+  .t-title { font-size: 3.2px; font-weight: 700; fill: var(--ink); }
+  .t-sub { font-size: 2.5px; fill: var(--slate); }
+  .t-small { font-size: 2.3px; fill: var(--muted); }
+  .t-row { font-size: 2.9px; font-weight: 700; fill: var(--ink); }
+  .t-sig { fill: var(--signal-dk); }
 
-  /* Whitworth spread */
-  .spread { background: var(--teal-950); color: var(--on-dark); }
-  .spread-inner { max-width: 1240px; margin: 0 auto; padding: clamp(64px, 9vw, 120px) var(--gutter); display: grid; grid-template-columns: var(--rail) 1fr; gap: clamp(28px, 4vw, 64px); }
-  .spread .label { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--on-dark-2); padding-top: 10px; }
-  .spread .hist { font-size: clamp(19px, 1.7vw, 23px); color: var(--on-dark-2); max-width: 54ch; margin-bottom: 22px; }
-  .spread .now { font-size: clamp(34px, 4.4vw, 58px); font-weight: 800; line-height: 1.04; letter-spacing: -.03em; max-width: 19ch; margin: 0; }
-  .spread .now span { color: var(--ochre); }
+  .align { display: grid; grid-template-columns: auto 1fr; gap: 1mm 3mm; font-size: 7.8pt; line-height: 1.38; color: var(--slate); }
+  .align b { color: var(--ink); }
 
-  /* Where UOW fits */
-  .fit { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; margin-top: 26px; align-items: start; }
-  .layers { display: grid; gap: 8px; }
-  .layer { padding: 16px 18px; border-radius: 8px; background: var(--teal-050); display: flex; justify-content: space-between; gap: 14px; align-items: baseline; }
-  .layer h3 { font-size: 18px; }
-  .layer span { font-size: 14.5px; color: var(--grey-700); text-align: right; }
-  .layer.uow { background: var(--teal-900); color: var(--on-dark); }
-  .layer.uow span { color: var(--ochre); font-weight: 700; }
-  .note { background: var(--ochre-wash); border-radius: 10px; padding: 18px 20px; }
-  .note h3 { font-size: 18px; margin-bottom: 6px; color: var(--ochre-ink); }
-  .note p { font-size: 15.5px; margin: 0; color: var(--ink); }
-  .note.precedent { margin-top: 18px; background: var(--teal-050); }
-  .note.precedent h3 { color: var(--teal-900); }
+  /* Page 2 */
+  table { width: 100%; border-collapse: collapse; font-size: 7.6pt; line-height: 1.34; }
+  th { text-align: left; background: var(--ink); color: #fff; font-weight: 600; font-size: 7pt; padding: 1.4mm 2mm; }
+  td { padding: 1.5mm 2mm; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--slate); }
+  td.k { font-weight: 700; color: var(--ink); white-space: nowrap; }
+  td.k small { display: block; font-weight: 500; color: var(--muted); font-size: 6.6pt; margin-top: .4mm; white-space: normal; }
+  td.amt { font-weight: 800; color: var(--ink); white-space: nowrap; font-size: 8.4pt; }
+  td.amt small { display: block; font-weight: 500; color: var(--muted); font-size: 6.4pt; }
+  .bar { height: 2.2mm; border-radius: 1mm; background: var(--signal); margin-top: 1mm; }
+  tr.base td { background: var(--wash); }
+  tr.t1 .bar { background: #c7cdd6; } tr.t2 .bar { background: var(--violet); } tr.t3 .bar { background: var(--signal); }
+  td.get b { color: var(--ink); }
+  table.roi td, table.roi th { text-align: center; } table.roi td:first-child, table.roi th:first-child { text-align: left; }
+  table.roi td { font-size: 7.8pt; } table.roi td:first-child { color: var(--ink); font-weight: 600; }
+  table.roi tr.hl td { background: var(--signal-wash); font-weight: 700; color: var(--ink); }
+  table.roi th.t3h { background: var(--signal-dk); }
 
-  /* Roadmap */
-  .roadmap { margin-top: 30px; position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
-  .roadmap::before { content: ""; position: absolute; left: 10px; right: 10px; top: 11px; height: 3px; background: linear-gradient(90deg, var(--ochre) 0 20%, var(--teal-100) 20% 100%); border-radius: 3px; }
-  .stop { position: relative; padding-top: 38px; }
-  .stop::before { content: ""; position: absolute; top: 2px; left: 0; width: 18px; height: 18px; border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 3px var(--teal-500); }
-  .stop.now::before { background: var(--ochre); box-shadow: 0 0 0 5px rgba(224,160,25,.25); }
-  .stop .when { font-size: 13px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--teal-500); }
-  .stop.now .when { color: var(--ochre-ink); }
-  .stop h3 { font-size: 18px; margin: 4px 0 12px; }
-  .stop .ret { font-size: 14.5px; line-height: 1.45; color: var(--grey-700); border-top: 1px solid var(--line); padding-top: 10px; }
-  .stop .ret b { display: block; color: var(--teal-900); font-size: 13px; letter-spacing: .05em; text-transform: uppercase; }
-  .stop.now { background: var(--ochre-wash); border-radius: 10px; padding: 38px 14px 14px; margin-top: -10px; }
-  .stop.now::before { left: 14px; top: 12px; }
-  .roadmap-note { margin-top: 20px; font-size: 15.5px; color: var(--grey-700); }
+  .two { display: grid; grid-template-columns: 1.05fr 1fr; gap: 3mm; }
+  .gantt { font-size: 7pt; color: var(--slate); }
+  .g-row { display: grid; grid-template-columns: 30mm 1fr; align-items: center; margin-bottom: 1mm; }
+  .g-track { position: relative; height: 4mm; background: repeating-linear-gradient(90deg, var(--wash) 0 calc(20% - 1px), var(--line) calc(20% - 1px) 20%); border-radius: 1mm; }
+  .g-bar { position: absolute; top: .6mm; height: 2.8mm; border-radius: 1mm; color: #fff; font-size: 6pt; font-weight: 600; padding-left: 1.2mm; line-height: 2.8mm; white-space: nowrap; overflow: hidden; }
+  .g-years { display: grid; grid-template-columns: 30mm repeat(5, 1fr); font-size: 6.4pt; color: var(--muted); margin-bottom: .6mm; }
+  .g-mile { position: absolute; top: .2mm; width: 3.4mm; height: 3.4mm; transform: rotate(45deg) translateX(-1.7mm); background: var(--ink); border: .5mm solid #fff; }
+  .g-key { font-size: 6.4pt; color: var(--muted); margin-top: .6mm; }
 
-  /* Investment */
-  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
-  .stage { border-radius: 8px; padding: 16px; background: var(--teal-050); position: relative; }
-  .stage.uow { background: var(--teal-900); color: var(--on-dark); }
-  .stage.uow p { color: var(--on-dark-2); }
-  .stage.users { background: var(--ochre-wash); }
-  .stage h3 { font-size: 17px; margin-bottom: 6px; }
-  .stage p { font-size: 14.5px; line-height: 1.45; color: var(--grey-700); margin: 0; }
-  .stage em { display: block; font-style: normal; font-size: 13.5px; font-weight: 700; margin-top: 10px; color: var(--ochre); }
-  .stage.users em { color: var(--ochre-ink); }
-  .stage + .stage::before { content: ""; position: absolute; left: -12px; top: 50%; width: 12px; height: 2px; background: var(--teal-500); }
-  .flowloop { margin-top: 12px; font-size: 15px; font-weight: 600; color: var(--teal-700); }
-  .fine { font-size: 14px; color: var(--grey-500); margin-top: 6px; }
-  h3.sub { font-size: 24px; font-weight: 800; color: var(--teal-900); margin-top: 48px; }
-  .bar { display: flex; height: 54px; border-radius: 8px; overflow: hidden; margin-top: 16px; }
-  .bar div { display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; padding: 0 6px; text-align: center; min-width: 0; line-height: 1.15; }
-  .b-std { flex: 280.3; background: var(--teal-700); color: #fff; }
-  .b-stip { flex: 134.5; background: var(--teal-950); color: #fff; }
-  .b-ra { flex: 246.2; background: var(--ochre); color: var(--teal-950); }
-  .b-stay { flex: 7.95; background: var(--ochre-ink); }
-  .b-fac { flex: 40; background: var(--teal-500); color: #fff; }
-  .barnote { display: flex; justify-content: space-between; gap: 16px; font-size: 14.5px; color: var(--grey-700); margin-top: 8px; }
-  .legend { display: grid; gap: 6px 24px; grid-template-columns: repeat(2, auto); justify-content: start; margin-top: 12px; font-size: 14.5px; color: var(--grey-700); }
-  .legend span { display: inline-flex; gap: 8px; align-items: center; }
-  .legend i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
-  .spec { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 15px; }
-  .spec th { text-align: left; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-500); border-bottom: 2px solid var(--teal-900); padding: 8px 12px 8px 0; }
-  .spec td { border-bottom: 1px solid var(--line); padding: 12px 12px 12px 0; vertical-align: top; line-height: 1.45; }
-  .spec td.line { font-weight: 700; width: 20%; }
-  .spec td.amt { font-weight: 800; color: var(--teal-900); white-space: nowrap; width: 12%; }
-  .spec td.ret { color: var(--ochre-ink); font-weight: 600; width: 28%; }
-  .spec tr.hl td { background: var(--ochre-wash); }
-  .spec tr.hl td:first-child { padding-left: 10px; }
-  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 30px; }
-  .panel { border-radius: 10px; padding: 20px 22px; }
-  .panel h3 { font-size: 19px; margin-bottom: 8px; }
-  .panel p { font-size: 15px; margin: 0; }
-  .panel.income { background: var(--teal-900); color: var(--on-dark); }
-  .panel.income p { color: var(--on-dark-2); }
-  .panel.income ul { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; font-size: 15px; }
-  .panel.income li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(234,243,245,.15); padding-bottom: 8px; }
-  .panel.income li i { font-style: normal; font-weight: 700; font-size: 13.5px; color: var(--teal-950); background: var(--ochre); padding: 1px 9px; border-radius: 999px; white-space: nowrap; align-self: start; }
-  .panel.income li i.none { background: none; color: var(--on-dark-2); }
-  .panel.staged { background: var(--teal-050); }
-  .panel.staged b { color: var(--teal-900); }
+  .risk td { font-size: 7.3pt; }
+  .decision { background: var(--ink); color: #fff; border-radius: 2.5mm; padding: 2.8mm 4mm; font-size: 8.4pt; line-height: 1.42; }
+  .decision b { color: #f2c46a; }
+  .team { font-size: 7.6pt; line-height: 1.4; color: var(--slate); }
+  .team b { color: var(--ink); }
+  footer { margin-top: auto; font-size: 6.2pt; color: var(--muted); line-height: 1.38; border-top: 1px solid var(--line); padding-top: 1.3mm; }
 
-  .legend span, .panel.income li span, .flow > *, .tracks > *, .stations > *, .fit > *, .panels > * { min-width: 0; }
-  body { overflow-wrap: break-word; }
-  footer { background: var(--teal-950); color: var(--on-dark-2); font-size: 13.5px; }
-  footer .inner { max-width: 1240px; margin: 0 auto; padding: 32px var(--gutter) 40px; }
-  footer p { max-width: none; margin-bottom: .6em; }
-
-  @media (max-width: 1000px) {
-    .doc, .spread-inner { grid-template-columns: 1fr; }
-    .rail { display: none; }
-    .spread .label { padding: 0; }
-    .cover-body, .fit { grid-template-columns: 1fr; }
-    .context { border-left: none; padding-left: 0; border-top: 1px solid rgba(234,243,245,.22); padding-top: 24px; }
-    .stations { grid-template-columns: 1fr; gap: 0; }
-    .gap { flex-direction: row; text-align: left; gap: 12px; padding: 12px 6px; align-items: center; }
-    .gap svg { width: 16px; height: 40px; margin: 0; flex: none; }
-    .spans { grid-template-columns: 1fr; }
-    .track { grid-template-columns: 1fr; }
-    .stage + .stage::before { display: none; }
-    .track { gap: 30px; }
-    .track > .who { margin-bottom: -14px; }
-    .cell + .cell::before { left: 50%; top: -26px; width: 2px; height: 16px; }
-    .track.eng .cell + .cell::before { width: 3px; height: 16px; }
-    .cell + .cell::after { left: calc(50% - 6px); top: -12px; border: 6px solid transparent; border-top: 8px solid var(--grey-500); border-bottom: 0; }
-    .track.eng .cell + .cell::after { border-left-color: transparent; border-top-color: var(--teal-700); }
-    .gap { display: grid; grid-template-columns: 30px 1fr; grid-template-rows: auto auto; column-gap: 14px; row-gap: 2px; align-items: center; text-align: left;
-      margin: 12px 0; padding: 14px 16px; border-radius: 10px; background: var(--teal-050); border: 1.5px dashed var(--teal-500); }
-    .gap .vdim { display: block; grid-row: 1 / span 2; width: 30px; height: 76px; }
-    .gap > svg:not(.vdim) { display: none; }
-    .gap strong { font-size: 17px; align-self: end; }
-    .gap span { font-size: 16px; align-self: start; }
-    .gap.open { background: var(--ochre-wash); border: 2px solid var(--ochre); padding: 18px 16px; }
-    .gap.open strong { font-size: 19px; }
-    .loopnote { margin-left: 0; border-radius: 10px; }
-    .roadmap { grid-template-columns: 1fr; gap: 0; }
-    .roadmap::before { left: 8px; right: auto; top: 10px; bottom: 10px; width: 3px; height: auto; background: linear-gradient(180deg, var(--ochre) 0 18%, var(--teal-100) 18% 100%); }
-    .stop { padding: 0 0 20px 36px; }
-    .stop::before { top: 2px; }
-    .stop.now { margin: 0 0 16px; padding: 14px 14px 14px 36px; }
-    .stop.now::before { left: 0; top: 16px; }
-    .flow, .panels { grid-template-columns: 1fr; }
-    .legend { grid-template-columns: 1fr; }
-    .bar div { font-size: 12.5px; }
-    .bar .hide-s { display: none; }
-    .barnote { flex-direction: column; gap: 2px; }
-    .spec thead { display: none; }
-    .spec, .spec tbody, .spec tr, .spec td { display: block; width: auto !important; }
-    .spec tr { border-bottom: 1px solid var(--line); padding: 12px 0; }
-    .spec tr.hl { background: var(--ochre-wash); padding: 12px; border-radius: 8px; margin: 6px 0; }
-    .spec td { border: none; padding: 2px 0; background: none !important; }
-    .spec td.del::before { content: "Delivers: "; font-weight: 700; }
-    .spec td.ret::before { content: "Return: "; font-weight: 700; }
+  /* screen version (MasonLab) */
+  @media screen {
+    html, body { background: #e6e9ee; }
+    .page { width: 210mm; max-width: 100%; height: auto; overflow: visible; margin: 24px auto; zoom: 1.2; border-radius: 4px; }
+    .tw { overflow-x: auto; }
   }
-  @media (max-width: 560px) {
-    body { font-size: 16px; }
-    .masthead { flex-direction: column; gap: 4px; }
+  @media screen and (max-width: 820px) {
+    .page { zoom: 1; width: auto; margin: 0 0 12px; padding: 16px; border-radius: 0; }
+    .snap, .case, .two { grid-template-columns: 1fr; }
+    .g-row { grid-template-columns: 26mm 1fr; } .g-years { grid-template-columns: 26mm repeat(5, 1fr); }
+    h1 { font-size: 20pt; }
+    .lead, .case ul, .team, td, .align { font-size: 9pt; }
   }
 </style>
 </head>
 <body>
-<header class="cover">
-  <div class="cover-inner">
-    <div class="masthead"><span><b>University of Wollongong</b> · Molecular Horizons</span><span>A proposal for the University of Wollongong · October 2026</span></div>
-    <div class="cover-body">
-      <div>
-        <h1>Animal-free, <span>by design</span></h1>
-        <p class="lede">Human models are replacing animal models worldwide, but they are not yet reproducible: the same protocol gives different results in different laboratories.
-          Synthetic cell engineering can specify and measure the signal these models are missing. This is an investment in a capability UOW will own, and I will lead it,
-          starting with a Future Fellowship.</p>
-        <p class="lede" style="margin-top:0">Now is the time to invest: FT27 is the last Future Fellowship round. The DECRA paid the cost of building the lab from scratch, and its outputs, trained people and network are landing now.</p>
-        <p class="by">Dr Alexander Mason · ARC DECRA Fellow · Synthetic Biomimetic Compartments Lab</p>
-        <a class="cta" href="#roadmap">See the investment and the return
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v11M3 8.5 8 13.5l5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-      </div>
-      <aside class="context" aria-labelledby="ctx">
-        <h2 id="ctx">The context</h2>
-        <ol>
-          <li><b>€124.5M</b>Dutch National Growth Fund stake in Ombion, a national animal-free centre (2025)</li>
-          <li><b>250</b>researchers in Roche's new Institute of Human Biology, Basel (2026)</li>
-          <li><b class="au">Action 28</b>Australia's proposed national platform for non-animal technologies. Not yet funded</li>
-          <li><b>$5M</b>QUT ARC Training Centre for organ-on-chip systems (MiPSET, 2025)</li>
-        </ol>
-      </aside>
+
+<!-- ============================ PAGE 1 ============================ -->
+<div class="page">
+  <header>
+    <div class="eyebrow">Research business case · University of Wollongong · October 2026</div>
+    <h1>Animal-free, <span>by design</span></h1>
+    <p class="why">Human stem-cell models are replacing animal testing, but they are not yet reproducible. UOW can own the measurement layer that fixes this,
+      and this is the moment to invest: FT27 is the last Future Fellowship round.</p>
+    <div class="byline">Dr Alexander Mason · ARC DECRA Fellow · Synthetic Biomimetic Compartments Lab, Molecular Horizons · Faculty of Science, Medicine and Health</div>
+    <div class="snap">
+      <div><b>Investment requested</b><span>The standard Fellowship package, plus <strong>one of three tiers: $34k, $187k or $441k</strong> over four years.</span></div>
+      <div><b>Duration</b><span><strong>2027 to 2031</strong>: a four-year Future Fellowship, with PhD completions to 2031.</span></div>
+      <div><b>Return on investment</b><span>At the top tier: <strong>3 PhD completions, 7 to 11 papers, 5 major applications</strong> seeking about <strong>$6M</strong>, and a measurement capability UOW owns.</span></div>
     </div>
-  </div>
-</header>
+  </header>
 
-<div class="doc">
-  <nav class="rail" aria-label="Contents">
-    <p>Contents</p>
-    <ol>
-      <li><a href="#problem">The problem: two gaps</a></li>
-      <li><a href="#inside">Where the gap is</a></li>
-      <li><a href="#fit">Where UOW fits</a></li>
-      <li><a href="#roadmap">The investment and the return</a></li>
-    </ol>
-  </nav>
+  <section>
+    <h2><span class="n">1</span>Executive summary</h2>
+    <p class="lead">Every laboratory that grows human stem-cell models adds the same few signals, but no one measures what actually reaches the cells, so the
+      same protocol gives different results in different laboratories. My Future Fellowship builds <b>synthetic cells that release those signals by design and
+      measure them in place</b>, so a protocol becomes a specification that works the same way everywhere. UOW is asked to fund the standard package plus one of
+      three tiers. Each tier adds people or access, and each has a stated return: from a Fellowship that runs faster, to a proof of concept on UOW's own neural
+      protocols, to a shared capability that positions UOW as a node of the proposed national platform for non-animal technologies.</p>
+  </section>
 
-  <main class="content">
-    <section class="chapter" id="problem">
-      
-      <h2>Two gaps between animal models and reliable human biology</h2>
-      <div class="stations">
-        <div class="station">
-          <h3>Animal models</h3>
-          <svg viewBox="0 0 200 80" aria-hidden="true">
-            <path d="M58,50 C40,52 38,68 22,64" fill="none" stroke="#7c8a92" stroke-width="2.2" stroke-linecap="round"/>
-            <ellipse cx="94" cy="48" rx="36" ry="22" fill="#b9c8ce"/><circle cx="130" cy="38" r="16" fill="#b9c8ce"/>
-            <circle cx="125" cy="23" r="9" fill="#d6e2e6" stroke="#b9c8ce" stroke-width="2"/>
-            <circle cx="137" cy="36" r="2.2" fill="#10212a"/><circle cx="146" cy="41" r="2.6" fill="#d98c9b"/>
-            <path d="M78,68 v6 M112,68 v6" stroke="#7c8a92" stroke-width="2.2" stroke-linecap="round"/>
-          </svg>
-          <p>Not human biology. Species differences limit what transfers to people, and animal use carries an ethical cost (the 3Rs).</p>
-        </div>
-        <div class="gap"><svg class="vdim" viewBox="0 0 24 80" aria-hidden="true"><line x1="12" y1="10" x2="12" y2="70" stroke="#2f8197" stroke-width="3"/><path d="M12,1 4,13 20,13Z M12,79 4,67 20,67Z" fill="#2f8197"/></svg><strong>Gap 1: species</strong>
-          <svg viewBox="0 0 120 16" preserveAspectRatio="none" aria-hidden="true"><line x1="6" y1="8" x2="114" y2="8" stroke="#2f8197" stroke-width="2"/><path d="M2,8 10,3 10,13Z M118,8 110,3 110,13Z" fill="#2f8197"/></svg>
-          <span>Closing: organoids, organs-on-chip</span></div>
-        <div class="station">
-          <h3>Human stem-cell models</h3>
-          <svg viewBox="0 0 200 80" aria-hidden="true">
-            <g fill="none" stroke="#10212a" stroke-width="1.6"><path d="M14,12 V60 a4,4 0 0 0 4,4 H62 a4,4 0 0 0 4,-4 V12"/><path d="M76,12 V60 a4,4 0 0 0 4,4 H124 a4,4 0 0 0 4,-4 V12"/><path d="M138,12 V60 a4,4 0 0 0 4,4 H186 a4,4 0 0 0 4,-4 V12"/></g>
-            <g opacity=".22" fill="#e0a019"><rect x="15" y="22" width="50" height="41"/><rect x="77" y="22" width="50" height="41"/><rect x="139" y="22" width="50" height="41"/></g>
-            <g stroke-width="1"><g fill="#4B3A8C" stroke="#2E2360"><path d="M17,63 a5,6 0 0 1 11,0Z"/><path d="M29,63 a5,6 0 0 1 11,0Z"/><path d="M41,63 a5,6 0 0 1 11,0Z"/><path d="M91,63 a5,6 0 0 1 11,0Z"/><path d="M141,63 a5,6 0 0 1 11,0Z"/><path d="M177,63 a5,6 0 0 1 11,0Z"/></g>
-            <g fill="#9FD8C4" stroke="#3F7F6A"><path d="M53,63 a5,6 0 0 1 11,0Z"/><path d="M79,63 a5,6 0 0 1 11,0Z"/><path d="M103,63 a5,6 0 0 1 11,0Z"/><path d="M115,63 a5,6 0 0 1 11,0Z"/><path d="M153,63 a5,6 0 0 1 11,0Z"/><path d="M165,63 a5,6 0 0 1 11,0Z"/></g></g>
-            <g font-family="Public Sans" font-size="11" font-weight="700" fill="#4b5a62" text-anchor="middle"><text x="40" y="78">Lab 1</text><text x="102" y="78">Lab 2</text><text x="164" y="78">Lab 3</text></g>
-          </svg>
-          <p>Human, but a nominal recipe: same protocol, different outcome.</p>
-        </div>
-        <div class="gap open"><svg class="vdim" viewBox="0 0 24 80" aria-hidden="true"><line x1="12" y1="10" x2="12" y2="70" stroke="#e0a019" stroke-width="4"/><path d="M12,1 4,13 20,13Z M12,79 4,67 20,67Z" fill="#e0a019"/></svg><strong>Gap 2: reproducibility</strong>
-          <svg viewBox="0 0 120 16" preserveAspectRatio="none" aria-hidden="true"><line x1="6" y1="8" x2="114" y2="8" stroke="#e0a019" stroke-width="3"/><path d="M2,8 11,2 11,14Z M118,8 109,2 109,14Z" fill="#e0a019"/></svg>
-          <span>Open: bridged by synthetic cell engineering</span></div>
-        <div class="station lead">
-          <h3>Engineered human models</h3>
-          <svg viewBox="0 0 200 80" aria-hidden="true">
-            <defs><linearGradient id="fg" x1="0" x2="1"><stop offset="0" stop-color="#e0a019" stop-opacity=".9"/><stop offset=".55" stop-color="#e0a019" stop-opacity=".3"/><stop offset="1" stop-color="#e0a019" stop-opacity="0"/></linearGradient></defs>
-            <path d="M8,20 V60 a4,4 0 0 0 4,4 H188 a4,4 0 0 0 4,-4 V20" fill="none" stroke="#10212a" stroke-width="1.6"/>
-            <rect x="9" y="28" width="182" height="35" fill="url(#fg)"/>
-            <circle cx="20" cy="55" r="8" fill="#e0a019" stroke="#855600" stroke-width="1.5"/>
-            <g stroke-width="1"><g fill="#4B3A8C" stroke="#2E2360"><path d="M32,63 a5,6 0 0 1 11,0Z"/><path d="M45,63 a5,6 0 0 1 11,0Z"/><path d="M58,63 a5,6 0 0 1 11,0Z"/><path d="M71,63 a5,6 0 0 1 11,0Z"/></g>
-            <g fill="#9FD8C4" stroke="#3F7F6A"><path d="M84,63 a5,6 0 0 1 11,0Z"/><path d="M97,63 a5,6 0 0 1 11,0Z"/><path d="M110,63 a5,6 0 0 1 11,0Z"/><path d="M123,63 a5,6 0 0 1 11,0Z"/><path d="M136,63 a5,6 0 0 1 11,0Z"/><path d="M149,63 a5,6 0 0 1 11,0Z"/><path d="M162,63 a5,6 0 0 1 11,0Z"/><path d="M175,63 a5,6 0 0 1 11,0Z"/></g></g>
-            <path d="M96,2 h12 q-5,8 -5,17 q0,3 2,6 h-6 q2,-3 2,-6 q0,-9 -5,-17Z" fill="#d6e2e6" stroke="#4b5a62" stroke-width="1.2"/>
-          </svg>
-          <p>Signal specified and measured; outcome predicted, then tested.</p>
-        </div>
+  <section>
+    <h2><span class="n">2</span>Strategic case</h2>
+    <div class="case">
+      <div>
+        <h3>Why this matters</h3>
+        <ul>
+          <li><b>Reproducibility.</b> Same stem-cell lines, one protocol, five laboratories: the laboratory was the largest source of variation (Volpato et al. 2018).</li>
+          <li><b>Replacing animals.</b> Species differences limit what animal results tell us about people, and the 3Rs ask research to replace and reduce animal use.</li>
+          <li><b>National priority.</b> The proposed national strategy names a platform for non-animal technologies (Action 28).</li>
+        </ul>
       </div>
-      <div class="spans"><div>Where the world is investing: Ombion (NL), Roche IHB (CH), QUT MiPSET (AU)</div><div class="uow">Where UOW can lead</div></div>
-    </section>
-
-    <section class="chapter" id="inside">
-      
-      <h2>Inside gap 2: what reaches the cell is almost never measured</h2>
-      <div class="tracks">
-        <div class="track today">
-          <div class="who">Today<small>nominal dosing</small></div>
-          <div class="cell"><h3>Dose added</h3><p>Pipetted into the well as a uniform bath</p></div>
-          <div class="cell box"><h3>Black box</h3><p>Diffusion · binding · uptake · feeding · geometry</p></div>
-          <div class="cell"><h3>Field at the cell</h3><p>Never measured</p><div class="q" aria-hidden="true">?</div></div>
-          <div class="cell"><h3>Cell fate</h3><p>Varies by laboratory, batch and line</p></div>
-        </div>
-        <div class="track eng">
-          <div class="who">Synthetic cell engineering</div>
-          <div class="cell"><h3>Designed source</h3><p>A synthetic cell that releases signal by design</p></div>
-          <div class="cell"><h3>Measured in situ</h3><p>Single-molecule methods, absolute concentration</p></div>
-          <div class="cell"><h3>Field at the cell</h3><div class="fieldbar" aria-hidden="true"></div><p>Known, not assumed</p></div>
-          <div class="cell"><h3>Cell fate</h3><p>Predicted from the field, then tested</p></div>
-        </div>
+      <div>
+        <h3>Why now</h3>
+        <ul>
+          <li><b>Last round.</b> FT27 is the final Future Fellowship round; ARC moves to project schemes from 2027.</li>
+          <li><b>New schemes open.</b> ARC Explore opens in 2027, then Breakthrough; NHMRC Emerging Leadership follows.</li>
+          <li><b>Others are investing.</b> The Dutch government put €124.5M into Ombion; Roche's Institute of Human Biology has up to 250 researchers.</li>
+          <li><b>The groundwork is paid.</b> The DECRA built the lab; outputs and trained people are landing now.</li>
+        </ul>
       </div>
-      <span class="loopnote">Closed loop: fabricate · measure · learn · refine (automated on DIB-BOT)</span>
-      <p class="evidence"><b>Evidence.</b> Same two stem-cell lines, one protocol, five laboratories: the laboratory was the largest source of variation, and only 15 differentially
-        expressed genes were shared by all five (Volpato et al. 2018).</p>
-      <p class="evidence"><b>Application.</b> Most hPSC neural differentiation protocols rely on the same few factors (BMP, Shh, RA), and the dose and timing of exposure decide what progenitors become. Measured and corrected, those protocols become faster and more reproducible, and give purer neuronal and glial populations. The Fellowship tests this with selected hPSC progenitors and the factors that decide neuronal and glial fates.</p>
-    </section>
-  </main>
+      <div class="pm">
+        <h3>Why UOW, and where it leads</h3>
+        <ul>
+          <li><b>In place already.</b> Molecular Horizons, animal-free stem-cell labs, automated fabrication (DIB-BOT) and single-molecule measurement.</li>
+          <li><b>Track record.</b> In seven months, one research assistant at 0.8 FTE took an idea to new IP.</li>
+          <li><b>Enabling personalised medicine.</b> When a protocol works the same way every time, a person's own stem cells can be turned reliably into the cells
+            needed to test which treatment suits them. Reproducible protocols are the precondition.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">3</span>What changes <span class="sub">the signal a cell receives, from assumed to measured</span></h2>
+    <svg viewBox="0 0 188 47" role="img" aria-label="Today: dose added, unmeasured processes, unknown field, fate varies. With synthetic cell engineering: designed source, measured in situ, known field, predicted fate.">
+      <defs>
+        <marker id="ah2" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8a95a3"/></marker>
+        <marker id="ah3" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8F5A00"/></marker>
+        <pattern id="hatch" width="2" height="2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="2" stroke="#d5dae1" stroke-width=".7"/></pattern>
+        <linearGradient id="fld2" x1="0" x2="1"><stop offset="0" stop-color="#E69F00" stop-opacity=".85"/><stop offset="1" stop-color="#E69F00" stop-opacity=".05"/></linearGradient>
+      </defs>
+      <text x="1" y="9.4" class="t-row">Today</text><text x="1" y="12.8" class="t-small">nominal dosing</text>
+      <text x="1" y="29.6" class="t-row t-sig">Synthetic cell</text><text x="1" y="33.1" class="t-row t-sig">engineering</text>
+      <rect x="28" y="2" width="33" height="15" rx="1.8" fill="#f3f5f8" stroke="#d5dae1" stroke-width=".3"/>
+      <text x="44.5" y="7.8" text-anchor="middle" class="t-title">Dose added</text><text x="44.5" y="11.4" text-anchor="middle" class="t-sub">BMP, Shh, RA pipetted</text><text x="44.5" y="14.4" text-anchor="middle" class="t-sub">in as a uniform bath</text>
+      <rect x="68" y="2" width="36" height="15" rx="1.8" fill="url(#hatch)" stroke="#8a95a3" stroke-width=".35" stroke-dasharray="1 .7"/>
+      <text x="86" y="7.8" text-anchor="middle" class="t-title">Black box</text><text x="86" y="11.4" text-anchor="middle" class="t-sub">diffusion · binding · uptake</text><text x="86" y="14.4" text-anchor="middle" class="t-sub">feeding · geometry</text>
+      <rect x="111" y="2" width="33" height="15" rx="1.8" fill="#f3f5f8" stroke="#d5dae1" stroke-width=".3"/>
+      <text x="127.5" y="7.8" text-anchor="middle" class="t-title">Field at the cell</text><text x="127.5" y="11.4" text-anchor="middle" class="t-sub">never measured</text><text x="127.5" y="15.4" text-anchor="middle" style="font-size:3.6px;font-weight:800;fill:#8a95a3">?</text>
+      <rect x="151" y="2" width="36" height="15" rx="1.8" fill="#f3f5f8" stroke="#d5dae1" stroke-width=".3"/>
+      <text x="169" y="7.8" text-anchor="middle" class="t-title">Cell fate</text><text x="169" y="11.4" text-anchor="middle" class="t-sub">varies by laboratory,</text><text x="169" y="14.4" text-anchor="middle" class="t-sub">batch and line</text>
+      <line x1="61.5" y1="9.5" x2="67.3" y2="9.5" stroke="#8a95a3" stroke-width=".6" marker-end="url(#ah2)"/>
+      <line x1="104.5" y1="9.5" x2="110.3" y2="9.5" stroke="#8a95a3" stroke-width=".6" marker-end="url(#ah2)"/>
+      <line x1="144.5" y1="9.5" x2="150.3" y2="9.5" stroke="#8a95a3" stroke-width=".6" marker-end="url(#ah2)"/>
+      <line x1="28" y1="20.5" x2="187" y2="20.5" stroke="#d5dae1" stroke-width=".3" stroke-dasharray="1 1"/>
+      <rect x="28" y="24" width="33" height="15" rx="1.8" fill="#fdf3e0" stroke="#E69F00" stroke-width=".5"/>
+      <text x="44.5" y="29.8" text-anchor="middle" class="t-title">Designed source</text><text x="44.5" y="33.4" text-anchor="middle" class="t-sub">a synthetic cell that</text><text x="44.5" y="36.4" text-anchor="middle" class="t-sub">releases signal by design</text>
+      <rect x="68" y="24" width="36" height="15" rx="1.8" fill="#fdf3e0" stroke="#E69F00" stroke-width=".5"/>
+      <text x="86" y="29.8" text-anchor="middle" class="t-title">Measured in situ</text><text x="86" y="33.4" text-anchor="middle" class="t-sub">single-molecule methods,</text><text x="86" y="36.4" text-anchor="middle" class="t-sub">absolute concentration</text>
+      <rect x="111" y="24" width="33" height="15" rx="1.8" fill="#fdf3e0" stroke="#E69F00" stroke-width=".5"/>
+      <text x="127.5" y="29.8" text-anchor="middle" class="t-title">Field at the cell</text><rect x="116" y="31.4" width="23" height="2.2" rx=".6" fill="url(#fld2)" stroke="#8F5A00" stroke-width=".2"/><text x="127.5" y="37" text-anchor="middle" class="t-sub">known, not assumed</text>
+      <rect x="151" y="24" width="36" height="15" rx="1.8" fill="#fdf3e0" stroke="#E69F00" stroke-width=".5"/>
+      <text x="169" y="29.8" text-anchor="middle" class="t-title">Cell fate</text><text x="169" y="33.4" text-anchor="middle" class="t-sub">purer neuronal and glial</text><text x="169" y="36.4" text-anchor="middle" class="t-sub">populations, every time</text>
+      <line x1="61.5" y1="31.5" x2="67.3" y2="31.5" stroke="#8F5A00" stroke-width=".7" marker-end="url(#ah3)"/>
+      <line x1="104.5" y1="31.5" x2="110.3" y2="31.5" stroke="#8F5A00" stroke-width=".7" marker-end="url(#ah3)"/>
+      <line x1="144.5" y1="31.5" x2="150.3" y2="31.5" stroke="#8F5A00" stroke-width=".7" marker-end="url(#ah3)"/>
+      <path d="M169,39.5 V44 H44.5 V40.2" fill="none" stroke="#8F5A00" stroke-width=".55" stroke-dasharray="1.4 .8" marker-end="url(#ah3)"/>
+      <rect x="58" y="41.6" width="98" height="4.8" rx="1" fill="#fff"/>
+      <text x="107" y="44.9" text-anchor="middle" class="t-sub t-sig" style="font-weight:600">closed loop: fabricate · measure · learn · refine (automated on DIB-BOT)</text>
+    </svg>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span>Strategic alignment</h2>
+    <div class="align">
+      <b>UOW</b><span>Global Research Impact Area: Future Industries (advanced materials and manufacturing; technology translation and commercialisation). Builds on Molecular Horizons.</span>
+      <b>National</b><span>Proposed National Collaborative Platform for Non-animal Technologies (Action 28); the 3Rs. A category the strategy has not yet named (synthetic and biomimetic systems) that UOW can define.</span>
+      <b>Partners</b><span>NAT-Net (NSW); QUT's organ-on-chip training centre builds the organ, UOW makes sure it gets the same signal every time.</span>
+    </div>
+  </section>
+
+  <footer>Sources: Volpato et al., <i>Stem Cell Reports</i> 11, 897–911 (2018); Proposed National Health and Medical Research Strategy 2026–2036, Action 28 (proposed, not yet funded);
+    Ombion and Utrecht University (2025); Roche media release, 23 March 2026; ARC National Competitive Grants Program reform (announced 22 July 2026).</footer>
 </div>
 
-<section class="spread" aria-label="Whitworth">
-  <div class="spread-inner">
-    <div class="label" aria-hidden="true"></div>
-    <blockquote style="margin:0">
-      <p class="hist">Before 1841, every workshop cut its own screw threads. Joseph Whitworth standardised the thread and built a machine that measured to a millionth of an inch.
-        Interchangeable parts and mass production followed.</p>
-      <p class="now">Today, every laboratory's differentiation protocol fits only its own laboratory. <span>We are building the thread gauge.</span></p>
-    </blockquote>
+<!-- ============================ PAGE 2 ============================ -->
+<div class="page">
+  <header style="padding:3.6mm 6mm 3.4mm">
+    <div class="eyebrow">Research business case · page 2 · the investment and the return</div>
+    <h1 style="font-size:18pt;margin-bottom:.8mm">A baseline and three tiers</h1>
+    <p class="why" style="font-size:9pt;font-weight:500">Every Future Fellow receives the standard package. Above it, UOW chooses how far to go. Each tier includes the one before it, and each has a stated return.</p>
+  </header>
+
+  <section>
+    <h2><span class="n">5</span>Funding request <span class="sub">costs from the UOW contributions spreadsheet and personnel calculator; 2027 to 2031</span></h2>
+    <div class="tw"><table>
+      <tr><th style="width:21%">Level</th><th style="width:31%">UOW funds</th><th style="width:15%">Cost</th><th>What UOW gets</th></tr>
+      <tr class="base"><td class="k">Baseline<small>offered to every FT applicant</small></td><td>Salary shortfall (DVC-RI), one UOW PhD stipend, top-up for the ARC-funded stipend, HDR allowances, dissemination</td>
+        <td class="amt">$276k<small>standard package</small></td><td class="get">A <b>Future Fellow in the final round</b> and <b>two PhD completions</b>. The ARC adds $240k for research costs.</td></tr>
+      <tr class="t1"><td class="k">Tier 1: Fellowship plus</td><td>Facility access at user rates: imaging for three HDRs and LC-MS/MS method set-up and runs</td>
+        <td class="amt">+$34k<div class="bar" style="width:8%"></div></td><td class="get">The ARC budget stays on research, spent in <b>UOW facilities</b>; faster data for an <b>ARC Explore</b> bid.</td></tr>
+      <tr class="t2"><td class="k">Tier 2: Proof of concept</td><td>Tier 1, plus a second UOW-funded PhD stipend and its allowance, so all three aims run in parallel</td>
+        <td class="amt">+$187k<div class="bar" style="width:42%"></div></td><td class="get"><b>Measured, corrected versions of UOW's in-house neural protocols</b>: faster, purer neuronal and glial populations. <b>Three PhD completions.</b></td></tr>
+      <tr class="t3"><td class="k">Tier 3: Shared capability</td><td>Tier 2, plus a research assistant (1.0 FTE, 2029 to 2030), one partner-lab stay and material shipping</td>
+        <td class="amt">+$441k<div class="bar" style="width:100%"></div></td><td class="get"><b>Multi-site evidence</b>, the <b>first operator of a capability UOW owns</b>, the credential for a <b>national node</b>, and a route to service income.</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2><span class="n">6</span>Expected return on investment <span class="sub">cumulative planning targets; income is the amount sought, not won</span></h2>
+    <div class="tw"><table class="roi">
+      <tr><th>Measure</th><th>Baseline</th><th>Tier 1</th><th>Tier 2</th><th class="t3h">Tier 3</th></tr>
+      <tr><td>UOW investment, including baseline</td><td>$276k</td><td>$310k</td><td>$463k</td><td>$717k</td></tr>
+      <tr><td>PhD completions</td><td>2</td><td>2</td><td>3</td><td>3</td></tr>
+      <tr><td>Papers (2 to 3 per PhD, plus multi-site work)</td><td>4–6</td><td>4–6</td><td>6–9</td><td>7–11</td></tr>
+      <tr><td>Partner laboratories using the method</td><td>–</td><td>–</td><td>2</td><td>3</td></tr>
+      <tr><td>Major applications</td><td>NHMRC EL2, 1 philanthropic</td><td>+ ARC Explore</td><td>+ 1 philanthropic</td><td>+ ARC Breakthrough</td></tr>
+      <tr class="hl"><td>External income sought</td><td>~$1.7M</td><td>~$2.9M</td><td>~$3.0M</td><td>~$6.0M</td></tr>
+    </table></div>
+  </section>
+
+  <div class="two">
+    <section>
+      <h2><span class="n">7</span>Research plan and timeline</h2>
+      <div class="gantt">
+        <div class="g-years"><span></span><span>2027</span><span>2028</span><span>2029</span><span>2030</span><span>2031</span></div>
+        <div class="g-row"><span>Aim 1: designed sources</span><div class="g-track"><div class="g-bar" style="left:10%;width:80%;background:#5b6d82">PhD 1</div></div></div>
+        <div class="g-row"><span>Aim 2: measured fields</span><div class="g-track"><div class="g-bar" style="left:10%;width:80%;background:#5b6d82">PhD 2, baseline paper</div></div></div>
+        <div class="g-row"><span>Aim 3: cell fate (Dottori)</span><div class="g-track"><div class="g-bar" style="left:20%;width:70%;background:var(--violet)">PhD 3 (tier 2)</div></div></div>
+        <div class="g-row"><span>Partner protocols (RA)</span><div class="g-track"><div class="g-bar" style="left:40%;width:40%;background:var(--signal);color:var(--ink)">RA (tier 3)</div></div></div>
+        <div class="g-row"><span>Applications</span><div class="g-track"><div class="g-mile" style="left:13%"></div><div class="g-mile" style="left:22%"></div><div class="g-mile" style="left:52%"></div></div></div>
+        <div class="g-key">◆ NHMRC EL2 (2027) · ARC Explore (2027–28) · ARC Breakthrough (2029); philanthropic rounds as they open</div>
+      </div>
+    </section>
+    <section>
+      <h2><span class="n">8</span>Team and capacity</h2>
+      <p class="team"><b>Lead:</b> Dr Alexander Mason. <b>Mentor and Aim 3:</b> Prof Mirella Dottori. <b>Partner protocols:</b> UOW's in-house stem-cell labs.
+        <b>Measurement:</b> single-molecule imaging and fluorescence correlation spectroscopy in Molecular Horizons. Three PhD candidates and one research assistant trained
+        across chemistry and stem-cell biology, a cross-disciplinary pipeline UOW keeps after the Fellowship.</p>
+    </section>
   </div>
-</section>
 
-<div class="doc">
-  <div class="rail" aria-hidden="true"></div>
-  <main class="content">
-    <section class="chapter" id="fit">
-      
-      <h2>Where UOW fits: they build the organ; we make sure it gets the same signal every time</h2>
-      <div class="fit">
-        <div class="layers">
-          <div class="layer"><h3>Human tissue models</h3><span>QUT MiPSET, Roche IHB, NAT-Net</span></div>
-          <div class="layer uow"><h3>Signal control and measurement: UOW</h3><span>The missing layer</span></div>
-          <div class="layer"><h3>Coordination</h3><span>Action 28 (proposed) · NAT-Net · Ombion</span></div>
-        </div>
-        <div class="note"><h3>A category the strategy has not named</h3>
-          <p>Its definition of non-animal technologies lists organoids, computational models and biochemical assays, not synthetic or biomimetic systems. UOW can define that category and lead it.</p></div>
-      </div>
-    </section>
+  <section>
+    <h2><span class="n">9</span>Risks and mitigation</h2>
+    <div class="tw"><table class="risk">
+      <tr><th style="width:34%">Risk</th><th>Mitigation</th></tr>
+      <tr><td>The measurement method (Aim 2) is late</td><td>The research assistant starts only once it works; if it is late, the partner projects start with the Aim 1 release methods on the same protocols.</td></tr>
+      <tr><td>External grants are not won</td><td>A staged pipeline across ARC, NHMRC and philanthropic schemes; the tiers let UOW stop at any level.</td></tr>
+      <tr><td>Partner uptake is slow</td><td>Start in-house with UOW's stem-cell labs, and give partners a ready-made plate that fits their existing protocol.</td></tr>
+    </table></div>
+  </section>
 
-    <section class="chapter" id="roadmap">
-      
-      <h2>The investment and the return</h2>
-      <p class="lede">Each step builds on the last; I lead every one.</p>
-      <div class="roadmap">
-        <div class="stop now"><span class="when">Now</span><h3>Invest in the Fellowship</h3><div class="ret"><b>Return</b>A retained Future Fellow; three HDR completions</div></div>
-        <div class="stop"><span class="when">Next</span><h3>Seed a UOW Animal-Free Hub</h3><div class="ret"><b>Return</b>Faster, purer neuronal and glial protocols for UOW's in-house labs, then a shared capability</div></div>
-        <div class="stop"><span class="when">Evidence</span><h3>Lead a 3Rs pilot</h3><div class="ret"><b>Return</b>measured replacement and reduction of animal use in UOW projects</div></div>
-        <div class="stop"><span class="when">National</span><h3>Become a national node</h3><div class="ret"><b>Return</b>Centre-scale external income</div></div>
-        <div class="stop"><span class="when">Horizon</span><h3>Services and spin-outs</h3><div class="ret"><b>Return</b>IP and service income</div></div>
-      </div>
-      <p class="roadmap-note">The first step is the decision in front of UOW now. The rest are where it leads.</p>
-    </section>
+  <div class="decision"><b>Decision sought.</b> That UOW confirm the standard Future Fellowship package and invest in <b>one of three tiers</b> ($34k, $187k or $441k over four years),
+    to build a measurement capability for human stem-cell models that UOW owns, in the final Future Fellowship round.</div>
 
-    
-  </main>
+  <footer>All costs: UOW FT27 contributions spreadsheet and personnel calculator (October 2026).
+    Income sought: NHMRC EL2 about $1.62M over five years at 2026 rates; ARC Explore up to $1.2M; ARC Breakthrough up to $3.0M; philanthropic about $100k each. Targets are planning estimates.</footer>
 </div>
-
-<footer>
-  <div class="inner">
-    <p>Sources: Ombion and Utrecht University (2025); Roche media release, 23 March 2026; Proposed National Health and Medical Research Strategy 2026–2036, Action 28 and definitions
-      (March 2026; proposed, not yet funded); ARC IC25 selection report (MiPSET); Volpato et al., <i>Stem Cell Reports</i> 11, 897–911 (2018).</p>
-    <p>Dr Alexander Mason, Synthetic Biomimetic Compartments Lab, Molecular Horizons, University of Wollongong.</p>
-  </div>
-</footer>
-
 </body>
 </html>
