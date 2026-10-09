@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>AGB gradient simulator</title>
+<style>
+:root{--bg:#f6f6f2;--panel:#ffffff;--ink:#1c1f22;--muted:#5d6368;--line:#dcdcd5;--grid:#ececE6;--accent:#0f6b6b;--accent-ink:#ffffff;--warn:#a1461f;--chip:#eef4f3}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171a;--panel:#1c2024;--ink:#e5e6e3;--muted:#a1a6ab;--line:#31363b;--grid:#262b30;--accent:#4db3b0;--accent-ink:#0c1214;--warn:#e38b5e;--chip:#1f2b2c}}
+:root[data-theme="dark"]{--bg:#14171a;--panel:#1c2024;--ink:#e5e6e3;--muted:#a1a6ab;--line:#31363b;--grid:#262b30;--accent:#4db3b0;--accent-ink:#0c1214;--warn:#e38b5e;--chip:#1f2b2c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:20px 24px 8px;max-width:1500px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px;font-weight:650;letter-spacing:-0.01em}
+h2{font-size:14px;margin:0 0 8px;font-weight:600}
+.sub{color:var(--muted);margin:0 0 14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer;font:inherit}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.blurb{color:var(--muted);margin:10px 0 0;max-width:900px}
+.layout{display:grid;grid-template-columns:340px 1fr;gap:16px;padding:12px 24px 32px;max-width:1500px;margin:0 auto}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;align-self:start;position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.plots{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+canvas{width:100%;display:block}
+#heat{height:300px}#prof,#mass,#probe{height:280px}#cbar{height:34px;margin-top:6px}
+details{border-top:1px solid var(--line);padding:6px 0}
+details:first-of-type{border-top:none}
+summary{cursor:pointer;font-weight:600;padding:4px 0}
+.row{display:grid;grid-template-columns:1fr 78px;gap:2px 8px;align-items:center;margin:8px 0}
+.row label{font-size:12.5px}
+.row .unit{color:var(--muted)}
+.row input[type=range]{grid-column:1 / span 2;width:100%;accent-color:var(--accent)}
+.row input.num{width:78px;font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right;padding:3px 5px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.chk{display:flex;gap:8px;align-items:center;font-size:12.5px;margin:8px 0}
+.derived{background:var(--chip);border-radius:8px;padding:8px 10px;font-size:12px;margin-bottom:8px}
+.derived div{display:flex;justify-content:space-between;gap:8px}
+.derived span:last-child{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.btns{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+button.b{border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:6px 10px;border-radius:8px;cursor:pointer;font:12.5px system-ui,sans-serif}
+button.b:hover{border-color:var(--accent)}
+.timebar{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.timebar input[type=range]{width:100%;accent-color:var(--accent)}
+.tlabel{font:600 14px ui-monospace,SFMono-Regular,Menlo,monospace;min-width:92px;text-align:right}
+.opts{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12.5px;color:var(--muted);align-items:center}
+.opts select{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:2px 4px;font:inherit}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:12px}
+.m{background:var(--chip);border-radius:8px;padding:8px 10px}
+.m .k{font-size:11.5px;color:var(--muted)}
+.m .v{font:600 16px ui-monospace,SFMono-Regular,Menlo,monospace}
+.notes{font-size:13px}
+.notes p,.notes li{max-width:900px}
+.notes code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace}
+.small{font-size:12px;color:var(--muted)}
+input.probes{width:100%;font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+footer{max-width:1500px;margin:0 auto;padding:0 24px 24px;color:var(--muted);font-size:12px}
+@media (max-width:1000px){.layout{grid-template-columns:1fr;padding:12px 16px}aside{position:static;max-height:none}.plots{grid-template-columns:1fr}header{padding:16px 16px 8px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>AGB gradient simulator</h1>
+  <p class="sub">Reaction-diffusion model of cargo release from one hydrogel bead in a culture well</p>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-m="A">Small molecule from polymer microparticles</button>
+    <button role="tab" data-m="B">Protein from coacervate droplets</button>
+  </div>
+  <p class="blurb" id="blurb"></p>
+</header>
+
+<div class="layout">
+  <aside id="controls" aria-label="Model parameters"></aside>
+  <main>
+    <section class="card">
+      <div class="timebar">
+        <button class="b" id="play" aria-label="Play">Play</button>
+        <input type="range" id="time" min="0" max="240" value="120" aria-label="Time">
+        <div class="tlabel" id="tlabel">0 h</div>
+      </div>
+      <div class="opts">
+        <label><input type="checkbox" id="logy" checked> Log concentration axes</label>
+        <label>View radius <select id="view"></select></label>
+        <span id="status"></span>
+      </div>
+      <div class="metrics" id="metrics"></div>
+    </section>
+    <div class="plots">
+      <section class="card"><h2>Free concentration field (slice through bead centre)</h2><canvas id="heat"></canvas><canvas id="cbar"></canvas></section>
+      <section class="card"><h2>Radial profile</h2><canvas id="prof"></canvas></section>
+      <section class="card"><h2>Release and mass balance</h2><canvas id="mass"></canvas></section>
+      <section class="card"><h2>Free concentration at fixed distances from bead surface</h2><canvas id="probe"></canvas></section>
+    </div>
+    <section class="card notes">
+      <h2>Model description</h2>
+      <p>The model solves one-dimensional radial reaction-diffusion for one spherical bead at the centre of a spherical volume of medium. The total volume is the medium volume plus the bead volume. The outer boundary has no flux. The solver uses a finite-volume grid (40 cells in the bead, 140 geometrically stretched cells outside) and an implicit (backward Euler) time step.</p>
+      <ul>
+        <li><b>Two phases in the bead.</b> Cargo is in a reservoir phase (microparticles or coacervate droplets, volume fraction <code>φ</code>) or in the continuous gel phase. Initial burst fraction goes into the gel phase at <i>t</i> = 0.</li>
+        <li><b>Reservoir exchange.</b> <code>dc<sub>r</sub>/dt = −k (c<sub>r</sub> − K·c<sub>free</sub>)</code>, solved exactly for each cell and step. Small molecule model: <code>k = 15 D<sub>p</sub> / a²</code> (linear driving force approximation for a sphere of radius <i>a</i>). Protein model: <code>k = ln 2 / t<sub>esc</sub></code>, which lumps interfacial resistance and binding off-rate. <code>t<sub>esc</sub></code> is the escape half-time under sink conditions.</li>
+        <li><b>Reservoir loss.</b> Small molecule model: logistic erosion of the microparticles, <code>φ(t) = φ<sub>0</sub> S(t)</code>. Protein model: polycation chain scission, <code>L(t)/L<sub>0</sub> = exp(−k<sub>s</sub> t)</code> with <code>k<sub>s</sub> = ln 2 / t<sub>½</sub> + s·E</code> (spontaneous plus protease-driven). A droplet dissolves when <code>L/L<sub>0</sub></code> falls below its critical fraction. Critical fractions are log-normal (median <code>ℓ<sub>m</sub></code>, width <code>σ</code>), so <code>S(t) = Φ((−k<sub>s</sub>t − ln ℓ<sub>m</sub>)/σ) / S(0)</code>. Cargo in lost reservoir volume moves to the gel phase.</li>
+        <li><b>Transport.</b> Free diffusivity from Stokes–Einstein with water viscosity at the set temperature. Gel diffusivity from the Amsden obstruction-scaling model, <code>D<sub>g</sub>/D<sub>0</sub> = exp(−π((r<sub>s</sub>+r<sub>f</sub>)/(ξ+2r<sub>f</sub>))²)</code>, with a Maxwell correction <code>(1−φ)/(1+φ/2)</code> for impermeable reservoir inclusions.</li>
+        <li><b>Serum albumin binding (small molecule model).</b> Fast equilibrium with free fraction <code>f</code>. Effective diffusivity <code>f·D<sub>free</sub> + (1−f)·D<sub>complex</sub></code> (complex radius 3.5 nm). Reservoir partition acts on the free concentration. All plotted concentrations are free (bioactive) concentrations.</li>
+        <li><b>Sinks.</b> First-order loss from the cargo half-life in all free phases, lumped cellular uptake in the medium only, and medium exchange events.</li>
+      </ul>
+      <h2>Limitations</h2>
+      <ul>
+        <li>The plate floor and the cell layer are not resolved. A bead that rests on a reflecting floor increases the local concentration near the contact point (up to approximately 2× very near the bead). This model does not include that effect.</li>
+        <li>One bead per well. No convection. Gel to medium partition is 1. Cellular uptake is a volumetric sink, not a surface sink at the cell layer.</li>
+        <li>Default values are illustrative. They are not measured values for any specific material. Use measured release data to set the reservoir parameters before you use the output quantitatively.</li>
+      </ul>
+    </section>
+  </main>
+</div>
+<footer>Synthetic Biomimetic Compartments Lab, Molecular Horizons, University of Wollongong. Model state is kept in the page link, so you can share a parameter set with the link.</footer>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const kB=1.380649e-23;
+
+/* ---------- parameter specification ---------- */
+const SPEC=[
+ {g:'Bead',id:'beadD',label:'Bead diameter',unit:'µm',min:20,max:1000,log:true,A:200,B:200},
+ {g:'Bead',id:'load',label:'Cargo loading per bead',unit:'pmol',min:0.01,max:1000,log:true,A:25,B:15},
+ {g:'Bead',id:'burst',label:'Burst fraction (free in gel at t = 0)',unit:'',min:0,max:0.9,step:0.01,A:0.05,B:0.05},
+ {g:'Cargo',id:'rh',label:'Hydrodynamic radius',unit:'nm',min:0.3,max:10,log:true,A:0.6,B:3.5},
+ {g:'Cargo',id:'T',label:'Temperature',unit:'°C',min:4,max:40,step:0.5,A:37,B:37},
+ {g:'Cargo',id:'thalf',label:'Cargo half-life in solution',unit:'h',min:1,max:10000,log:true,inf:true,A:24,B:10000},
+ {g:'Cargo',id:'fu',label:'Free fraction (not bound to serum albumin)',unit:'',min:0.001,max:1,log:true,A:0.05,models:['A']},
+ {g:'Hydrogel',id:'xi',label:'Mesh size ξ',unit:'nm',min:2,max:100,log:true,A:10,B:10},
+ {g:'Hydrogel',id:'rf',label:'Polymer strand radius',unit:'nm',min:0.2,max:2,step:0.05,A:0.5,B:0.5},
+ {g:'Reservoir',id:'phi',label:'Reservoir volume fraction in bead',unit:'',min:0.005,max:0.4,step:0.005,A:0.1,B:0.05},
+ {g:'Reservoir',id:'K',label:'Partition coefficient (reservoir : free)',unit:'',min:1,max:1e6,log:true,A:1000,B:1000},
+ {g:'Reservoir',id:'pa',label:'Microparticle radius',unit:'µm',min:0.5,max:30,log:true,A:5,models:['A']},
+ {g:'Reservoir',id:'Dp',label:'Cargo diffusivity in microparticle',unit:'µm²/s',min:1e-8,max:1e-2,log:true,A:3e-6,models:['A']},
+ {g:'Reservoir',id:'eros',label:'Microparticle erosion',type:'check',A:1,models:['A']},
+ {g:'Reservoir',id:'et50',label:'Erosion midpoint',unit:'d',min:1,max:120,log:true,A:28,models:['A']},
+ {g:'Reservoir',id:'ew',label:'Erosion width',unit:'d',min:0.5,max:30,log:true,A:5,models:['A']},
+ {g:'Reservoir',id:'tesc',label:'Escape half-time from intact droplet',unit:'h',min:0.01,max:10000,log:true,B:200,models:['B']},
+ {g:'Reservoir',id:'pchl',label:'Polycation half-life, no protease',unit:'d',min:0.5,max:1000,log:true,B:30,models:['B']},
+ {g:'Reservoir',id:'prot',label:'Protease activity E',unit:'rel.',min:0,max:5,step:0.05,B:0.2,models:['B']},
+ {g:'Reservoir',id:'psens',label:'Protease sensitivity s',unit:'d⁻¹ per unit',min:0.01,max:5,log:true,B:0.3,models:['B']},
+ {g:'Reservoir',id:'lcrit',label:'Critical chain fraction ℓm',unit:'',min:0.05,max:0.95,step:0.01,B:0.5,models:['B']},
+ {g:'Reservoir',id:'sig',label:'Droplet heterogeneity σ',unit:'',min:0.02,max:1.5,step:0.01,B:0.25,models:['B']},
+ {g:'Well',id:'Vm',label:'Medium volume',unit:'µL',min:5,max:200,log:true,A:50,B:50},
+ {g:'Well',id:'exI',label:'Medium exchange interval',unit:'h',min:0,max:168,step:1,zero:'none',A:48,B:48},
+ {g:'Well',id:'exF',label:'Fraction of medium exchanged',unit:'',min:0.05,max:1,step:0.05,A:0.5,B:0.5},
+ {g:'Well',id:'kc',label:'Cellular uptake rate (lumped)',unit:'h⁻¹',min:0,max:1,step:0.005,A:0,B:0},
+ {g:'Run',id:'dur',label:'Duration',unit:'d',min:1,max:60,step:1,A:21,B:14},
+ {g:'Run',id:'thr',label:'Response threshold (free)',unit:'nM',min:0.01,max:1000,log:true,A:10,B:1},
+];
+const GROUP_TITLE={Bead:'Bead',Cargo:'Cargo',Hydrogel:'Hydrogel network',Reservoir:'Reservoir',Well:'Well and culture',Run:'Run'};
+const BLURB={
+ A:'Small molecule model: a hydrophobic cargo (for example retinoic acid) partitions into polymer microparticles held in the bead. Release is controlled by diffusion in the microparticles, partition, serum albumin binding and microparticle erosion.',
+ B:'Protein model: a protein cargo partitions into coacervate droplets held in the bead. Release is a slow leak from intact droplets plus a delayed pulse when polycation chain scission dissolves the droplets.'
+};
+const NSNAP=240;
+const PAL=['#0f8a86','#c2621f','#7b5cd6','#2f74c9','#8a8f94','#c23b5a'];
+
+let model='A';
+const vals={A:{},B:{}};
+const probesTxt={A:'25, 100, 300, 1000',B:'25, 100, 300, 1000'};
+function defaults(m){const o={};SPEC.forEach(s=>{if(s[m]!==undefined)o[s.id]=s[m];});return o;}
+vals.A=defaults('A');vals.B=defaults('B');
+
+/* ---------- formatting ---------- */
+function fmt(v){if(!isFinite(v))return '∞';if(v===0)return '0';const a=Math.abs(v);if(a>=1e5||a<1e-3)return v.toExponential(2).replace('e+','e');return String(+v.toPrecision(3));}
+function disp(s,v){if(s.inf&&v>=s.max*0.999)return '∞';if(s.zero&&v===0)return s.zero;return fmt(v);}
+function fmtTime(sec){const h=sec/3600;if(h<48)return fmt(h)+' h';return fmt(h/24)+' d';}
+function toSlider(s,v){v=Math.min(s.max,Math.max(s.min,v));return s.log?1000*Math.log(v/s.min)/Math.log(s.max/s.min):1000*(v-s.min)/(s.max-s.min);}
+function fromSlider(s,x){let v=s.log?s.min*Math.pow(s.max/s.min,x/1000):s.min+(s.max-s.min)*x/1000;if(s.step)v=Math.round(v/s.step)*s.step;else v=+v.toPrecision(3);return +v.toFixed(10);}
+function applies(s){return !s.models||s.models.includes(model);}
+
+/* ---------- maths helpers ---------- */
+function erf(x){const s=x<0?-1:1;x=Math.abs(x);const t=1/(1+0.3275911*x);const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return s*y;}
+const Phi=x=>0.5*(1+erf(x/Math.SQRT2));
+function waterVisc(Tc){const T=Tc+273.15;return 2.414e-5*Math.pow(10,247.8/(T-140));}
+function stokesD(rh_nm,Tc){return kB*(Tc+273.15)/(6*Math.PI*waterVisc(Tc)*rh_nm*1e-9);}
+function amsden(rs,xi,rf){return Math.exp(-Math.PI*Math.pow((rs+rf)/(xi+2*rf),2));}
+function interp(xs,ys,x){let lo=0,hi=xs.length-1;if(x<=xs[0])return ys[0];if(x>=xs[hi])return ys[hi];while(hi-lo>1){const m=(lo+hi)>>1;if(xs[m]<=x)lo=m;else hi=m;}const f=(x-xs[lo])/(xs[hi]-xs[lo]);return ys[lo]+f*(ys[hi]-ys[lo]);}
+
+/* ---------- simulation ---------- */
+function simulate(p,probeList){
+ const m=p.model;
+ const Rb=p.beadD*0.5e-6;
+ const Vb=4/3*Math.PI*Rb**3;
+ const Vm=p.Vm*1e-9;
+ const Rout=Math.cbrt(3*(Vm+Vb)/(4*Math.PI));
+ const Nb=40,No=140,n=Nb+No;
+ // grid faces
+ const fr=new Float64Array(n+1);
+ const dr0=Rb/Nb;for(let i=0;i<=Nb;i++)fr[i]=i*dr0;
+ const L=Rout-Rb;let g=1;
+ if(dr0*No<L){let lo=1+1e-9,hi=2;for(let k=0;k<80;k++){const mid=(lo+hi)/2;const s=dr0*(Math.pow(mid,No)-1)/(mid-1);if(s>L)hi=mid;else lo=mid;}g=(lo+hi)/2;}
+ {let r=Rb,d=(g===1)?L/No:dr0;for(let i=1;i<=No;i++){r+=d;fr[Nb+i]=r;d*=g;}fr[n]=Rout;}
+ const rc=new Float64Array(n),V=new Float64Array(n),d1=new Float64Array(n),d2=new Float64Array(n);
+ for(let i=0;i<n;i++){rc[i]=0.5*(fr[i]+fr[i+1]);V[i]=(fr[i+1]**3-fr[i]**3)/3;}
+ // transport
+ const fu=m==='A'?p.fu:1;
+ const D0=stokesD(p.rh,p.T),Dalb=stokesD(3.5,p.T);
+ const Dgel=fu*D0*amsden(p.rh,p.xi,p.rf)+(1-fu)*Dalb*amsden(3.5,p.xi,p.rf);
+ const Dmed=fu*D0+(1-fu)*Dalb;
+ const kdeg=isFinite(p.thalf)?Math.LN2/(p.thalf*3600):0;
+ const kcell=p.kc/3600;
+ const kex=m==='A'?15*p.Dp*1e-12/Math.pow(p.pa*1e-6,2):Math.LN2/(p.tesc*3600);
+ const Kf=p.K*fu;
+ let S,resMid;
+ if(m==='A'){
+  if(p.eros){const t50=p.et50*86400,w=p.ew*86400,n0=1+Math.exp(-t50/w);S=t=>n0/(1+Math.exp((t-t50)/w));resMid=t50;}
+  else{S=()=>1;resMid=Infinity;}
+ }else{
+  const ks=(Math.LN2/p.pchl+p.psens*p.prot)/86400;const l=Math.log(p.lcrit);const S0=Phi(-l/p.sig);
+  S=t=>Phi((-ks*t-l)/p.sig)/S0;resMid=-l/ks;
+ }
+ // state
+ const M0=p.load*1e-12;
+ const phi0=p.phi;let phi=phi0;
+ let Vbead=0;for(let i=0;i<Nb;i++)Vbead+=V[i];
+ const FP=4*Math.PI;
+ const u=new Float64Array(n),c=new Float64Array(Nb);
+ for(let i=0;i<Nb;i++){u[i]=p.burst*M0/(FP*(1-phi0)*Vbead);c[i]=(1-p.burst)*M0/(FP*phi0*Vbead);}
+ let lost=0,removed=0;
+ const T=p.dur*86400;
+ const snapT=[];for(let j=0;j<=NSNAP;j++)snapT.push(j*T/NSNAP);
+ const exT=[];if(p.exI>0){for(let t=p.exI*3600;t<T-1e-6;t+=p.exI*3600)exT.push(t);}
+ const prof=[],snapRel=[],snapMean=[];
+ const ser={t:[],rel:[],res:[],bead:[],med:[],lost:[],rem:[],mean:[],probes:probeList.map(()=>[])};
+ const rcum=Array.from(rc,x=>x*1e6);
+ let vmax=0,vmaxOut=0;
+ // work arrays
+ const a=new Float64Array(n),b=new Float64Array(n),cc=new Float64Array(n),dd=new Float64Array(n),G=new Float64Array(n),cp=new Float64Array(n),Dc=new Float64Array(n),capV=new Float64Array(n),lam=new Float64Array(n);
+ for(let i=0;i<n;i++)lam[i]=i<Nb?kdeg:kdeg+kcell;
+ function amounts(){let r=0,bf=0,md=0;for(let i=0;i<Nb;i++){r+=phi*c[i]*V[i];bf+=(1-phi)*u[i]*V[i];}for(let i=Nb;i<n;i++)md+=u[i]*V[i];return[r*FP/M0,bf*FP/M0,md*FP/M0];}
+ function meanFree(){let s=0,v=0;for(let i=Nb;i<n;i++){s+=u[i]*V[i];v+=V[i];}return fu*s/v*1e6;}
+ function record(t){const [r,bf,md]=amounts();ser.t.push(t/86400);ser.rel.push(100*(1-r-bf));ser.res.push(100*r);ser.bead.push(100*bf);ser.med.push(100*md);ser.lost.push(100*lost/M0);ser.rem.push(100*removed/M0);ser.mean.push(meanFree());
+  probeList.forEach((d,k)=>{ser.probes[k].push(fu*interp(rcum,u,p.beadD/2+d)*1e6);});}
+ function snap(){const pr=new Float64Array(n);for(let i=0;i<n;i++){pr[i]=fu*u[i]*1e6;if(pr[i]>vmax)vmax=pr[i];if(i>=Nb&&prof.length>0&&pr[i]>vmaxOut)vmaxOut=pr[i];}prof.push(pr);const [r,bf]=amounts();snapRel.push(100*(1-r-bf));snapMean.push(meanFree());}
+ function step(h,tNew){
+  // reservoir loss
+  const phiN=phi0*S(tNew);
+  if(phiN<phi){const capO=1-phi,capN=1-phiN;for(let i=0;i<Nb;i++){u[i]=(capO*u[i]+(phi-phiN)*c[i])/capN;}phi=phiN;}
+  // exchange (exact local solution)
+  if(phi>1e-12){const cap=1-phi;const kef=kex*(1+phi*Kf/cap);const e=Math.exp(-kef*h);
+   for(let i=0;i<Nb;i++){const mt=cap*u[i]+phi*c[i];const ueq=mt/(cap+phi*Kf);const ceq=Kf*ueq;c[i]=ceq+(c[i]-ceq)*e;u[i]=(mt-phi*c[i])/cap;}}
+  // diffusion (implicit)
+  const Din=Dgel*(1-phi)/(1+phi/2);
+  for(let i=0;i<n;i++){Dc[i]=i<Nb?Din:Dmed;capV[i]=(i<Nb?(1-phi):1)*V[i];}
+  for(let i=0;i<n-1;i++){const e1=fr[i+1]-rc[i],e2=rc[i+1]-fr[i+1];const Df=(e1+e2)/(e1/Dc[i]+e2/Dc[i+1]);G[i]=Df*fr[i+1]*fr[i+1]/(rc[i+1]-rc[i]);}
+  G[n-1]=0;
+  for(let i=0;i<n;i++){const gl=i>0?G[i-1]:0,gr=G[i];a[i]=-gl;cc[i]=-gr;b[i]=capV[i]/h+lam[i]*capV[i]+gl+gr;dd[i]=capV[i]*u[i]/h;}
+  cp[0]=cc[0]/b[0];dd[0]=dd[0]/b[0];
+  for(let i=1;i<n;i++){const den=b[i]-a[i]*cp[i-1];cp[i]=cc[i]/den;dd[i]=(dd[i]-a[i]*dd[i-1])/den;}
+  u[n-1]=dd[n-1];for(let i=n-2;i>=0;i--)u[i]=dd[i]-cp[i]*u[i+1];
+  let ls=0;for(let i=0;i<n;i++)ls+=lam[i]*capV[i]*u[i];lost+=ls*h*FP;
+ }
+ snap();record(0);
+ let t=0,dt=1;const dtmax=T/2500;let js=1,je=0,guard=0;
+ while(t<T-1e-6&&guard<200000){
+  guard++;
+  const tn=Math.min(snapT[js]??Infinity,exT[je]??Infinity);
+  const hit=(tn-t)<=dt;const h=hit?tn-t:dt;const tNew=hit?tn:t+h;
+  step(h,tNew);t=tNew;
+  if(hit){
+   if(je<exT.length&&exT[je]===tn){let rm=0;for(let i=Nb;i<n;i++){rm+=p.exF*u[i]*V[i];u[i]*=(1-p.exF);}removed+=rm*FP;je++;}
+   if(js<snapT.length&&snapT[js]===tn){snap();js++;}
+  }
+  record(t);
+  dt=Math.min(dt*1.15,dtmax);
+ }
+ const [r,bf,md]=amounts();
+ const balErr=Math.abs(r+bf+md+lost/M0+removed/M0-1)*100;
+ // half release time
+ let t50=NaN;for(let k=1;k<ser.rel.length;k++){if(ser.rel[k]>=50){const f=(50-ser.rel[k-1])/(ser.rel[k]-ser.rel[k-1]);t50=(ser.t[k-1]+f*(ser.t[k]-ser.t[k-1]))*86400;break;}}
+ return{rc:rcum,Rb:p.beadD/2,Rout:Rout*1e6,snapT,prof,snapRel,snapMean,ser,vmax:(vmaxOut>0?vmaxOut:vmax),probeList,thr:p.thr,
+  derived:{D0:D0*1e12,Dgel:Dgel*1e12,Dmed:Dmed*1e12,tesc:Math.LN2/kex,resMid,bath:fu*M0/Vm*1e3/1e-6*1e-3,Rout:Rout*1e3,balErr,t50,steps:guard}};
+}
+
+/* ---------- controls ---------- */
+function buildControls(){
+ const el=$('controls');el.innerHTML='';
+ const dv=document.createElement('div');dv.className='derived';dv.id='derived';el.appendChild(dv);
+ const bt=document.createElement('div');bt.className='btns';
+ bt.innerHTML='<button class="b" id="reset">Reset defaults</button><button class="b" id="copy">Copy link</button><button class="b" id="csvS">Time series CSV</button><button class="b" id="csvP">Profile CSV</button>';
+ el.appendChild(bt);
+ const groups={};
+ SPEC.filter(applies).forEach(s=>{
+  if(!groups[s.g]){const d=document.createElement('details');d.open=true;d.innerHTML='<summary>'+GROUP_TITLE[s.g]+'</summary>';el.appendChild(d);groups[s.g]=d;}
+  const d=groups[s.g];
+  if(s.type==='check'){const lb=document.createElement('label');lb.className='chk';lb.innerHTML='<input type="checkbox" id="c-'+s.id+'"> '+s.label;d.appendChild(lb);
+   const cb=lb.querySelector('input');cb.checked=!!vals[model][s.id];cb.addEventListener('change',()=>{vals[model][s.id]=cb.checked?1:0;schedule();});return;}
+  const row=document.createElement('div');row.className='row';
+  row.innerHTML='<label for="r-'+s.id+'">'+s.label+(s.unit?' <span class="unit">('+s.unit+')</span>':'')+'</label><input class="num" id="n-'+s.id+'" aria-label="'+s.label+' value"><input type="range" id="r-'+s.id+'" min="0" max="1000" step="1">';
+  d.appendChild(row);
+  const r=row.querySelector('input[type=range]'),nm=row.querySelector('input.num');
+  const v=vals[model][s.id];r.value=toSlider(s,v);nm.value=disp(s,v);
+  r.addEventListener('input',()=>{const x=fromSlider(s,+r.value);vals[model][s.id]=x;nm.value=disp(s,x);schedule();});
+  nm.addEventListener('change',()=>{let t=nm.value.trim().toLowerCase();let x;if(t==='∞'||t==='inf')x=s.max;else if(t==='none')x=0;else x=parseFloat(t);
+   if(!isFinite(x)){nm.value=disp(s,vals[model][s.id]);return;}x=Math.min(s.max,Math.max(s.min,x));vals[model][s.id]=x;nm.value=disp(s,x);r.value=toSlider(s,x);schedule();});
+  if(s.g==='Run'&&s.id==='thr'){}
+ });
+ const pr=document.createElement('div');pr.innerHTML='<label class="small" for="probes">Probe distances from bead surface (µm, comma separated)</label><input class="probes" id="probes">';
+ groups.Run.appendChild(pr);
+ const pin=$('probes');pin.value=probesTxt[model];pin.addEventListener('change',()=>{probesTxt[model]=pin.value;schedule();});
+ $('reset').onclick=()=>{vals[model]=defaults(model);probesTxt[model]='25, 100, 300, 1000';buildControls();schedule();};
+ $('copy').onclick=()=>{writeHash();navigator.clipboard&&navigator.clipboard.writeText(location.href).then(()=>flash('Link copied'),()=>flash('Copy the address bar link'));};
+ $('csvS').onclick=csvSeries;$('csvP').onclick=csvProfile;
+}
+function flash(t){$('status').textContent=t;setTimeout(()=>{$('status').textContent='';},2000);}
+
+/* ---------- state in URL ---------- */
+function writeHash(){const q=new URLSearchParams();q.set('m',model);SPEC.filter(applies).forEach(s=>q.set(s.id,vals[model][s.id]));q.set('probes',probesTxt[model]);try{history.replaceState(null,'','#'+q.toString());}catch(e){}}
+function readHash(){try{const q=new URLSearchParams(location.hash.slice(1));const m=q.get('m');if(m!=='A'&&m!=='B')return;model=m;SPEC.forEach(s=>{if(q.has(s.id)&&applies(s)){const x=parseFloat(q.get(s.id));if(isFinite(x))vals[m][s.id]=Math.min(s.max,Math.max(s.min,x));}});if(q.has('probes'))probesTxt[m]=q.get('probes');}catch(e){}}
+
+/* ---------- run ---------- */
+let res=null,timer=null,idx=NSNAP/2;
+function parseProbes(){const a=probesTxt[model].split(/[,; ]+/).map(Number).filter(x=>isFinite(x)&&x>=0).slice(0,6);return a.length?a:[25,100,300,1000];}
+function schedule(){clearTimeout(timer);timer=setTimeout(run,40);}
+function run(){
+ const p=Object.assign({model},vals[model]);
+ const ts=SPEC.find(s=>s.id==='thalf');if(p.thalf>=ts.max*0.999)p.thalf=Infinity;
+ if(model==='B')p.fu=1;
+ const t0=performance.now();
+ res=simulate(p,parseProbes());
+ const ms=performance.now()-t0;
+ writeHash();buildView();renderDerived(ms);render();
+}
+function renderDerived(ms){
+ const d=res.derived;const rows=[
+  ['Free diffusivity D₀',fmt(d.D0)+' µm²/s'],
+  ['Diffusivity in gel',fmt(d.Dgel)+' µm²/s'],
+  ['Diffusivity in medium',fmt(d.Dmed)+' µm²/s'],
+  ['Reservoir escape half-time',fmtTime(d.tesc)],
+  [model==='A'?'Erosion midpoint':'Droplet dissolution midpoint',isFinite(d.resMid)?fmtTime(d.resMid):'none'],
+  ['Equivalent well radius',fmt(d.Rout)+' mm'],
+  ['Bath equivalent (all released, free)',fmt(d.bath)+' nM'],
+  ['Mass balance error',fmt(d.balErr)+' %'],
+ ];
+ $('derived').innerHTML='<b>Derived values</b>'+rows.map(r=>'<div><span>'+r[0]+'</span><span>'+r[1]+'</span></div>').join('');
+ $('status').textContent='Solved in '+Math.round(ms)+' ms ('+d.steps+' steps)';
+}
+function buildView(){
+ const sel=$('view');const prev=+sel.value;const opts=[250,500,1000,2000,5000].filter(v=>v<res.Rout);opts.push(Math.round(res.Rout));
+ sel.innerHTML=opts.map(v=>'<option value="'+v+'">'+(v===Math.round(res.Rout)?'whole well ('+v+' µm)':v+' µm')+'</option>').join('');
+ let pick=opts.includes(prev)?prev:(opts.find(v=>v>=Math.max(1000,5*res.Rb))||opts[opts.length-1]);sel.value=pick;
+}
+
+/* ---------- drawing ---------- */
+function setup(cv){const dpr=window.devicePixelRatio||1;const w=cv.clientWidth,h=cv.clientHeight;const W=Math.max(1,Math.round(w*dpr)),H=Math.max(1,Math.round(h*dpr));if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);return{ctx,w,h,dpr};}
+function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function niceTicks(a,b,n){const span=b-a;if(span<=0)return[a];let st=Math.pow(10,Math.floor(Math.log10(span/n)));const err=n/span*st;if(err<=0.15)st*=10;else if(err<=0.35)st*=5;else if(err<=0.75)st*=2;const out=[];for(let v=Math.ceil(a/st)*st;v<=b+st*1e-9;v+=st)out.push(+v.toPrecision(12));return out;}
+function tickLabel(v){if(v===0)return '0';const a=Math.abs(v);if(a>=1e4||a<1e-2)return '1e'+Math.round(Math.log10(a));return String(+v.toPrecision(4));}
+function plot(cv,o){
+ const {ctx,w,h}=setup(cv);const ink=cssv('--ink'),muted=cssv('--muted'),grid=cssv('--grid'),line=cssv('--line');
+ ctx.clearRect(0,0,w,h);ctx.font='11px system-ui,sans-serif';
+ const m={l:56,r:12,t:10,b:36};const pw=w-m.l-m.r,ph=h-m.t-m.b;
+ const [x0,x1]=o.xlim,[y0,y1]=o.ylim;
+ const lx=v=>Math.log10(v);
+ const fx=o.xlog?v=>(lx(v)-lx(x0))/(lx(x1)-lx(x0)):v=>(v-x0)/(x1-x0);
+ const fy=o.ylog?v=>(lx(v)-lx(y0))/(lx(y1)-lx(y0)):v=>(v-y0)/(y1-y0);
+ const X=v=>m.l+fx(v)*pw,Y=v=>m.t+ph-fy(v)*ph;
+ const xt=o.xlog?[]:niceTicks(x0,x1,6);
+ let yt;if(o.ylog){yt=[];for(let e=Math.ceil(lx(y0));e<=Math.floor(lx(y1));e++)yt.push(Math.pow(10,e));if(yt.length>7)yt=yt.filter((_,i)=>i%2===0);}else yt=niceTicks(y0,y1,5);
+ ctx.strokeStyle=grid;ctx.lineWidth=1;ctx.fillStyle=muted;ctx.textAlign='center';ctx.textBaseline='top';
+ xt.forEach(v=>{const x=X(v);ctx.beginPath();ctx.moveTo(x,m.t);ctx.lineTo(x,m.t+ph);ctx.stroke();ctx.fillText(tickLabel(v),x,m.t+ph+4);});
+ ctx.textAlign='right';ctx.textBaseline='middle';
+ yt.forEach(v=>{const y=Y(v);ctx.beginPath();ctx.moveTo(m.l,y);ctx.lineTo(m.l+pw,y);ctx.stroke();ctx.fillText(tickLabel(v),m.l-5,y);});
+ ctx.strokeStyle=line;ctx.strokeRect(m.l,m.t,pw,ph);
+ ctx.save();ctx.beginPath();ctx.rect(m.l,m.t,pw,ph);ctx.clip();
+ if(o.shade){ctx.fillStyle=cssv('--chip');ctx.fillRect(X(o.shade[0]),m.t,X(o.shade[1])-X(o.shade[0]),ph);}
+ (o.hlines||[]).forEach(l=>{if(o.ylog&&l.y<=0)return;ctx.strokeStyle=l.color||muted;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(m.l,Y(l.y));ctx.lineTo(m.l+pw,Y(l.y));ctx.stroke();ctx.setLineDash([]);});
+ (o.vlines||[]).forEach(l=>{ctx.strokeStyle=l.color||muted;ctx.setLineDash(l.dash||[]);ctx.lineWidth=l.width||1;ctx.beginPath();ctx.moveTo(X(l.x),m.t);ctx.lineTo(X(l.x),m.t+ph);ctx.stroke();ctx.setLineDash([]);ctx.lineWidth=1;});
+ o.series.forEach(s=>{ctx.strokeStyle=s.color;ctx.lineWidth=s.width||1.6;ctx.globalAlpha=s.alpha||1;ctx.beginPath();let pen=false;
+  for(let i=0;i<s.x.length;i++){const xv=s.x[i],yv=s.y[i];if(!isFinite(yv)||(o.ylog&&yv<=0)||(o.xlog&&xv<=0)){pen=false;continue;}const yy=o.ylog?Math.max(yv,y0*1e-3):yv;const px=X(xv),py=Y(yy);if(!pen){ctx.moveTo(px,py);pen=true;}else ctx.lineTo(px,py);}
+  ctx.stroke();ctx.globalAlpha=1;});
+ ctx.restore();
+ ctx.fillStyle=ink;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(o.xlabel,m.l+pw/2,h-2);
+ ctx.save();ctx.translate(12,m.t+ph/2);ctx.rotate(-Math.PI/2);ctx.textBaseline='middle';ctx.fillText(o.ylabel,0,0);ctx.restore();
+ const lg=o.series.filter(s=>s.label);if(lg.length){ctx.textAlign='left';ctx.textBaseline='middle';let wmax=0;lg.forEach(s=>wmax=Math.max(wmax,ctx.measureText(s.label).width));
+  const bx=m.l+pw-wmax-30,by=m.t+6;ctx.fillStyle=cssv('--panel');ctx.globalAlpha=0.85;ctx.fillRect(bx-6,by-4,wmax+34,lg.length*15+6);ctx.globalAlpha=1;
+  lg.forEach((s,i)=>{ctx.strokeStyle=s.color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bx,by+6+i*15);ctx.lineTo(bx+16,by+6+i*15);ctx.stroke();ctx.fillStyle=ink;ctx.fillText(s.label,bx+22,by+6+i*15);});ctx.lineWidth=1;}
+}
+const VIR=[[68,1,84],[72,40,120],[62,74,137],[49,104,142],[38,130,142],[31,158,137],[53,183,121],[109,205,89],[180,222,44],[253,231,37]];
+function cmap(f){f=Math.min(1,Math.max(0,f));const x=f*(VIR.length-1),i=Math.min(VIR.length-2,Math.floor(x)),t=x-i;return VIR[i].map((v,k)=>Math.round(v+t*(VIR[i+1][k]-v)));}
+function colourFrac(v,lo,hi,logy){if(logy){if(v<=lo)return 0;return Math.log(v/lo)/Math.log(hi/lo);}return v/hi;}
+function hexToRgb(hx){const m=hx.replace('#','');const s=m.length===3?m.split('').map(c=>c+c).join(''):m;return[parseInt(s.slice(0,2),16),parseInt(s.slice(2,4),16),parseInt(s.slice(4,6),16)];}
+function drawHeat(){
+ const cv=$('heat');const {ctx,w,h,dpr}=setup(cv);const W=cv.width,H=cv.height;
+ const view=+$('view').value;const logy=$('logy').checked;
+ const hi=res.vmax||1,lo=hi*1e-3;const pr=res.prof[idx];
+ ctx.setTransform(1,0,0,1,0,0);
+ const img=ctx.createImageData(W,H);const cx=W/2,cy=H/2,Rpx=Math.min(W,H)/2-4*dpr;const umpp=view/Rpx;
+ let bg=[128,128,128];try{bg=hexToRgb(cssv('--panel'));}catch(e){}
+ const maxd=Math.ceil(Math.hypot(cx,cy))+2;const lut=new Array(maxd);
+ for(let d=0;d<maxd;d++){const r=d*umpp;if(r>res.Rout||d>Rpx+1)lut[d]=bg;else lut[d]=cmap(colourFrac(interp(res.rc,pr,r),lo,hi,logy));}
+ const D=img.data;for(let y=0;y<H;y++){for(let x=0;x<W;x++){const d=Math.round(Math.hypot(x-cx,y-cy));const c=lut[d];const k=(y*W+x)*4;D[k]=c[0];D[k+1]=c[1];D[k+2]=c[2];D[k+3]=255;}}
+ ctx.putImageData(img,0,0);
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+ const cxc=w/2,cyc=h/2,R=Rpx/dpr;const s=R/view;
+ ctx.strokeStyle='rgba(255,255,255,0.9)';ctx.lineWidth=1.2;ctx.setLineDash([3,3]);ctx.beginPath();ctx.arc(cxc,cyc,res.Rb*s,0,2*Math.PI);ctx.stroke();ctx.setLineDash([]);
+ ctx.strokeStyle=cssv('--line');ctx.beginPath();ctx.arc(cxc,cyc,Math.min(R,res.Rout*s),0,2*Math.PI);ctx.stroke();
+ // threshold contour
+ let rthr=null;for(let i=res.rc.length-1;i>=0;i--){if(pr[i]>=res.thr){rthr=res.rc[i];break;}}
+ if(rthr!==null&&rthr*s<R){ctx.strokeStyle='#ffffff';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cxc,cyc,rthr*s,0,2*Math.PI);ctx.stroke();}
+ const sb=niceTicks(0,view/2,2).filter(v=>v>0)[0]||view/4;ctx.fillStyle=cssv('--ink');ctx.fillRect(10,h-14,sb*s,3);ctx.font='11px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText(fmt(sb)+' µm',10,h-17);
+ ctx.textAlign='right';ctx.fillStyle=cssv('--muted');ctx.fillText('dashed: bead edge, solid: threshold',w-6,12);
+ // colour bar
+ const cb=$('cbar');const o=setup(cb);const c2=o.ctx;c2.clearRect(0,0,o.w,o.h);
+ const bw=o.w-120,bx=60;for(let i=0;i<bw;i++){const c=cmap(i/bw);c2.fillStyle='rgb('+c+')';c2.fillRect(bx+i,4,1.2,10);}
+ c2.fillStyle=cssv('--muted');c2.font='11px system-ui,sans-serif';c2.textBaseline='top';c2.textAlign='right';c2.fillText((logy?fmt(lo):'0')+' nM',bx-4,3);c2.textAlign='left';c2.fillText(fmt(hi)+' nM',bx+bw+4,3);
+ c2.textAlign='center';c2.fillText((logy?'free concentration, log scale':'free concentration, linear scale')+'; bead interior above maximum shown at top colour',bx+bw/2,18);
+}
+function render(){
+ if(!res)return;
+ const logy=$('logy').checked,view=+$('view').value;const t=res.snapT[idx];
+ $('tlabel').textContent=fmtTime(t);$('time').max=NSNAP;$('time').value=idx;
+ drawHeat();
+ // profile
+ const ghosts=[];for(let k=1;k<=5;k++){const j=Math.round(k*NSNAP/6);ghosts.push({x:res.rc,y:res.prof[j],color:cssv('--muted'),alpha:0.35,width:1});}
+ const hi=Math.max(res.vmax,res.thr)*1.5;
+ plot($('prof'),{series:[...ghosts,{x:res.rc,y:res.prof[idx],color:PAL[0],width:2.2,label:'t = '+fmtTime(t)}],xlim:[0,view],ylim:logy?[hi*1e-5,hi]:[0,hi/1.5*1.05],ylog:logy,
+  xlabel:'distance from bead centre (µm)',ylabel:'free concentration (nM)',shade:[0,res.Rb],hlines:[{y:res.thr,color:cssv('--warn')}]});
+ // mass balance
+ const S=res.ser;
+ plot($('mass'),{series:[{x:S.t,y:S.rel,color:PAL[0],width:2.2,label:'released from bead'},{x:S.t,y:S.res,color:PAL[1],label:'in reservoir'},{x:S.t,y:S.bead,color:PAL[2],label:'free in bead'},
+  {x:S.t,y:S.med,color:PAL[3],label:'in medium'},{x:S.t,y:S.lost,color:PAL[4],label:'degraded or taken up'},{x:S.t,y:S.rem,color:PAL[5],label:'removed by exchange'}],
+  xlim:[0,S.t[S.t.length-1]],ylim:[0,100],xlabel:'time (d)',ylabel:'% of loading',vlines:[{x:t/86400,color:cssv('--ink'),dash:[2,3]}]});
+ // probes
+ let pmax=res.thr;S.probes.forEach(a=>a.forEach(v=>{if(v>pmax)pmax=v;}));pmax*=1.5;
+ const ps=res.probeList.map((d,k)=>({x:S.t,y:S.probes[k],color:PAL[k%PAL.length],label:fmt(d)+' µm'}));
+ ps.push({x:S.t,y:S.mean,color:cssv('--muted'),width:1.2,label:'well mean'});
+ plot($('probe'),{series:ps,xlim:[0,S.t[S.t.length-1]],ylim:logy?[pmax*1e-5,pmax]:[0,pmax/1.5*1.05],ylog:logy,xlabel:'time (d)',ylabel:'free concentration (nM)',
+  hlines:[{y:res.thr,color:cssv('--warn')}],vlines:[{x:t/86400,color:cssv('--ink'),dash:[2,3]}]});
+ renderMetrics();
+}
+function renderMetrics(){
+ const pr=res.prof[idx];const rc=res.rc;let iS=0;while(iS<rc.length&&rc[iS]<res.Rb)iS++;
+ const surf=pr[Math.min(iS,pr.length-1)];
+ let zone=0,whole=false;if(surf>=res.thr){let k=iS;while(k<rc.length&&pr[k]>=res.thr)k++;if(k>=rc.length)whole=true;else zone=rc[k]-res.Rb;}
+ let lam=NaN;if(surf>0){const tgt=surf/Math.E;for(let k=iS;k<rc.length;k++){if(pr[k]<=tgt){lam=rc[k]-res.Rb;break;}}}
+ const far=pr[pr.length-1];
+ const d=res.derived;
+ const items=[
+  ['Released from bead',fmt(res.snapRel[idx])+' %'],
+  ['Free conc. at bead surface',fmt(surf)+' nM'],
+  ['Zone above threshold',surf<res.thr?'none':whole?'whole well':fmt(zone)+' µm'],
+  ['1/e decay length',isFinite(lam)?fmt(lam)+' µm':'flat (> well)'],
+  ['Well mean (bath equivalent)',fmt(res.snapMean[idx])+' nM'],
+  ['Surface : well edge',far>0?fmt(surf/far)+'×':'∞'],
+  ['Time to 50 % release',isFinite(d.t50)?fmtTime(d.t50):'> run'],
+ ];
+ $('metrics').innerHTML=items.map(i=>'<div class="m"><div class="k">'+i[0]+'</div><div class="v">'+i[1]+'</div></div>').join('');
+}
+
+/* ---------- export ---------- */
+function download(name,txt){const b=new Blob([txt],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+function csvSeries(){if(!res)return;const S=res.ser;const hdr=['time_d','released_pct','reservoir_pct','free_in_bead_pct','medium_pct','degraded_or_uptake_pct','removed_pct','well_mean_free_nM',...res.probeList.map(d=>'free_nM_at_'+d+'um')];
+ const lines=[hdr.join(',')];for(let i=0;i<S.t.length;i++){lines.push([S.t[i],S.rel[i],S.res[i],S.bead[i],S.med[i],S.lost[i],S.rem[i],S.mean[i],...S.probes.map(a=>a[i])].map(v=>+(+v).toPrecision(6)).join(','));}
+ download('agb_timeseries_model'+model+'.csv',lines.join('\n'));}
+function csvProfile(){if(!res)return;const pr=res.prof[idx];const lines=['# time_s='+res.snapT[idx],'r_um,free_nM'];for(let i=0;i<pr.length;i++)lines.push(+res.rc[i].toPrecision(6)+','+(+pr[i].toPrecision(6)));download('agb_profile_model'+model+'_t'+Math.round(res.snapT[idx]/3600)+'h.csv',lines.join('\n'));}
+
+/* ---------- wiring ---------- */
+function setModel(m){model=m;document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.m===m?'true':'false'));$('blurb').textContent=BLURB[m];buildControls();schedule();}
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>setModel(b.dataset.m)));
+$('time').addEventListener('input',()=>{idx=+$('time').value;render();});
+$('logy').addEventListener('change',render);$('view').addEventListener('change',render);
+let playing=false,last=0;
+$('play').addEventListener('click',()=>{playing=!playing;$('play').textContent=playing?'Pause':'Play';if(playing){if(idx>=NSNAP)idx=0;requestAnimationFrame(tick);}});
+function tick(ts){if(!playing)return;if(ts-last>45){last=ts;idx=Math.min(NSNAP,idx+1);render();if(idx>=NSNAP){playing=false;$('play').textContent='Play';return;}}requestAnimationFrame(tick);}
+let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(render,100);});
+readHash();setModel(model);
+</script>
+</body>
+</html>
