@@ -158,7 +158,7 @@
   @media (min-width: 720px) {
     .snap { grid-template-columns: 1.1fr .8fr 1.2fr; }
     .grid3, .risks { grid-template-columns: repeat(3, 1fr); }
-    .tiers { grid-template-columns: repeat(4, 1fr); }
+    .tiers { grid-template-columns: repeat(3, 1fr); }
     .steps { grid-template-columns: repeat(4, 1fr); gap: 26px; }
     .steps li + li::before { left: -22px; top: 50%; width: 16px; height: 2px; }
     .steps li + li::after { left: -9px; top: calc(50% - 6px); border: 6px solid transparent; border-left: 7px solid var(--muted); border-right: 0; }
@@ -181,11 +181,11 @@
       and <em>this is the moment to invest: FT27 is the last Future Fellowship round.</em></p>
     <p class="by">Dr Alexander Mason · ARC DECRA Fellow · Synthetic Biomimetic Compartments Lab · Faculty of Science, Medicine and Health</p>
     <div class="snap">
-      <div><b>Investment requested</b><span>The standard Fellowship package, plus <strong>one of three tiers: $34k, $187k or $441k</strong> over four years.</span></div>
+      <div><b>Investment requested</b><span>Standard support is approved. The ask is <strong>tier 2: $160k more from the DVCRI</strong>, building on the faculty's $20k, for a third PhD.</span></div>
       <div><b>Duration</b><span><strong>2027 to 2031</strong>: a four-year Future Fellowship.</span></div>
-      <div><b>Return on investment</b><span>At the top tier: <strong>3 PhD completions, 7 to 11 papers, 5 major applications</strong> seeking about <strong>$6M</strong>.</span></div>
+      <div><b>Return on investment</b><span>At tier 2: <strong>3 PhD completions, 6 to 9 papers, 4 major applications</strong> seeking about <strong>$3M</strong>.</span></div>
     </div>
-    <a class="cta" href="#tiers">See the three tiers
+    <a class="cta" href="#tiers">See the ask
       <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2v13M3.5 9.5 9 15l5.5-5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   </div>
 </header>
@@ -299,24 +299,20 @@
   <section class="dark" id="tiers">
     <div class="wrap">
       <span class="label">The investment</span>
-      <h2 style="margin-top:6px">A baseline and three tiers</h2>
-      <p class="lede">Every Future Fellow receives the standard package. Above it, UOW chooses how far to go. Each tier includes the one before it.
-        Tap a tier to see its return.</p>
+      <h2 style="margin-top:6px">Three tiers: the ask is tier 2</h2>
+      <p class="lede">Tier 1 is already approved. Tier 2 is the ask: one more PhD candidate, so all three aims run at once. Tier 3 is the stretch. Tap a tier to see its return.</p>
       <div class="tiers" role="group" aria-label="Choose a tier">
-        <div class="tier base"><span class="tn">Baseline</span><span class="cost">$276k <small>standard package</small></span>
-          <span class="what">Salary shortfall, one UOW PhD stipend, top-up for the ARC-funded stipend, allowances, dissemination</span>
-          <span class="gets">A Future Fellow in the final round, and two PhD completions</span></div>
-        <button class="tier t1" data-tier="1" aria-pressed="false"><span class="tn">Tier 1 · Fellowship plus</span><span class="cost">+$34k</span>
-          <span class="what">Facility access at user rates: imaging and LC-MS/MS</span>
-          <span class="gets">The ARC money stays on research, spent in UOW facilities</span></button>
-        <button class="tier t2" data-tier="2" aria-pressed="false"><span class="tn">Tier 2 · Proof of concept</span><span class="cost">+$187k</span>
-          <span class="what">Plus a second UOW-funded PhD stipend, so all three aims run in parallel</span>
-          <span class="gets">Measured, corrected versions of UOW's in-house neural protocols; three PhD completions</span></button>
-        <button class="tier t3" data-tier="3" aria-pressed="true"><span class="tn">Tier 3 · Shared capability</span><span class="cost">+$441k</span>
+        <button class="tier t1" data-tier="1" aria-pressed="false"><span class="tn">Tier 1 · Standard support · approved</span><span class="cost">$269k</span>
+          <span class="what">Standard DVCRI package: salary shortfall, one UOW PhD stipend, top-up, allowances, dissemination; plus $98k faculty in-kind</span>
+          <span class="gets">A Future Fellow in the final round, and two PhD completions</span></button>
+        <button class="tier t2" data-tier="2" aria-pressed="true"><span class="tn">Tier 2 · Proof of concept · the ask</span><span class="cost">+$180k <small>DVCRI $160k, faculty $20k</small></span>
+          <span class="what">A second UOW-funded PhD stipend and facility access. The faculty's $20k pays the third PhD's first year, so the cell-fate aim starts in 2027.</span>
+          <span class="gets">Three aims in parallel; measured, corrected versions of UOW's in-house neural protocols; data for Explore and EL2 bids</span></button>
+        <button class="tier t3" data-tier="3" aria-pressed="false"><span class="tn">Tier 3 · Shared capability · stretch</span><span class="cost">+$434k <small>DVCRI $414k, faculty $20k</small></span>
           <span class="what">Plus a research assistant (2029 to 2030) running three partner-lab projects</span>
           <span class="gets">Multi-site evidence, a capability UOW owns, and the credential for a national node</span></button>
       </div>
-      <p class="tier-note">The ARC adds $240k for research costs. Costs from the UOW contributions spreadsheet and personnel calculator.</p>
+      <p class="tier-note">The ARC adds $240k for research costs. Costs from the FRST C2 amounts and the UOW personnel calculator.</p>
     </div>
   </section>
 
@@ -326,18 +322,20 @@
       <p class="lede">Cumulative planning targets. Income is the amount sought, not won.</p>
       <div class="tablebox">
         <table id="roi">
-          <thead><tr><th>Measure</th><th data-col="0">Baseline</th><th data-col="1">Tier 1</th><th data-col="2">Tier 2</th><th data-col="3">Tier 3</th></tr></thead>
+          <thead><tr><th>Measure</th><th data-col="1">Tier 1</th><th data-col="2">Tier 2: the ask</th><th data-col="3">Tier 3</th></tr></thead>
           <tbody>
-            <tr><td>UOW investment, incl. baseline</td><td data-col="0">$276k</td><td data-col="1">$310k</td><td data-col="2">$463k</td><td data-col="3">$717k</td></tr>
-            <tr><td>PhD completions</td><td data-col="0">2</td><td data-col="1">2</td><td data-col="2">3</td><td data-col="3">3</td></tr>
-            <tr><td>Papers (2 to 3 per PhD)</td><td data-col="0">4–6</td><td data-col="1">4–6</td><td data-col="2">6–9</td><td data-col="3">7–11</td></tr>
-            <tr><td>Partner labs using the method</td><td data-col="0">–</td><td data-col="1">–</td><td data-col="2">2</td><td data-col="3">3</td></tr>
-            <tr><td>Major applications</td><td data-col="0">NHMRC EL2 + 1 philanthropic</td><td data-col="1">+ ARC Explore</td><td data-col="2">+ 1 philanthropic</td><td data-col="3">+ ARC Breakthrough</td></tr>
-            <tr class="sought"><td>External income sought</td><td data-col="0">~$1.7M</td><td data-col="1">~$2.9M</td><td data-col="2">~$3.0M</td><td data-col="3">~$6.0M</td></tr>
+            <tr><td>Non-standard UOW investment</td><td data-col="1">–</td><td data-col="2">$160k + $20k</td><td data-col="3">$414k + $20k</td></tr>
+            <tr><td>Proof of concept for Explore and EL2</td><td data-col="1">method only</td><td data-col="2">yes</td><td data-col="3">yes, multi-site</td></tr>
+            <tr><td>PhD completions</td><td data-col="1">2</td><td data-col="2">3</td><td data-col="3">3</td></tr>
+            <tr><td>Papers (2 to 3 per PhD)</td><td data-col="1">4–6</td><td data-col="2">6–9</td><td data-col="3">7–11</td></tr>
+            <tr><td>UOW labs with optimised protocols</td><td data-col="1">–</td><td data-col="2">2</td><td data-col="3">3</td></tr>
+            <tr><td>Major applications</td><td data-col="1">NHMRC EL2 + 1 philanthropic</td><td data-col="2">+ ARC Explore, + 1 philanthropic</td><td data-col="3">+ ARC Breakthrough</td></tr>
+            <tr class="sought"><td>External income sought</td><td data-col="1">~$1.7M</td><td data-col="2">~$3.0M</td><td data-col="3">~$6.0M</td></tr>
           </tbody>
         </table>
       </div>
       <p class="scrollhint">Swipe the table sideways to see every tier.</p>
+      <p class="lede" style="font-size:17px;margin-top:14px"><b>Why tier 2 pays back.</b> Two PhDs cannot run three aims at once. The faculty's $20k pays the third PhD's first year, so the cell-fate aim starts in 2027. It produces the proof of concept in 2027–28, in time for the first ARC Explore round and an NHMRC EL2 bid: about $1.3M more income sought for the DVCRI's $160k, roughly 8 to 1.</p>
       <p class="note">Income sought: NHMRC Emerging Leadership 2 about $1.62M over five years at 2026 rates; ARC Explore up to $1.2M; ARC Breakthrough up to $3.0M; philanthropic about $100k each.</p>
     </div>
   </section>
@@ -349,7 +347,7 @@
         <div class="tl-years"><span>2027</span><span>2028</span><span>2029</span><span>2030</span><span>2031</span></div>
         <div class="tl-row"><span>Aim 1: designed sources</span><div class="tl-track"><div class="tl-bar" style="left:10%;width:80%;background:var(--steel)">PhD 1</div></div></div>
         <div class="tl-row"><span>Aim 2: measured fields</span><div class="tl-track"><div class="tl-bar" style="left:10%;width:80%;background:var(--steel)">PhD 2 · baseline paper</div></div></div>
-        <div class="tl-row"><span>Aim 3: cell fate</span><div class="tl-track"><div class="tl-bar" style="left:20%;width:70%;background:var(--violet)">PhD 3 · tier 2</div></div></div>
+        <div class="tl-row"><span>Aim 3: cell fate</span><div class="tl-track"><div class="tl-bar" style="left:10%;width:70%;background:var(--violet)">PhD 3 · tier 2</div></div></div>
         <div class="tl-row"><span>Partner protocols</span><div class="tl-track"><div class="tl-bar" style="left:40%;width:40%;background:var(--signal);color:var(--ink)">RA · tier 3</div></div></div>
       </div>
       <div class="ms" aria-label="Applications"><span>NHMRC EL2 · 2027</span><span>ARC Explore · 2027–28</span><span>ARC Breakthrough · 2029</span><span>Philanthropic rounds as they open</span></div>
@@ -366,7 +364,7 @@
       <h2>Risks and how they are handled</h2>
       <div class="risks">
         <div class="risk"><b>The measurement method is late</b><span>The research assistant starts only once it works; if it is late, partner projects start with the release methods on the same protocols.</span></div>
-        <div class="risk"><b>External grants are not won</b><span>A staged pipeline across ARC, NHMRC and philanthropic schemes; the tiers let UOW stop at any level.</span></div>
+        <div class="risk"><b>External grants are not won</b><span>A staged pipeline across ARC, NHMRC and philanthropic schemes; the tiers let UOW stop at tier 2.</span></div>
         <div class="risk"><b>Partner uptake is slow</b><span>Start in-house, and give partners a ready-made plate that fits their existing protocol.</span></div>
       </div>
       <h2 style="margin-top:48px">Strategic alignment</h2>
@@ -380,8 +378,7 @@
 
   <section class="decision">
     <div class="wrap">
-      <p><b>Decision sought.</b> That UOW confirm the standard Future Fellowship package and invest in one of three tiers ($34k, $187k or $441k over four years),
-        to build a measurement capability for human stem-cell models that UOW owns, in the final Future Fellowship round.</p>
+      <p><b>Decision sought.</b> That the DVCRI support tier 2: $160k over four years, building on the faculty's $20k in year 1, for a third PhD candidate and facility access, in the final Future Fellowship round.</p>
     </div>
   </section>
 </main>
@@ -411,7 +408,7 @@
         }
       });
     });
-    pick(3);
+    pick(2);
   })();
 </script>
 </body>
